@@ -1,5 +1,7 @@
 # HornPenguin Booklet
 
+![HornPenguinBooklet](Logo.svg)
+
 HornPenguin Booklet is a simple software that generates Booklet file from your own pdf.
 Print your own book signatures and simple Pamplet with your home print.
 
