@@ -13,8 +13,8 @@ from functools import partial
 import os
 
 
-git_repository = r"https://github.com/HornPenguin"
-homepage = r"https://www.hornpenguin.com/%EC%84%9C%EB%B9%84%EC%8A%A4/hpwc"
+git_repository = r"https://github.com/HornPenguin/Booklet"
+homepage = r"https://www.hornpenguin.com/"
 about_text= r'''
 Copyright (c) 2022 Kim, Hyunseong
 All right reserved.
