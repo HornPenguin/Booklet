@@ -60,8 +60,8 @@ class routines:
         pdfinfo = pdf.documentInfo
 
 
-        title = pdfinfo['/Title'] if '/Title' in pdfinfo.keys() else ''
-        authors = pdfinfo['/Author'] if '/Author' in pdfinfo.keys() else ''
+        title = pdfinfo['/Title'] if '/Title' in pdfinfo.keys() else 'None'
+        authors = pdfinfo['/Author'] if '/Author' in pdfinfo.keys() else 'Unkown'
         page_num = int(pdf.getNumPages())
         page_size=  pdf.getPage(0).mediaBox[2:]
         return title, authors, page_num, page_size
@@ -81,10 +81,13 @@ class routines:
                 per.extend([n-i, 1+i])
         return per
     @classmethod
-    def gen_signature(cls, input_file, output_file, meta, leaves, format, fold, riffle = True, ):
+    def gen_signature(cls, input_file, output_file, meta, leaves, format, fold, riffle = True):
 
         pdf = pypdf.PdfFileReader(input_file)
         pdf_sig = pypdf.PdfFileWriter()
+
+        pdf_sig.addMetadata(pdf.documentInfo)
+        pdf_sig.addMetadata({"/Producer": "HornPenguin Booklet"})
 
         page_n = pdf.getNumPages()
         per_n = cls.sig_permutation(leaves, riffle)
@@ -92,43 +95,36 @@ class routines:
         re_n = int(page_n /leaves) + 1 if page_n%leaves else 0
 
         f_dim = PaperFormat[format].split("x")
-        width = f_dim[0]
-        height = f_dim[1]
+        width = float(f_dim[0])
+        height = float(f_dim[1])
         scale_x = scale_y = 1.0
 
         if format != "Default":
             fd_dim = PaperFormat["Default"].split("x")
             
-            scale_x = width/fd_dim[0]
-            scale_y = height/fd_dim[1]
-        
-        pdf_sig.addMetadata(
-            {
-                "/Title": meta['title'],
-                "/Author": meta['author'],
-                "/Producer": "HornPenguin Booklet"
-            }
-        )
-
+            scale_x = width/float(fd_dim[0])
+            scale_y = height/float(fd_dim[1])
 
         if riffle:
             for i in range(0, re_n):
                 for j in range(0, leaves):
                     l  =  leaves* i + per_n[j] -1
                     if l >= page_n:
-                        pdf_sig.addBlankPage(widh = width , height =height)
+                        pdf_sig.addBlankPage(width = width, height= height)
                     else:
                         page =pdf.pages[l]
-                        page.scaleBy(scale_x, scale_y)
-                        pdf_sig.addPage(page)
+                        page.scale(scale_x, scale_y)
+                        pdf_sig.addPage(pdf.pages[l])
         else:
             pass
         
+        print("Done")
         output = open(output_file, "wb")
         pdf_sig.write(output)
-        output.close()
+        
+        print("Save")
 
-        return 0
+        return output.close()
 
 
 #UI--------------------------------------------------------------------------------------------
@@ -387,7 +383,7 @@ class HP_Booklet:
         format = self.format.get() 
         fold = self.foldvalue.get() 
         riffle = True if self.riffle.get() == "right" else False
-        meta = {"title": self.title.get(), "author": self.author.get()}
+        meta = [self.title.get(),self.author.get()]
 
         routines.gen_signature(input_file, output_path, meta, leaves, format, fold, riffle)
 
