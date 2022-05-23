@@ -23,8 +23,21 @@ This program is using PyPDF2 library which is ditributed under
 BSD-3 license.
 See details of license in LICENSE file in repository.
 '''
+format_table = r'''
+Format (mm)x(mm)
 
-PaperFormat = {
+A4      210x297
+A5      148x210
+B5      176x250
+B6      125x176
+JIS B5  182x257
+JIS B6  128x182
+Letter  216x279
+Legal   215x275
+'''
+
+PaperFormat = { #mm
+    "Default": "0x0",
     "A4": "210x297",
     "A5": "148x210",
     "B5": "176x250",
@@ -50,8 +63,8 @@ class routines:
         title = pdfinfo['/Title'] if '/Title' in pdfinfo.keys() else ''
         authors = pdfinfo['/Author'] if '/Author' in pdfinfo.keys() else ''
         page_num = int(pdf.getNumPages())
-        page_format = pdf.pageLayout
-        return title, authors, page_num, page_format
+        page_size=  pdf.getPage(0).mediaBox[2:]
+        return title, authors, page_num, page_size
 
     @classmethod
     def open_url(cls, url):
@@ -68,24 +81,46 @@ class routines:
                 per.extend([n-i, 1+i])
         return per
     @classmethod
-    def gen_signature(cls, input_file, output_file, leaves, format, fold, riffle = True):
+    def gen_signature(cls, input_file, output_file, meta, leaves, format, fold, riffle = True, ):
 
         pdf = pypdf.PdfFileReader(input_file)
+        pdf_sig = pypdf.PdfFileWriter()
+
         page_n = pdf.getNumPages()
         per_n = cls.sig_permutation(leaves, riffle)
 
-        re_n = int(page_n / leaves)
+        re_n = int(page_n /leaves) + 1 if page_n%leaves else 0
 
-        pdf_sig = pypdf.PdfFileWriter()
+        f_dim = PaperFormat[format].split("x")
+        width = f_dim[0]
+        height = f_dim[1]
+        scale_x = scale_y = 1.0
+
+        if format != "Default":
+            fd_dim = PaperFormat["Default"].split("x")
+            
+            scale_x = width/fd_dim[0]
+            scale_y = height/fd_dim[1]
+        
+        pdf_sig.addMetadata(
+            {
+                "/Title": meta['title'],
+                "/Author": meta['author'],
+                "/Producer": "HornPenguin Booklet"
+            }
+        )
+
 
         if riffle:
             for i in range(0, re_n):
                 for j in range(0, leaves):
                     l  =  leaves* i + per_n[j] -1
                     if l >= page_n:
-                        pdf_sig.addBlankPage()
+                        pdf_sig.addBlankPage(widh = width , height =height)
                     else:
-                        pdf_sig.addPage(pdf.pages[l])
+                        page =pdf.pages[l]
+                        page.scaleBy(scale_x, scale_y)
+                        pdf_sig.addPage(page)
         else:
             pass
         
@@ -151,8 +186,8 @@ class HP_Booklet:
 
         version = ttk.Label(sub_window, text = f"Version. {__version__}")
         version.pack(pady=10)
-        copytext = ttk.Label(sub_window, text=text, justify=tk.LEFT)
-        copytext.pack(padx=10, pady=2.5)
+        formattext = ttk.Label(sub_window, text=text)
+        formattext.pack(padx=10, pady=2.5)
 
         destorybutton = ttk.Button(sub_window, text="OK", width=15, comman=sub_window.destroy)
         destorybutton.pack(pady=5)
@@ -162,10 +197,29 @@ class HP_Booklet:
         self.window.wait_window(sub_window)
         return 0
 
+    def format_window(self, text):
+        sub_window = tk.Toplevel(self.window)
+        sub_window.title("Format")
+        sub_window.geometry(f'300x300')
+        sub_window.resizable(False, True)
+        sub_window.iconbitmap('./images/HornPengunPavicon.ico')
+
+        copytext = ttk.Label(sub_window, text=text, justify=tk.LEFT)
+        copytext.pack(padx=10, pady=2.5)
+
+        destorybutton = ttk.Button(sub_window, text="OK", width=15, comman=sub_window.destroy)
+        destorybutton.pack(pady=5)
+
+        #sub_window.transient(self.window)
+        #sub_window.grab_set()
+        #self.window.wait_window(sub_window)
+        return 0
+
 
     def initiate_menu(self):
         self.menu.add_cascade(label = "Help", menu=self.menu_help)
         self.menu_help.add_command(label="About", command=partial(self.about_window, about_text))
+        self.menu_help.add_command(label="Paper Format", command=partial(self.format_window, format_table))
         self.menu_help.add_command(label="Homepage", command=partial(routines.open_url,self.url_homepage))
         self.menu_help.add_command(label="Source", command=partial(routines.open_url,self.url_source))
 
@@ -178,12 +232,13 @@ class HP_Booklet:
 
         self.input_entry.delete(0, tk.END)
         self.input_entry.insert(0, filename)
-        title, author, page_num, page_format = routines.get_pdf_info(filename)
+        title, author, page_num, page_size = routines.get_pdf_info(filename)
 
         self.title.set(title)
         self.author.set(author)
         self.page_n.set(int(page_num))
-        self.page_format.set(page_format)
+        self.page_format.set(f'{page_size[0]}x{page_size[1]}')
+        PaperFormat["Default"] = f'{page_size[0]}x{page_size[1]}'
 
         file_name = os.path.split(str(filename))[1]
         self.filename.set(file_name)
@@ -332,8 +387,9 @@ class HP_Booklet:
         format = self.format.get() 
         fold = self.foldvalue.get() 
         riffle = True if self.riffle.get() == "right" else False
+        meta = {"title": self.title.get(), "author": self.author.get()}
 
-        routines.gen_signature(input_file, output_path, leaves, format, fold, riffle)
+        routines.gen_signature(input_file, output_path, meta, leaves, format, fold, riffle)
 
         return 0
     def fold_enable(self, event):

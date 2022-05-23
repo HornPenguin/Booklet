@@ -2,8 +2,13 @@
 
 ![HornPenguinBooklet](Logo.svg)
 
-HornPenguin Booklet is a simple software that generates Booklet file from your own pdf.
-Print your own book signatures and simple Pamplet with your home print.
+HornPenguin Booklet is a simple software that generates booklet and signature for bookbinding from your pdf files.
+You can print your own book signatures and simple pamplet with your home printer.
+
+* Support diffence signature size from 4 to 32.
+* Fold signature is supported for special number of leaves (8, 16, 32).
+* Change page size during generating signature.
+* Left riffling direction is supported for old asian bookbinding.
 
 ## Layout of signatue
 
@@ -13,10 +18,12 @@ Book can consists of single signature or multiple signatures.
 For single sheet binding, for example traditional asian binding, you just print manuscript with double side print option
 and bind them. However, for folded signature, you need to rearrange the pages of the pdf.
 
-
 The order of the pages depend on the number of sheet per each signature. 
 See layout of signatures for 4, 6, 8
 
+## UI
+
+Version 1.0.0
 
 ## Dependency
 
