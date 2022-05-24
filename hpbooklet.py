@@ -56,7 +56,7 @@ class routines:
     
     @classmethod
     def get_pdf_info(cls, pdf_path):
-        pdf = (pypdf.PdfFileReader(pdf_path))
+        pdf = pypdf.PdfFileReader(pdf_path)
         pdfinfo = pdf.documentInfo
 
 
@@ -81,9 +81,9 @@ class routines:
                 per.extend([n-i, 1+i])
         return per
     @classmethod
-    def gen_signature(cls, input_file, output_file, meta, leaves, format, fold, riffle = True):
+    def gen_signature(cls, input_file, output_file, leaves, format, fold, riffle = True):
 
-        pdf = pypdf.PdfFileReader(input_file)
+        pdf = pypdf.PdfFileReader(str((input_file)))
         pdf_sig = pypdf.PdfFileWriter()
 
         pdf_sig.addMetadata(pdf.documentInfo)
@@ -92,7 +92,7 @@ class routines:
         page_n = pdf.getNumPages()
         per_n = cls.sig_permutation(leaves, riffle)
 
-        re_n = int(page_n /leaves) + 1 if page_n%leaves else 0
+        re_n = int(page_n /leaves) + (1 if page_n%leaves else 0)
 
         f_dim = PaperFormat[format].split("x")
         width = float(f_dim[0])
@@ -105,26 +105,23 @@ class routines:
             scale_x = width/float(fd_dim[0])
             scale_y = height/float(fd_dim[1])
 
-        if riffle:
-            for i in range(0, re_n):
-                for j in range(0, leaves):
-                    l  =  leaves* i + per_n[j] -1
-                    if l >= page_n:
-                        pdf_sig.addBlankPage(width = width, height= height)
-                    else:
-                        page =pdf.pages[l]
-                        page.scale(scale_x, scale_y)
-                        pdf_sig.addPage(pdf.pages[l])
-        else:
-            pass
         
-        print("Done")
+        for i in range(0, re_n):
+            for j in range(0, leaves):
+                l  =  leaves* i + per_n[j] -1
+                if l >= page_n:
+                    pdf_sig.addBlankPage(width = width, height= height)
+                else:
+                    page =pdf.pages[l]
+                    page.scale(scale_x, scale_y)
+                    pdf_sig.addPage(pdf.pages[l])
+        
+
         output = open(output_file, "wb")
         pdf_sig.write(output)
-        
-        print("Save")
+        output.close()
 
-        return output.close()
+        return 0
 
 
 #UI--------------------------------------------------------------------------------------------
@@ -141,7 +138,8 @@ class HP_Booklet:
 
         self.initiate_window()
 
-        self.window.iconbitmap(icon_path)
+        self.icon_path = icon_path
+        self.window.iconbitmap(self.icon_path)
 
         self.menu = tk.Menu(self.window)
         self.menu_help = tk.Menu(self.menu, tearoff=0)
@@ -172,50 +170,34 @@ class HP_Booklet:
         self.window.update()
         self.window.attributes('-topmost', False)
     
-    def about_window(self, text):
+    def popup_window(self, width, height, text, title, tpadx=10, tpady=2.5, fix=False):
         sub_window = tk.Toplevel(self.window)
-        sub_window.title("About Horn Penguin Booklet")
-        sub_window.geometry(f'400x250')
-        sub_window.resizable(False, True)
-        sub_window.iconbitmap('./images/HornPengunPavicon.ico')
+        sub_window.title(title)
+        sub_window.geometry(f'{width}x{height}')
+        sub_window.resizable(False,False)
+        sub_window.iconbitmap(self.icon_path)
 
-
-        version = ttk.Label(sub_window, text = f"Version. {__version__}")
-        version.pack(pady=10)
-        formattext = ttk.Label(sub_window, text=text)
-        formattext.pack(padx=10, pady=2.5)
+        text_label = ttk.Label(sub_window, text= text, wraplengt=width -20)
+        text_label.pack(padx=tpadx, pady = tpady)
 
         destorybutton = ttk.Button(sub_window, text="OK", width=15, comman=sub_window.destroy)
-        destorybutton.pack(pady=5)
+        destorybutton.pack(pady=int(2*tpady))
 
-        sub_window.transient(self.window)
-        sub_window.grab_set()
-        self.window.wait_window(sub_window)
+        if fix:
+            sub_window.transient(self.window)
+            sub_window.grab_set()
+            self.window.wait_window(sub_window)
         return 0
-
-    def format_window(self, text):
-        sub_window = tk.Toplevel(self.window)
-        sub_window.title("Format")
-        sub_window.geometry(f'300x300')
-        sub_window.resizable(False, True)
-        sub_window.iconbitmap('./images/HornPengunPavicon.ico')
-
-        copytext = ttk.Label(sub_window, text=text, justify=tk.LEFT)
-        copytext.pack(padx=10, pady=2.5)
-
-        destorybutton = ttk.Button(sub_window, text="OK", width=15, comman=sub_window.destroy)
-        destorybutton.pack(pady=5)
-
-        #sub_window.transient(self.window)
-        #sub_window.grab_set()
-        #self.window.wait_window(sub_window)
-        return 0
-
 
     def initiate_menu(self):
         self.menu.add_cascade(label = "Help", menu=self.menu_help)
-        self.menu_help.add_command(label="About", command=partial(self.about_window, about_text))
-        self.menu_help.add_command(label="Paper Format", command=partial(self.format_window, format_table))
+
+        about_window = partial(self.popup_window, 400, 220, about_text, "About HornPenguin Booklet", 10, 2.5, True)
+        self.menu_help.add_command(label="About", command=about_window)
+        
+        format_window = partial(self.popup_window, 300, 300, format_table, "Paper Format", 10, 2.5, False)
+        self.menu_help.add_command(label="Paper Format", command=format_window)
+
         self.menu_help.add_command(label="Homepage", command=partial(routines.open_url,self.url_homepage))
         self.menu_help.add_command(label="Source", command=partial(routines.open_url,self.url_source))
 
@@ -383,9 +365,16 @@ class HP_Booklet:
         format = self.format.get() 
         fold = self.foldvalue.get() 
         riffle = True if self.riffle.get() == "right" else False
-        meta = [self.title.get(),self.author.get()]
 
-        routines.gen_signature(input_file, output_path, meta, leaves, format, fold, riffle)
+        print(f'Document:{filename}\n{riffle}')
+
+        status = routines.gen_signature(input_file, output_path, leaves, format, fold, riffle=riffle)
+
+        if status == 0:
+            done_text = f'''
+            {filename}
+            Done'''
+            self.popup_window(250,100,done_text,"popup")
 
         return 0
     def fold_enable(self, event):

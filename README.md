@@ -21,9 +21,27 @@ and bind them. However, for folded signature, you need to rearrange the pages of
 The order of the pages depend on the number of sheet per each signature. 
 See layout of signatures for 4, 6, 8
 
-## UI
+## UI and Usage
 
 Version 1.0.0
+
+### Manuscript Frame
+
+1. File selector: Choose original file.
+2. Title, Author(s), Pages, Format: Automatically detect metadata of the selected pdf file. They will be remianed in generated signature or booklet file. 
+
+### Output Frame
+
+1. Output directory: Generated file location.
+2. File name: Choose file name of output. Initial value is original file. 
+3. Leaves: Number of leabes per signature. 'f' suffix means fold support number.
+4. Book Format: Output page size. 'Default' value remains original size. See other ISO dimensions of format in 'Help' -> 'Format' above menu.
+5. Fold: Option for fold signature. Pages will be rotated and rearranged for folding.
+6. Riffling direction: Default is 'right' value. 'left' value is for an traditional asian bookbinding which riffles from right to left. 
+
+
+
+![HP_booklet_UI](ui.PNG)
 
 ## Dependency
 
