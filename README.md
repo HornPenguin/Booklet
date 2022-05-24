@@ -39,9 +39,10 @@ Version 1.0.0
 5. Fold: Option for fold signature. Pages will be rotated and rearranged for folding. (Not supported yet)
 6. Riffling direction: Default is 'right' value. 'left' value is for an traditional asian bookbinding which riffles from right to left. 
 
+<p align="center">
+  <img width="300" height="470" src="ui.PNG">
+</p>
 
-
-![HP_booklet_UI](ui.PNG)
 
 ## Dependency
 
