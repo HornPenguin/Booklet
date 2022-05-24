@@ -10,43 +10,14 @@ import PyPDF2 as pypdf
 import TKinterModernThemes as TKMT
 from PIL import Image, ImageTk
 from functools import partial
+from datetime import datetime
 import os
 
+from resources import *
+import image_resources
+import base64
+from io import BytesIO
 
-git_repository = r"https://github.com/HornPenguin/Booklet"
-homepage = r"https://www.hornpenguin.com/"
-about_text= r'''
-Copyright (c) 2022 Kim, Hyunseong
-All right reserved.
-
-This program is using PyPDF2 library which is ditributed under
-BSD-3 license.
-See details of license in LICENSE file in repository.
-'''
-format_table = r'''
-Format (mm)x(mm)
-
-A4      210x297
-A5      148x210
-B5      176x250
-B6      125x176
-JIS B5  182x257
-JIS B6  128x182
-Letter  216x279
-Legal   215x275
-'''
-
-PaperFormat = { #mm
-    "Default": "0x0",
-    "A4": "210x297",
-    "A5": "148x210",
-    "B5": "176x250",
-    "B6": "125x176",
-    "JIS B5": "182x257",
-    "JIS B6": "128x182",
-    "Letter" : "216x279",
-    "Legal" : "215x275"
-}
 
 #Routines--------------------------------------------------------------------------------
 
@@ -57,14 +28,18 @@ class routines:
     @classmethod
     def get_pdf_info(cls, pdf_path):
         pdf = pypdf.PdfFileReader(pdf_path)
-        pdfinfo = pdf.documentInfo
+        page_num = pdf.getNumPages()
+        
+        if page_num != 0:
+            pdfinfo = pdf.metadata
 
-
-        title = pdfinfo['/Title'] if '/Title' in pdfinfo.keys() else 'None'
-        authors = pdfinfo['/Author'] if '/Author' in pdfinfo.keys() else 'Unkown'
-        page_num = int(pdf.getNumPages())
-        page_size=  pdf.getPage(0).mediaBox[2:]
-        return title, authors, page_num, page_size
+            title = pdfinfo['/Title'] if '/Title' in pdfinfo.keys() else 'None'
+            authors = pdfinfo['/Author'] if '/Author' in pdfinfo.keys() else 'Unkown'
+            page_size=  pdf.getPage(0).mediaBox[2:]
+            return title, authors, page_num, page_size
+        return False, False, False, False
+    
+        
 
     @classmethod
     def open_url(cls, url):
@@ -86,8 +61,13 @@ class routines:
         pdf = pypdf.PdfFileReader(str((input_file)))
         pdf_sig = pypdf.PdfFileWriter()
 
-        pdf_sig.addMetadata(pdf.documentInfo)
-        pdf_sig.addMetadata({"/Producer": "HornPenguin Booklet"})
+        meta = {}
+        for key in pdf.metadata.keys():
+            val = pdf.metadata.raw_get(key)
+            meta[key] = str(val) 
+        pdf_sig.add_metadata(meta)
+        pdf_sig.add_metadata({"/Producer": "HornPenguin Booklet"})
+        pdf_sig.add_metadata({"/ModDate": f"{datetime.now()}"})
 
         page_n = pdf.getNumPages()
         per_n = cls.sig_permutation(leaves, riffle)
@@ -126,7 +106,7 @@ class routines:
 
 #UI--------------------------------------------------------------------------------------------
 class HP_Booklet:
-    def __init__(self, icon_path, homepage, source, textpady):
+    def __init__(self, icon, homepage, source, textpady):
         self.url_homepage = homepage
         self.url_source = source
 
@@ -138,8 +118,8 @@ class HP_Booklet:
 
         self.initiate_window()
 
-        self.icon_path = icon_path
-        self.window.iconbitmap(self.icon_path)
+        #self.icon_path = icon_path
+        self.window.tk.call('wm', 'iconphoto', self.window._w, tk.PhotoImage(data=icon))
 
         self.menu = tk.Menu(self.window)
         self.menu_help = tk.Menu(self.menu, tearoff=0)
@@ -170,7 +150,7 @@ class HP_Booklet:
         self.window.update()
         self.window.attributes('-topmost', False)
     
-    def popup_window(self, width, height, text, title, tpadx=10, tpady=2.5, fix=False):
+    def popup_window(self, width, height, text, title, tpadx=10, tpady=2.5, fix=False, align='center', button_text = "Ok"):
         sub_window = tk.Toplevel(self.window)
         sub_window.title(title)
         sub_window.geometry(f'{width}x{height}')
@@ -178,9 +158,10 @@ class HP_Booklet:
         sub_window.iconbitmap(self.icon_path)
 
         text_label = ttk.Label(sub_window, text= text, wraplengt=width -20)
+        text_label.configure(anchor=align)
         text_label.pack(padx=tpadx, pady = tpady)
 
-        destorybutton = ttk.Button(sub_window, text="OK", width=15, comman=sub_window.destroy)
+        destorybutton = ttk.Button(sub_window, text=button_text , width=15, comman=sub_window.destroy)
         destorybutton.pack(pady=int(2*tpady))
 
         if fix:
@@ -207,21 +188,24 @@ class HP_Booklet:
             title="Select Manuscript", 
             filetypes= (("PDF", "*.pdf"),)
         )
+        if filename != '':
+            self.input_entry.delete(0, tk.END)
+            self.input_entry.insert(0, filename)
 
-        self.input_entry.delete(0, tk.END)
-        self.input_entry.insert(0, filename)
-        title, author, page_num, page_size = routines.get_pdf_info(filename)
+            title, author, page_num, page_size = routines.get_pdf_info(filename)
+            if title != False:
+                self.title.set(title)
+                self.author.set(author)
+                self.page_n.set(int(page_num))
+                self.page_format.set(f'{page_size[0]}x{page_size[1]}')
+                PaperFormat["Default"] = f'{page_size[0]}x{page_size[1]}'
 
-        self.title.set(title)
-        self.author.set(author)
-        self.page_n.set(int(page_num))
-        self.page_format.set(f'{page_size[0]}x{page_size[1]}')
-        PaperFormat["Default"] = f'{page_size[0]}x{page_size[1]}'
+                file_name = os.path.split(str(filename))[1]
+                self.filename.set(file_name)
 
-        file_name = os.path.split(str(filename))[1]
-        self.filename.set(file_name)
-
-        print(self.title.get())
+                print(f'title:{self.title.get()}\nfile:{filename}')
+            else:
+                print(f"Not a vaild PDF file: file ({filename})")
         return 0
     def open_output_directory(self):
         directory = filedialog.askdirectory(
@@ -371,10 +355,8 @@ class HP_Booklet:
         status = routines.gen_signature(input_file, output_path, leaves, format, fold, riffle=riffle)
 
         if status == 0:
-            done_text = f'''
-            {filename}
-            Done'''
-            self.popup_window(250,100,done_text,"popup")
+            done_text = f'{filename}'
+            self.popup_window(250,100,done_text,"popup", align="center", button_text = "Done")
 
         return 0
     def fold_enable(self, event):
@@ -387,21 +369,22 @@ class HP_Booklet:
 
 
         
-
-
-
-
 if __name__ == "__main__":
     text_pady = 3
 
-    icon_path = 'resources/HornPengunPavicon.ico'
-    logo_path = 'resources/HP_Booklet.png'
-    logo_img = (Image.open(logo_path))
+    icon_data_byte = base64.b64decode(image_resources.icon)
+    icon_data = BytesIO(icon_data_byte)
+    icon_image = Image.open(icon_data)
+    
+    logo_data_byte = base64.b64decode(image_resources.logo)
+    logo_data = BytesIO(logo_data_byte)
+    logo_image = Image.open(logo_data)
+    
     logo_height = 150
     logo_width = int(logo_height*1.380952380952381)
-    resize_logo = logo_img.resize((logo_width, logo_height), Image.ANTIALIAS)
+    resize_logo = logo_image.resize((logo_width, logo_height), Image.Resampling(1))
 
-    hpbooklet = HP_Booklet(icon_path=icon_path, homepage= homepage, source = git_repository, textpady= text_pady)
+    hpbooklet = HP_Booklet(icon_data_byte, homepage= homepage, source = git_repository, textpady= text_pady)
     
     logo = ImageTk.PhotoImage(resize_logo, master = hpbooklet.window)
     hpbooklet.logo_display(logo)

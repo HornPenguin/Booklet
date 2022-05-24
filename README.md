@@ -6,7 +6,7 @@ HornPenguin Booklet is a simple software that generates booklet and signature fo
 You can print your own book signatures and simple pamplet with your home printer.
 
 * Support diffence signature size from 4 to 32.
-* Fold signature is supported for special number of leaves (8, 16, 32).
+* Fold signature is supported for special number of leaves (8, 16). (Not supported yet)
 * Change page size during generating signature.
 * Left riffling direction is supported for old asian bookbinding.
 
@@ -40,7 +40,7 @@ Version 1.0.0
 6. Riffling direction: Default is 'right' value. 'left' value is for an traditional asian bookbinding which riffles from right to left. 
 
 <p align="center">
-  <img width="300" height="470" src="images/ui.PNG">
+  <img width="300" height="580" src="images/ui.PNG">
 </p>
 
 
