@@ -36,7 +36,7 @@ Version 1.0.0
 2. File name: Choose file name of output. Initial value is original file. 
 3. Leaves: Number of leabes per signature. 'f' suffix means fold support number.
 4. Book Format: Output page size. 'Default' value remains original size. See other ISO dimensions of format in 'Help' -> 'Format' above menu.
-5. Fold: Option for fold signature. Pages will be rotated and rearranged for folding.
+5. Fold: Option for fold signature. Pages will be rotated and rearranged for folding. (Not supported yet)
 6. Riffling direction: Default is 'right' value. 'left' value is for an traditional asian bookbinding which riffles from right to left. 
 
 
