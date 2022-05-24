@@ -1,6 +1,6 @@
 # HornPenguin Booklet
 
-![HornPenguinBooklet](Logo.svg)
+![HornPenguinBooklet](images/Logo.svg)
 
 HornPenguin Booklet is a simple software that generates booklet and signature for bookbinding from your pdf files.
 You can print your own book signatures and simple pamplet with your home printer.
@@ -40,7 +40,7 @@ Version 1.0.0
 6. Riffling direction: Default is 'right' value. 'left' value is for an traditional asian bookbinding which riffles from right to left. 
 
 <p align="center">
-  <img width="300" height="470" src="ui.PNG">
+  <img width="300" height="470" src="images/ui.PNG">
 </p>
 
 

@@ -394,8 +394,8 @@ class HP_Booklet:
 if __name__ == "__main__":
     text_pady = 3
 
-    icon_path = 'images/HornPengunPavicon.ico'
-    logo_path = 'images/HP_Booklet.png'
+    icon_path = 'resources/HornPengunPavicon.ico'
+    logo_path = 'resources/HP_Booklet.png'
     logo_img = (Image.open(logo_path))
     logo_height = 150
     logo_width = int(logo_height*1.380952380952381)
