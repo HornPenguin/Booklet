@@ -1,12 +1,13 @@
+
+
 git_repository = r"https://github.com/HornPenguin/Booklet"
 homepage = r"https://www.hornpenguin.com/"
 about_text= r'''
-Copyright (c) 2022 Kim, Hyunseong
+Copyright (c) 2022 HornPenguin Co.
 All right reserved.
 
-This program is using PyPDF2 library which is ditributed under
-BSD-3 license.
-See details of license in LICENSE file in repository.
+See details of use in LICENSE file in repository.
+"Help" -> "Source"
 '''
 format_table = r'''
 Format (mm)x(mm)

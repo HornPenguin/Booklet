@@ -1,17 +1,49 @@
+#BSD 3-Clause License
+#
+#Copyright (c) 2022, HornPenguin Co.
+#All rights reserved.
+#
+#Redistribution and use in source and binary forms, with or without
+#modification, are permitted provided that the following conditions are met:
+#
+#1. Redistributions of source code must retain the above copyright notice, this
+#   list of conditions and the following disclaimer.
+#
+#2. Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+#
+#3. Neither the name of the copyright holder nor the names of its
+#   contributors may be used to endorse or promote products derived from
+#   this software without specific prior written permission.
+#
+#THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+#AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+#IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+#DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+#FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+#DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+#SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+#CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+#OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+#OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
 
 __author__ = "Hyunseong Kim"
-__version__ = "1.0.0"
+__company__ = "HornPenguin"
+__version__ = "0.0.1"
 __license__ = "BSD license"
 
 import tkinter as tk
 from tkinter import NW, Checkbutton, ttk, filedialog
 import webbrowser
 import PyPDF2 as pypdf
-import TKinterModernThemes as TKMT
 from PIL import Image, ImageTk
 from functools import partial
+
 from datetime import datetime
-import os
+import os, sys
 
 from resources import *
 import image_resources
@@ -20,6 +52,17 @@ from io import BytesIO
 
 
 #Routines--------------------------------------------------------------------------------
+
+def resource_path(relative_path, directory):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, directory, relative_path)
+
 
 class routines:
     def __init__(self):
@@ -61,6 +104,7 @@ class routines:
         pdf = pypdf.PdfFileReader(str((input_file)))
         pdf_sig = pypdf.PdfFileWriter()
 
+        #Copy metadata and add 'producer' and 'moddata'
         meta = {}
         for key in pdf.metadata.keys():
             val = pdf.metadata.raw_get(key)
@@ -69,6 +113,7 @@ class routines:
         pdf_sig.add_metadata({"/Producer": "HornPenguin Booklet"})
         pdf_sig.add_metadata({"/ModDate": f"{datetime.now()}"})
 
+        
         page_n = pdf.getNumPages()
         per_n = cls.sig_permutation(leaves, riffle)
 
@@ -106,11 +151,14 @@ class routines:
 
 #UI--------------------------------------------------------------------------------------------
 class HP_Booklet:
-    def __init__(self, icon, homepage, source, textpady):
+    def __init__(self, icon_path, homepage, source, textpady):
         self.url_homepage = homepage
         self.url_source = source
 
-        self.window =  TKMT.ThemedTKinterFrame("HornPenguin Booklet","azure","light").root
+        #self.window =  TKMT.ThemedTKinterFrame("HornPenguin Booklet","azure","light").root
+        self.window = tk.Tk()
+        self.window.call('source', resource_path('azure.tcl','resource'))
+        self.window.call("set_theme", "light")
         self.window.title('HornPenguin Booklet')
 
         self.window_width = 404 #px
@@ -118,8 +166,9 @@ class HP_Booklet:
 
         self.initiate_window()
 
-        #self.icon_path = icon_path
-        self.window.tk.call('wm', 'iconphoto', self.window._w, tk.PhotoImage(data=icon))
+
+        self.window.iconbitmap(icon_path)
+       
 
         self.menu = tk.Menu(self.window)
         self.menu_help = tk.Menu(self.menu, tearoff=0)
@@ -366,15 +415,12 @@ class HP_Booklet:
             self.fold.config(state=tk.DISABLED)
 
 
-
-
         
 if __name__ == "__main__":
     text_pady = 3
 
-    icon_data_byte = base64.b64decode(image_resources.icon)
-    icon_data = BytesIO(icon_data_byte)
-    icon_image = Image.open(icon_data)
+    icon_name = 'hp_booklet.ico'
+    icon_path = resource_path(icon_name, 'resource')
     
     logo_data_byte = base64.b64decode(image_resources.logo)
     logo_data = BytesIO(logo_data_byte)
@@ -384,7 +430,7 @@ if __name__ == "__main__":
     logo_width = int(logo_height*1.380952380952381)
     resize_logo = logo_image.resize((logo_width, logo_height), Image.Resampling(1))
 
-    hpbooklet = HP_Booklet(icon_data_byte, homepage= homepage, source = git_repository, textpady= text_pady)
+    hpbooklet = HP_Booklet(icon_path, homepage= homepage, source = git_repository, textpady= text_pady)
     
     logo = ImageTk.PhotoImage(resize_logo, master = hpbooklet.window)
     hpbooklet.logo_display(logo)

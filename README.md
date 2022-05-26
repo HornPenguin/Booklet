@@ -6,24 +6,20 @@ HornPenguin Booklet is a simple software that generates booklet and signature fo
 You can print your own book signatures and simple pamplet with your home printer.
 
 * Support diffence signature size from 4 to 32.
-* Fold signature is supported for special number of leaves (8, 16). (Not supported yet)
 * Change page size during generating signature.
 * Left riffling direction is supported for old asian bookbinding.
 
-## Layout of signatue
+Further routines for next version
 
-The signature in bookbing is a collection of sheets that is an unit of contents.
-Book can consists of single signature or multiple signatures. 
-
-For single sheet binding, for example traditional asian binding, you just print manuscript with double side print option
-and bind them. However, for folded signature, you need to rearrange the pages of the pdf.
-
-The order of the pages depend on the number of sheet per each signature. 
-See layout of signatures for 4, 6, 8
+* Fold signature supporting for special number of leaves (8, 16, 32).
 
 ## UI and Usage
 
-Version 1.0.0
+Version 0.0.1
+
+Executable file is in `dist` directory with `HPBooklet.exe` name. It is complete itself. This is only useful for Windows user, however, I did not use any os dependent things. For OSX and Linux users, you can execute program with `main.py` script in `src` directory. Just check the prerequists in **Dependency** section.
+
+Note: I used [pyinstaller](https://pyinstaller.org/en/stable/) to create executable file in Windows with `--onefile` option. It will be take some time at iniitial stage.
 
 ### Manuscript Frame
 
@@ -46,13 +42,17 @@ Version 1.0.0
 
 ## Dependency
 
-Configurtion
+* Tkinter
+* PyPDF2
+* Pillow
 
-* UI: Tkinter
-* PDF manipulation: PyPDF2(external library, BSD-3 licensed, )
+Install them with next command
 
+```
+pip install PyPDF2 Pillow 
+```
 
 ## License
 
 This program distributed under BSD-3 license
-See detail license text in "LICENSE" file in repository.
+See detail license text in "[LICENSE](LICENSE)" file in repository.
