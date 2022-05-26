@@ -10,9 +10,11 @@ You can print your own book signatures and simple pamplet with your home printer
 * Change page size during generating signature.
 * Left riffling direction is supported for old asian bookbinding.
 
-Further routines for next version
+Further routines for next versions
 
 * Fold signature supporting for special number of leaves (8, 16, 32).
+* Seperating cover(front, back) pages from ouput.
+* PDF Preview(original and signature).
 
 ## Layout of Signatures
 
