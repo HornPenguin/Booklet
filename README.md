@@ -12,15 +12,30 @@ You can print your own book signatures and simple pamplet with your home printer
 
 Further routines for next versions
 
-* Fold signature supporting for special number of leaves (8, 16, 32).
-* Seperating cover(front, back) pages from ouput.
-* PDF Preview(original and signature).
+Simple
+1. Distribution option of added blank pages: both(front, back), only front, only back.
+2. Show required blank pages for each leaves of signature.
+3. Seperates cover(front, back) pages from ouput option.
+Little troublesome
+1. Progress bar and fine notification
+2. Fold signature support for special number of leaves: 8, 16, 32.
+3. Imposition option (4, 8, 16, 32)
+4. Combine Cover page from other PDFs option.
+Annoying
+1. Dealing multiple PDFs at once.
+2. PDF preview for original and signature(UI.... :<).
 
 ## Layout of Signatures
+
+Output pdf will be arranged as next image for 4, 12 leaves as F, B, F, B, ... order.
+
+For example, 4 leaves per signature: 4, 1, 2, 3, 8, 5, 6, 7, 12, 9, 10, 11.
 
 <p align="center">
   <img width="780" height="550" src="images/Signature.png">
 </p>
+
+Above image shows order of pages per each case of signatures: 4, 12 and how to fold and attaching each sheets. The right, 12 leaves sig, also can be combined with other signatures to consist one book or it can be completed as a pamplet.
 
 ## UI and Usage
 

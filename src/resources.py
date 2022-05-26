@@ -1,14 +1,19 @@
 
 
 git_repository = r"https://github.com/HornPenguin/Booklet"
-homepage = r"https://www.hornpenguin.com/"
+homepage = r"https://www.hornpenguin.com/%EC%84%9C%EB%B9%84%EC%8A%A4/booklet"
+
+
 about_text= r'''
 Copyright (c) 2022 HornPenguin Co.
 All right reserved.
 
+Contact: support@hornpenguin.com
+
 See details of use in LICENSE file in repository.
 "Help" -> "Source"
 '''
+
 format_table = r'''
 Format (mm)x(mm)
 

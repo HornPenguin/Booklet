@@ -45,7 +45,7 @@ from functools import partial
 from datetime import datetime
 import os, sys
 
-from resources import *
+import resources
 import image_resources
 import base64
 from io import BytesIO
@@ -119,13 +119,13 @@ class routines:
 
         re_n = int(page_n /leaves) + (1 if page_n%leaves else 0)
 
-        f_dim = PaperFormat[format].split("x")
+        f_dim = resources.PaperFormat[format].split("x")
         width = float(f_dim[0])
         height = float(f_dim[1])
         scale_x = scale_y = 1.0
 
         if format != "Default":
-            fd_dim = PaperFormat["Default"].split("x")
+            fd_dim = resources.PaperFormat["Default"].split("x")
             
             scale_x = width/float(fd_dim[0])
             scale_y = height/float(fd_dim[1])
@@ -166,8 +166,8 @@ class HP_Booklet:
 
         self.initiate_window()
 
-
-        self.window.iconbitmap(icon_path)
+        self.icon_path = icon_path
+        self.window.iconbitmap(self.icon_path)
        
 
         self.menu = tk.Menu(self.window)
@@ -222,10 +222,10 @@ class HP_Booklet:
     def initiate_menu(self):
         self.menu.add_cascade(label = "Help", menu=self.menu_help)
 
-        about_window = partial(self.popup_window, 400, 220, about_text, "About HornPenguin Booklet", 10, 2.5, True)
+        about_window = partial(self.popup_window, 400, 220, resources.about_text, "About HornPenguin Booklet", 10, 2.5, True)
         self.menu_help.add_command(label="About", command=about_window)
         
-        format_window = partial(self.popup_window, 300, 300, format_table, "Paper Format", 10, 2.5, False)
+        format_window = partial(self.popup_window, 300, 300, resources.format_table, "Paper Format", 10, 2.5, False)
         self.menu_help.add_command(label="Paper Format", command=format_window)
 
         self.menu_help.add_command(label="Homepage", command=partial(routines.open_url,self.url_homepage))
@@ -247,10 +247,11 @@ class HP_Booklet:
                 self.author.set(author)
                 self.page_n.set(int(page_num))
                 self.page_format.set(f'{page_size[0]}x{page_size[1]}')
-                PaperFormat["Default"] = f'{page_size[0]}x{page_size[1]}'
+                resources.PaperFormat["Default"] = f'{page_size[0]}x{page_size[1]}'
 
-                file_name = os.path.split(str(filename))[1]
-                self.filename.set(file_name)
+                file_name_with_format = os.path.split(str(filename))[1]
+                file_name = file_name_with_format.split('.')
+                self.filename.set(file_name[0] + '_HPBooklet'+'.'+file_name[1])
 
                 print(f'title:{self.title.get()}\nfile:{filename}')
             else:
@@ -343,7 +344,7 @@ class HP_Booklet:
        
 
         self.text_format = ttk.Label(self.Frame_output, text="Book Format", justify=tk.LEFT, anchor='w') 
-        self.format_list = [x for x in PaperFormat.keys()]
+        self.format_list = [x for x in resources.PaperFormat.keys()]
         self.format = ttk.Combobox(self.Frame_output, value= self.format_list, state='readonly')
         self.format.current(0)
 
@@ -430,7 +431,7 @@ if __name__ == "__main__":
     logo_width = int(logo_height*1.380952380952381)
     resize_logo = logo_image.resize((logo_width, logo_height), Image.Resampling(1))
 
-    hpbooklet = HP_Booklet(icon_path, homepage= homepage, source = git_repository, textpady= text_pady)
+    hpbooklet = HP_Booklet(icon_path, homepage= resources.homepage, source = resources.git_repository, textpady= text_pady)
     
     logo = ImageTk.PhotoImage(resize_logo, master = hpbooklet.window)
     hpbooklet.logo_display(logo)
