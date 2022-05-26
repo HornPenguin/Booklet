@@ -13,6 +13,12 @@ Further routines for next version
 
 * Fold signature supporting for special number of leaves (8, 16, 32).
 
+## Layout of Signatures
+
+<p align="center">
+  <img width="780" height="550" src="images/Signature.png">
+</p>
+
 ## UI and Usage
 
 Version 0.0.1
