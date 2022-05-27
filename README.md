@@ -35,7 +35,7 @@ For example, 4 leaves per signature: 4, 1, 2, 3, 8, 5, 6, 7, 12, 9, 10, 11.
   <img width="780" height="550" src="images/Signature.png">
 </p>
 
-Above image shows order of pages per each case of signatures: 4, 12 and how to fold and attaching each sheets. The right, 12 leaves sig, also can be combined with other signatures to consist one book or it can be completed as a pamplet.
+Above image shows order of pages per each case of signatures: 4, 12 and how to fold and attaching each sheets. The right, 12 leaves sig, also can be combined with other signatures to form a book or it can be complete in itself as a pamplet.
 
 ## UI and Usage
 
