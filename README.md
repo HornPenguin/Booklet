@@ -12,16 +12,21 @@ You can print your own book signatures and simple pamplet with your home printer
 
 Further routines for next versions
 
-Simple
+**Simple**
+
 1. Distribution option of added blank pages: both(front, back), only front, only back.
 2. Show required blank pages for each leaves of signature.
 3. Seperates cover(front, back) pages from ouput option.
-Little troublesome
+
+**Little troublesome**
+
 1. Progress bar and fine notification
 2. Fold signature support for special number of leaves: 8, 16, 32.
 3. Imposition option (4, 8, 16, 32)
 4. Combine Cover page from other PDFs option.
-Annoying
+
+**Annoying**
+
 1. Dealing multiple PDFs at once.
 2. PDF preview for original and signature(UI.... :<).
 
