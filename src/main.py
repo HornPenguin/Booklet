@@ -62,9 +62,10 @@ import routines
 
 #UI--------------------------------------------------------------------------------------------
 class HP_Booklet:
-    def __init__(self, icon_path, homepage, source, textpady):
+    def __init__(self, icon_path, homepage, source, tutorial, textpady):
         self.url_homepage = homepage
         self.url_source = source
+        self.url_tutorial = tutorial
 
         self.window = tk.Tk()
         self.window.call('source', routines.resource_path('azure.tcl','resource'))
@@ -89,6 +90,9 @@ class HP_Booklet:
         self.icon_path = icon_path
         self.window.iconbitmap(self.icon_path)
        
+       # Menu setting
+       # Help: About, Format, Tutorial, License, Contact, Source, homepage, support
+
         self.menu = tk.Menu(self.window)
         self.menu_help = tk.Menu(self.menu, tearoff=0)
         self.initiate_menu()
@@ -161,39 +165,49 @@ class HP_Booklet:
         return 0
 
 # Popup table routines
-#    def popup_window_table(self, width, height, column_names, data, tpadx=10, tpady=2.5, fix=False, align = 'center' , button_text='Ok'):
-#        sub_window = tk.Toplevel(self.window)
-#        sub_window.title = title
-#        sub_window.geometry(f'{width}x{height}')
-#        if fix:
-#            sub_window.resizable(False,False)
-#        else:
-#            sub_window.resizable(True,True)
-#        
-#        table = ttk.Treeview(sub_window)
-#        table['column'] = column_names
-#
-#        for i, x in enumerate(column_names):
-#            if i ==0:
-#                table.column("#0", width=0, st)
-#            else:
-#                table.column(x, anchor=CENTER)
-#        destroybutton = ttk.Button(sub_window, text=button_text, width = 15, comman=sub_window.destroy)
-#        destroybutton.pack(pady=int(2*tpady))
-            
+    def popup_window_table(self, width, height, column_names, data, title, tpadx=10, tpady=2.5, fix=False, align = 'center'):
+        sub_window = tk.Toplevel(self.window)
+        sub_window.title(title)
+        sub_window.geometry(f'{width}x{height}')
+        if fix:
+            sub_window.resizable(True,True)
+        else:
+            sub_window.resizable(False,False)
+        
+        sub_window.iconbitmap(self.icon_path)
 
+        table = ttk.Treeview(sub_window, selectmode='browse',height = 36)
+        table.pack(fill='both')
+        table['column'] = column_names
+
+        table.column("#0", width=0, stretch=tk.NO)
+        table.heading("#0", text="", anchor=tk.W)
+        #Head and column setting
+        for x in column_names: 
+            table.column(x, width=100, anchor=align)
+            table.heading(x, text=x, anchor=align)
+        
+        #Data innsert
+
+        for i, d in enumerate(data):
+            table.insert(parent = '', index= 'end', iid=i, values=d)
 
     def initiate_menu(self):
+        # Help: About, Format, Tutorial, License, support
         self.menu.add_cascade(label = "Help", menu=self.menu_help)
 
-        about_window = partial(self.popup_window, 400, 220, textdata.about_text, "About HornPenguin Booklet", 10, 2.5, True)
+        about_window = partial(self.popup_window, 400, 220, textdata.about_text, "About", 10, 2.5, False)
         self.menu_help.add_command(label="About", command=about_window)
         
-        format_window = partial(self.popup_window, 300, 300, textdata.format_table, "Paper Format", 30, 2.5, False)
+        format_window = partial(self.popup_window_table, 300, 480, textdata.format_head, textdata.format_table, "Paper Format", 30, 2.5, False)
         self.menu_help.add_command(label="Paper Format", command=format_window)
 
-        self.menu_help.add_command(label="Homepage", command=partial(routines.open_url,self.url_homepage))
-        self.menu_help.add_command(label="Source", command=partial(routines.open_url,self.url_source))
+        self.menu_help.add_command(label="Tutorial", command = partial(routines.open_url, self.url_tutorial))
+        self.menu_help.add_command(label="Homepage", command = partial(routines.open_url,self.url_homepage))
+        self.menu_help.add_command(label="Source", command = partial(routines.open_url,self.url_source))
+
+        license = partial(self.popup_window, 600, 800, textdata.license, "License", 10, 2.5, False)
+        self.menu_help.add_command(label="License", command= license)
 
     def open_file(self):
         filename = filedialog.askopenfilename(
@@ -395,7 +409,7 @@ if __name__ == "__main__":
     logo_width = int(logo_height*1.380952380952381)
     resize_logo = logo_image.resize((logo_width, logo_height), Image.Resampling(1))
 
-    hpbooklet = HP_Booklet(icon_path, homepage= textdata.homepage, source = textdata.git_repository, textpady= text_pady)
+    hpbooklet = HP_Booklet(icon_path, homepage= textdata.homepage, source = textdata.git_repository, tutorial = textdata.git_repository, textpady= text_pady)
     
     logo = ImageTk.PhotoImage(resize_logo, master = hpbooklet.window)
     hpbooklet.logo_display(logo)
