@@ -4,10 +4,44 @@ import PyPDF2 as pypdf
 import webbrowser
 from datetime import datetime
 import textdata
-import sys, os
+import sys, os, math
 
 from itertools import permutations
 
+import numpy as np
+
+
+#Utils===============================================================================
+
+def resource_path(relative_path, directory):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, directory, relative_path)
+
+def open_url(url):
+        return webbrowser.open(url)
+
+def get_pdf_info(pdf_path):
+        pdf = pypdf.PdfFileReader(pdf_path)
+        page_num = pdf.getNumPages()
+        
+        if page_num != 0:
+            pdfinfo = pdf.metadata
+
+            title = pdfinfo['/Title'] if '/Title' in pdfinfo.keys() else 'None'
+            authors = pdfinfo['/Author'] if '/Author' in pdfinfo.keys() else 'Unkown'
+            page_size=  pdf.getPage(0).mediaBox[2:]
+            return title, authors, page_num, page_size
+        return False, False, False, False
+
+
+
+#Permutations and generating functions for signature routines
 
 class Permutation:
     @classmethod
@@ -100,36 +134,87 @@ class Permutation:
         else:
             return cycliclist
 
-def resource_path(relative_path, directory):
-    """ Get absolute path to resource, works for dev and for PyInstaller """
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
 
-    return os.path.join(base_path, directory, relative_path)
+per_fold ={
+    4: [
+        [4,1],
+        [2,3]
+    ],
+    8: [
+        [8,1,5,4],
+        [2,7,3,9]
+    ],
+    16: [
+        [16,1,4,13,9,8,5,12],
+        [10,7,6,11,15,2,3,14]
+    ],
+    32: [
+        [44,21,28,37,40,25,24,41,53,12,5,60,57,8,9,56,52,13,4,61,64,1,16,49,45,20,29,36,33,32,17,48],
+        [46,19,30,35,34,31,18,47,51,14,3,62,63,2,15,50,54,11,6,59,58,7,10,55,43,22,27,38,39,26,23,42]
+    ]
+}
 
-def open_url(url):
-        return webbrowser.open(url)
+def sig_layout(n):
+    if type(n) != int or n<4 or n%4 !=0:
+        raise ValueError(f"n:{n} must be a positive integer that multiple of 4.")
+    
+    i = int(math.log(n/4 ,2))
+    if i%2 :
+        k = kp = int((i+1)/2)
+    else:
+        k = int(i/2)
+        kp = k+1
+    return (int(2**k), int(2**kp))
 
-def get_pdf_info(pdf_path):
-        pdf = pypdf.PdfFileReader(pdf_path)
-        page_num = pdf.getNumPages()
-        
-        if page_num != 0:
-            pdfinfo = pdf.metadata
 
-            title = pdfinfo['/Title'] if '/Title' in pdfinfo.keys() else 'None'
-            authors = pdfinfo['/Author'] if '/Author' in pdfinfo.keys() else 'Unkown'
-            page_size=  pdf.getPage(0).mediaBox[2:]
-            return title, authors, page_num, page_size
-        return False, False, False, False
+def __fold_matrix_update(n, matrix):
+    n_1 = np.flip(matrix.T, axis=0)
+    len_n = len(n_1[0])
+    l = int(len_n/2)
+
+    rows =[]
+    for row in n_1:
+        r_split = np.split(row,l)
+        row_appended = []
+
+        for tu in r_split:
+            tem = np.array([n-tu[0] +1,n-tu[1] +1])
+            row_appended.append(np.insert(tem, 1, tu))    
+        rows.append(np.concatenate(row_appended, axis=None))     
+    return np.stack(rows)
+
+def per_fold_n(n):
+    if n % 4 !=0:
+        raise ValueError("Fold sheets must be 4*2^k for k= 0, 1, 2, .... \n Current value is {n}")
+    
+    if n <64:
+        return per_fold[n]
+    else:
+        n_iter = int(math.log(n/16,2))
+        n_i = 32
+        per_n_1 = [per_fold[n_i][0], per_fold[n_i][1]]
+
+        #permutation to matrix
+        layout_n_1 = sig_layout(n_i)
+        front_matrix = np.array(per_n_1[0]).reshape(layout_n_1)
+        back_matrix = np.array(per_n_1[1]).reshape(layout_n_1)
+        for i in range(0, n_iter):
+            n_i = 2*n_i
+            front_matrix = __fold_matrix_update(n_i, front_matrix)
+            back_matrix = __fold_matrix_update(n_i, back_matrix)   
+    per_fn = np.concatenate(front_matrix).tolist() 
+    per_bn = np.concatenate(back_matrix).tolist()
+
+    return [per_fn, per_bn]    
+
+def fold_permutation(n):
+    per_sep = per_fold_n(n)
+    per = per_sep[0]  + per_sep[1]
+
+    return Permutation(n, per)         
 
 
 # Reverse -> Signature gen -> fold permutation
-
-
 def sig_permutation(n):
         per = [n,1]
         for i in range(1, int(n/2)):
@@ -179,11 +264,11 @@ def gen_signature(input_file, output_file, leaves, format, fold, riffle = True):
             for j in range(0, leaves):
                 l  =  leaves* i + per_n[j] -1
                 if l >= page_n:
-                    pdf_sig.addBlankPage(width = width, height= height)
+                    pdf_sig.add_blank_page(width = width, height= height)
                 else:
                     page =pdf.pages[l]
                     page.scale(scale_x, scale_y)
-                    pdf_sig.addPage(pdf.pages[l])
+                    pdf_sig.add_page(pdf.pages[l])
         
 
         output = open(output_file, "wb")

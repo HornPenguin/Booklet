@@ -40,6 +40,7 @@ from tkinter import NW, Checkbutton, ttk, filedialog
 from PIL import Image, ImageTk
 from functools import partial
 import os
+
 import textdata
 from image_data import logo
 import base64
@@ -48,13 +49,23 @@ from io import BytesIO
 import routines
 
 
+# Tab_advanced
+#===========================================================
+# Paper size: h x w
+# Page range: []
+# Fold option: Sheet num = n1 x n2 <- ratio modification
+# Imposition option: On, Off
+# Sig Proof: color option
+# Attachement PDF: Cover and back: front, back, none
+
+# Progress Bar
+
 #UI--------------------------------------------------------------------------------------------
 class HP_Booklet:
     def __init__(self, icon_path, homepage, source, textpady):
         self.url_homepage = homepage
         self.url_source = source
 
-        #self.window =  TKMT.ThemedTKinterFrame("HornPenguin Booklet","azure","light").root
         self.window = tk.Tk()
         self.window.call('source', routines.resource_path('azure.tcl','resource'))
         self.window.call("set_theme", "light")
@@ -63,12 +74,21 @@ class HP_Booklet:
         self.window_width = 404 #px
         self.window_height = 720
 
+        # Tab: basic, Advanced
+        self.Tabwindow = ttk.Notebook(self.window)
+
+        self.tab_basic = ttk.Frame(self.Tabwindow)
+        self.tab_advance = ttk.Frame(self.Tabwindow)
+        
+        self.Tabwindow.add(self.tab_basic, text='basic')
+        self.Tabwindow.add(self.tab_advance, text='advanced')
+
+
         self.initiate_window()
 
         self.icon_path = icon_path
         self.window.iconbitmap(self.icon_path)
        
-
         self.menu = tk.Menu(self.window)
         self.menu_help = tk.Menu(self.menu, tearoff=0)
         self.initiate_menu()
@@ -84,6 +104,28 @@ class HP_Booklet:
         self.page_n = tk.IntVar()
         self.page_format = tk.StringVar()
         self.filename = tk.StringVar()
+
+        #Advanced variables
+        # Paper size: h x w
+        # Page range: []
+        # Fold option: Sheet num = n1 x n2 <- ratio modification
+        # Imposition option: On, Off
+        # Sig Proof: color option
+        # Attachement PDF: Cover and back: front, back, none
+
+        self.page_size = {"width": tk.IntVar(), "height": tk.IntVar()}
+        self.page_range = tk.StringVar()
+
+        self.sig_n1 = tk.IntVar()
+        self.sig_n2 = tk.IntVar()
+
+        self.imposition = tk.BooleanVar()
+        self.sig_proof = tk.StringVar()
+
+        self.att_front = tk.BooleanVar()
+        self.att_back = tk.BooleanVar()
+
+        
 
 
     def initiate_window(self):
@@ -101,8 +143,8 @@ class HP_Booklet:
     def popup_window(self, width, height, text, title, tpadx=10, tpady=2.5, fix=False, align='center', button_text = "Ok"):
         sub_window = tk.Toplevel(self.window)
         sub_window.title(title)
-        sub_window.geometry(f'{width}x{height}')
-        sub_window.resizable(False,False)
+        #sub_window.geometry(f'{width}x{height}')
+        sub_window.resizable(False,True)
         sub_window.iconbitmap(self.icon_path)
 
         text_label = ttk.Label(sub_window, text= text, wraplengt=width -20)
@@ -118,13 +160,36 @@ class HP_Booklet:
             self.window.wait_window(sub_window)
         return 0
 
+# Popup table routines
+#    def popup_window_table(self, width, height, column_names, data, tpadx=10, tpady=2.5, fix=False, align = 'center' , button_text='Ok'):
+#        sub_window = tk.Toplevel(self.window)
+#        sub_window.title = title
+#        sub_window.geometry(f'{width}x{height}')
+#        if fix:
+#            sub_window.resizable(False,False)
+#        else:
+#            sub_window.resizable(True,True)
+#        
+#        table = ttk.Treeview(sub_window)
+#        table['column'] = column_names
+#
+#        for i, x in enumerate(column_names):
+#            if i ==0:
+#                table.column("#0", width=0, st)
+#            else:
+#                table.column(x, anchor=CENTER)
+#        destroybutton = ttk.Button(sub_window, text=button_text, width = 15, comman=sub_window.destroy)
+#        destroybutton.pack(pady=int(2*tpady))
+            
+
+
     def initiate_menu(self):
         self.menu.add_cascade(label = "Help", menu=self.menu_help)
 
         about_window = partial(self.popup_window, 400, 220, textdata.about_text, "About HornPenguin Booklet", 10, 2.5, True)
         self.menu_help.add_command(label="About", command=about_window)
         
-        format_window = partial(self.popup_window, 300, 300, textdata.format_table, "Paper Format", 10, 2.5, False)
+        format_window = partial(self.popup_window, 300, 300, textdata.format_table, "Paper Format", 30, 2.5, False)
         self.menu_help.add_command(label="Paper Format", command=format_window)
 
         self.menu_help.add_command(label="Homepage", command=partial(routines.open_url,self.url_homepage))
@@ -173,10 +238,10 @@ class HP_Booklet:
         self.canvas.grid(row=row, column=column)
         return 0
 
-    def inputbox(self,row, column, padx, pady, width, height, relief, padding, entry_width =41):
+    def inputbox(self, row, column, padx, pady, width, height, relief, padding, entry_width =41):
 
         self.Frame_input = ttk.Frame(
-            master  = self.window,
+            master  = self.tab_basic,
             width   = width,
             height  = height,
             relief  = relief,
@@ -215,10 +280,11 @@ class HP_Booklet:
         self.Frame_input.grid(row=row, column=column, padx=padx, pady=pady)
 
         return 0
+
     def outputbox(self,row, column, padx, pady, width, height, relief, padding, entry_width =41):
 
         self.Frame_output = ttk.Frame(
-            master  = self.window, 
+            master  = self.tab_basic, 
             width   = width, 
             height  = height, 
             relief  = relief, 
@@ -273,7 +339,6 @@ class HP_Booklet:
 
         self.Frame_output.grid(row=row, column=column, padx=padx, pady=pady)
         
-
     def genbutton(self, row, column, width, height, padding):
         self.Frame_button = ttk.Frame(
             master = self.window,
@@ -283,12 +348,12 @@ class HP_Booklet:
             padding = padding
         )
 
-        self.Generate_button = ttk.Button(self.Frame_button, text="Generate", width = 25, command=partial(self.button_action))
+        self.Generate_button = ttk.Button(self.Frame_button, text="Generate", width = 25, command=partial(self.gen_button_action))
         self.Generate_button.pack(side=tk.RIGHT, pady=18, anchor="e")
 
         self.Frame_button.grid(row=row, column=column)
     
-    def button_action(self):
+    def gen_button_action(self):
         input_file = self.input_entry.get()
         filename = self.filename.get()
         if ".pdf" not in filename:
@@ -335,9 +400,9 @@ if __name__ == "__main__":
     logo = ImageTk.PhotoImage(resize_logo, master = hpbooklet.window)
     hpbooklet.logo_display(logo)
 
-    hpbooklet.inputbox(     row=1, column=0, padx = 5, pady =10, width = 390, height = 160, relief="solid", padding="4 4 10 10")
-    hpbooklet.outputbox(    row=2, column=0, padx = 5, pady =10, width = 390, height = 200, relief="solid", padding="4 4 10 10")
-    hpbooklet.genbutton(    row=3, column=0, width = 390, height = 50, padding="2 2 2 2")
+    hpbooklet.inputbox( row=1, column=0, padx = 5, pady =10, width = 390, height = 160, relief="solid", padding="4 4 10 10")
+    hpbooklet.outputbox(row=2, column=0, padx = 5, pady =10, width = 390, height = 200, relief="solid", padding="4 4 10 10")
+    hpbooklet.genbutton(row=3, column=0, width = 390, height = 50, padding="2 2 2 2")
 
     hpbooklet.window.mainloop()
     
