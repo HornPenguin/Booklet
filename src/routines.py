@@ -11,6 +11,11 @@ from itertools import permutations
 import numpy as np
 
 
+status_code = {
+    0: "Sucess",
+    1: "Invaild page range"
+}
+
 #Utils===============================================================================
 
 def resource_path(relative_path, directory):
@@ -38,8 +43,6 @@ def get_pdf_info(pdf_path):
             page_size=  pdf.getPage(0).mediaBox[2:]
             return title, authors, page_num, page_size
         return False, False, False, False
-
-
 
 #Permutations and generating functions for signature routines
 
@@ -228,7 +231,11 @@ def signature_permutation(n, fold, riffle=True):
 
     return per_sig * per_riffle
 
-def gen_signature(input_file, output_file, leaves, format, fold, riffle = True):
+def gen_signature(input_file, output_file, settings:dict):
+        leaves = setting["leaves"]
+        format = setting["format"]
+        fold = setting["fold"]
+
 
         pdf = pypdf.PdfFileReader(str((input_file)))
         pdf_sig = pypdf.PdfFileWriter()

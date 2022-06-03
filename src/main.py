@@ -382,18 +382,39 @@ class HP_Booklet:
         if ".pdf" not in filename:
             filename = filename+".pdf"
         output_path = os.path.join(self.output_entry.get(), filename)
-        leaves = int((self.leaves.get()).split('f')[0])
+        nl = int((self.leaves.get()).split('f')[0])
+        nn = self.nn.get()
+        ns = self.ns.get()
+
+        foldbool = (len((self.leaves.get()).split('f')) == 2)  and self.fold.get() 
         format = self.format.get() 
         fold = self.foldvalue.get() 
-        riffle = True if self.riffle.get() == "right" else False
+        rifflebool = True if self.riffle.get() == "right" else False
 
-        print(f'Document:{filename}\n{riffle}')
+        print(f'Document:{filename}\n signature leaves: {nl} \n direction: {self.riffle.get()}')
+
+        setting = {
+            "filename" : filename,
+            "leaves" : [nl, nn, ns],
+            "fold" : foldbool,
+            "Riggle" : rifflebool,
+            "format" : [format, self.format_width.get(), self.format_height.get()],
+            "blank" : [blank_mode, blank_n],
+            "split" : splitbool,
+            "sigproof" : [sigproofbool, sig_color],
+            "trim": trimbool,
+            "registaration" : regisbool,
+            "cymk" : cymkbool
+            
+        }
 
         status = routines.gen_signature(input_file, output_path, leaves, format, fold, riffle=riffle)
 
         if status == 0:
-            done_text = f'{filename}'
-            self.popup_window(250,100,done_text,"popup", align="center", button_text = "Done")
+            done_text = f'{filename} is done'
+            self.popup_window(250,100, done_text, "Done", align="center", button_text = "Ok")
+        else:
+            self.popup_window(250, 100, routines.status_code[status], "Error", align = "center", button_text= "Ok")
 
         return 0
     def fold_enable(self, event):
