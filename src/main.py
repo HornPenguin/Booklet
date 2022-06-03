@@ -62,21 +62,23 @@ import routines
 
 #UI--------------------------------------------------------------------------------------------
 class HP_Booklet:
-    def __init__(self, icon_path, homepage, source, tutorial, textpady):
+    def __init__(self, icon_path, homepage, source, tutorial, textpady, fix = False, width = 404, height =780):
         self.url_homepage = homepage
         self.url_source = source
         self.url_tutorial = tutorial
+
+        self.fix = fix
+        self.window_width = width
+        self.window_height = height
 
         self.window = tk.Tk()
         self.window.call('source', routines.resource_path('azure.tcl','resource'))
         self.window.call("set_theme", "light")
         self.window.title('HornPenguin Booklet')
 
-        self.window_width = 404 #px
-        self.window_height = 720
-
         # Tab: basic, Advanced
         self.Tabwindow = ttk.Notebook(self.window)
+        self.Tabwindow.grid(row=1, column=0)
 
         self.tab_basic = ttk.Frame(self.Tabwindow)
         self.tab_advance = ttk.Frame(self.Tabwindow)
@@ -119,24 +121,23 @@ class HP_Booklet:
 
         self.page_size = {"width": tk.IntVar(), "height": tk.IntVar()}
         self.page_range = tk.StringVar()
-
         self.sig_n1 = tk.IntVar()
         self.sig_n2 = tk.IntVar()
-
         self.imposition = tk.BooleanVar()
         self.sig_proof = tk.StringVar()
 
-        self.att_front = tk.BooleanVar()
-        self.att_back = tk.BooleanVar()
-
+        self.marke_info = tk.BooleanVar()
+        self.mark_trim = tk.BooleanVar()
+        self.mark_registration = tk.BooleanVar()
+        self.mark_cymk_bar = tk.BooleanVar()
         
-
-
     def initiate_window(self):
-        x = int((self.window.winfo_screenwidth() - self.window_width)/2)
-        y = int((self.window.winfo_screenheight() - self.window_height)/2)
+        self.window.winfo_height
+        x = int((self.window.winfo_screenwidth() - self.window.winfo_width())/2)
+        y = int((self.window.winfo_screenheight() - self.window.winfo_height())/2)
 
-        self.window.geometry(f'{self.window_width}x{self.window_height}+{x}+{y}')
+        if self.fix:
+            self.window.geometry(f'{self.window_width}x{self.window.winfo_height}+{x}+{y}')
         self.window.resizable(False,True)
 
         #Stack top of windows arrangement at beginning of program 
@@ -156,7 +157,7 @@ class HP_Booklet:
         text_label.pack(padx=tpadx, pady = tpady)
 
         destorybutton = ttk.Button(sub_window, text=button_text , width=15, comman=sub_window.destroy)
-        destorybutton.pack(pady=int(2*tpady))
+        destorybutton.pack(padx=int(2*tpadx),pady=int(2*tpady))
 
         if fix:
             sub_window.transient(self.window)
@@ -252,7 +253,8 @@ class HP_Booklet:
         self.canvas.grid(row=row, column=column)
         return 0
 
-    def inputbox(self, row, column, padx, pady, width, height, relief, padding, entry_width =41):
+# Tab Basic
+    def basic_inputbox(self, row, column, padx, pady, width, height, relief, padding, entry_width =41):
 
         self.Frame_input = ttk.Frame(
             master  = self.tab_basic,
@@ -295,7 +297,7 @@ class HP_Booklet:
 
         return 0
 
-    def outputbox(self,row, column, padx, pady, width, height, relief, padding, entry_width =41):
+    def basic_outputbox(self,row, column, padx, pady, width, height, relief, padding, entry_width =41):
 
         self.Frame_output = ttk.Frame(
             master  = self.tab_basic, 
@@ -352,7 +354,14 @@ class HP_Booklet:
 
 
         self.Frame_output.grid(row=row, column=column, padx=padx, pady=pady)
-        
+
+# Tab Advanced
+
+    def advanced_dimension(self):
+        pass
+    def advanced_printing(self):
+        pass
+
     def genbutton(self, row, column, width, height, padding):
         self.Frame_button = ttk.Frame(
             master = self.window,
@@ -413,9 +422,10 @@ if __name__ == "__main__":
     
     logo = ImageTk.PhotoImage(resize_logo, master = hpbooklet.window)
     hpbooklet.logo_display(logo)
-
-    hpbooklet.inputbox( row=1, column=0, padx = 5, pady =10, width = 390, height = 160, relief="solid", padding="4 4 10 10")
-    hpbooklet.outputbox(row=2, column=0, padx = 5, pady =10, width = 390, height = 200, relief="solid", padding="4 4 10 10")
+    hpbooklet.basic_inputbox( row=1, column=0, padx = 5, pady =10, width = 390, height = 160, relief="solid", padding="4 4 10 10")
+    hpbooklet.basic_outputbox( row=2, column=0, padx = 5, pady =10, width = 390, height = 200, relief="solid", padding="4 4 10 10")
+    
+    
     hpbooklet.genbutton(row=3, column=0, width = 390, height = 50, padding="2 2 2 2")
 
     hpbooklet.window.mainloop()
