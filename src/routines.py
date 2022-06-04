@@ -231,11 +231,27 @@ def signature_permutation(n, fold, riffle=True):
 
     return per_sig * per_riffle
 
-def gen_signature(input_file, output_file, settings:dict):
-        leaves = setting["leaves"]
-        format = setting["format"]
-        fold = setting["fold"]
-
+def gen_signature(input_file, output_file, **parameters):
+        #Parameters
+        # 1. filename(str): File name of output
+        # 1. leaves(list(nl, nn, ns)) 
+        #               nl(int): number of leaves per signature
+        #               nn(int): number of sub signature
+        #               ns(int): number of leaves per subsignature: nl = nn x ns
+        # 2. fold(bool): determines n-fold book or not( fold more than 1 per each papaer)
+        # 3. riffle(bool): determines reiffle direction of pages, default = False(left to right)
+        # 4. format(list(formatbool, width, height)): paper format dimension
+        # 5. imposition(bool):
+        # 6. blank(list(mode, n))
+        #               mode(str): determines distribution of additional blank page to its value(front, back, both(=equal)).
+        #               n(int): number of additional blank page(s).
+        # 7. split(bool): determines whether split each signatures as disfferent files or not.
+        # 8. sigproof(list(sigproofbool sig_color)) 
+        #               sigproofbool(bool): determines add sigproof or not
+        #               sig_color: hex color code
+        # 9. trim(bool): add trim or not
+        # 10. registration(bool): add registration or not
+        # 11. cymk(bool): add cymk proof or not  
 
         pdf = pypdf.PdfFileReader(str((input_file)))
         pdf_sig = pypdf.PdfFileWriter()
@@ -249,22 +265,23 @@ def gen_signature(input_file, output_file, settings:dict):
         pdf_sig.add_metadata({"/Producer": "HornPenguin Booklet"})
         pdf_sig.add_metadata({"/ModDate": f"{datetime.now()}"})
 
-        
+        #Get number of pages
         page_n = pdf.getNumPages()
-        per_n = sig_permutation(leaves, riffle)
 
+        #Generates signatures
+        per_n = sig_permutation(leaves, riffle)
+        #Calculate addtional pages
         re_n = int(page_n /leaves) + (1 if page_n%leaves else 0)
 
+        #Format 
         f_dim = textdata.PaperFormat[format].split("x")
         width = float(f_dim[0])
         height = float(f_dim[1])
         scale_x = scale_y = 1.0
 
-        if format != "Default":
-            fd_dim = textdata.PaperFormat["Default"].split("x")
-            
-            scale_x = width/float(fd_dim[0])
-            scale_y = height/float(fd_dim[1])
+
+        scale_x = width/parameters["format"][0]
+        scale_y = height/parameters["format"][1]
 
         
         for i in range(0, re_n):

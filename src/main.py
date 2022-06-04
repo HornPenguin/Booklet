@@ -119,6 +119,7 @@ class HP_Booklet:
         # Sig Proof: color option
         # Attachement PDF: Cover and back: front, back, none
 
+
         self.page_size = {"width": tk.IntVar(), "height": tk.IntVar()}
         self.page_range = tk.StringVar()
         self.sig_n1 = tk.IntVar()
@@ -126,7 +127,7 @@ class HP_Booklet:
         self.imposition = tk.BooleanVar()
         self.sig_proof = tk.StringVar()
 
-        self.marke_info = tk.BooleanVar()
+        self.mark_info = tk.BooleanVar()
         self.mark_trim = tk.BooleanVar()
         self.mark_registration = tk.BooleanVar()
         self.mark_cymk_bar = tk.BooleanVar()
@@ -377,46 +378,84 @@ class HP_Booklet:
         self.Frame_button.grid(row=row, column=column)
     
     def gen_button_action(self):
+
         input_file = self.input_entry.get()
+        
         filename = self.filename.get()
         if ".pdf" not in filename:
             filename = filename+".pdf"
+        
         output_path = os.path.join(self.output_entry.get(), filename)
-        nl = int((self.leaves.get()).split('f')[0])
+        
+        #Leaves and sub signature---------------------------------------------------------------
+        leaves = (self.leaves.get()).split('f')
+        nl = int(leaves[0])
         nn = self.nn.get()
         ns = self.ns.get()
 
-        foldbool = (len((self.leaves.get()).split('f')) == 2)  and self.fold.get() 
-        format = self.format.get() 
-        fold = self.foldvalue.get() 
+        #Format----------------------------------------------------------------------------------
+        formatbool = False
+        format_width = 0.0
+        format_height = 0.0
+        if self.custom_format.get():
+            formatbool = True
+            format_width = self.custom_format_width.get()
+            format_height = self.custom_format_height.get()
+        else:
+            formatname = self.format.get()
+            if formatname == "Default":
+                formatbool = False
+            else:
+                formatbool = True
+                wh = textdata.PaperFromat[formatname].split('x')
+                format_width = int(wh[0])
+                format_height = int(wh[1])
+        #Fold----------------------------------------------------------------------------------
+        foldbool = (len(leaves) == 2)  and self.fold.get() 
+        fold = self.foldvalue.get()
+
+        #Riffle direction----------------------------------------------------------------------
         rifflebool = True if self.riffle.get() == "right" else False
+        #Imposition----------------------------------------------------------------------------
+        impositionbool = self.imposition.get()
+        #Split---------------------------------------------------------------------------------
+        splitbool = self.split.get()
+        #Signature Proof-----------------------------------------------------------------------
+        sigproofbool = self.sigproof.get()
+        #sig_color = hex
+        #Trim Mark-----------------------------------------------------------------------------
+        trimbool = self.trim.get()
+        #Registration Mark---------------------------------------------------------------------
+        registrationbool = self.registration.get()
+        #CYMK Mark-----------------------------------------------------------------------------
+        cymkbool = self.cymk.get()
+
+        
 
         print(f'Document:{filename}\n signature leaves: {nl} \n direction: {self.riffle.get()}')
 
-        setting = {
-            "filename" : filename,
-            "leaves" : [nl, nn, ns],
-            "fold" : foldbool,
-            "Riggle" : rifflebool,
-            "format" : [format, self.format_width.get(), self.format_height.get()],
-            "blank" : [blank_mode, blank_n],
-            "split" : splitbool,
-            "sigproof" : [sigproofbool, sig_color],
-            "trim": trimbool,
-            "registaration" : regisbool,
-            "cymk" : cymkbool
-            
-        }
-
-        status = routines.gen_signature(input_file, output_path, leaves, format, fold, riffle=riffle)
+        status = routines.gen_signature(
+            input_file, 
+            output_path,
+            leaves = [nl, nn, ns], 
+            fold = fold, 
+            riffle = rifflebool,
+            format = [formatbool, format_width , format_height],
+            imposition = impositionbool,
+            split = splitbool,
+            sigproof = [sigproofbool, sig_color],
+            trim = trimbool,
+            registration = registrationbool,
+            cymk = cymkbool
+            )
 
         if status == 0:
             done_text = f'{filename} is done'
             self.popup_window(250,100, done_text, "Done", align="center", button_text = "Ok")
         else:
             self.popup_window(250, 100, routines.status_code[status], "Error", align = "center", button_text= "Ok")
-
         return 0
+
     def fold_enable(self, event):
         if 'f' in self.leaves.get():
             self.fold.config(state=tk.NORMAL)

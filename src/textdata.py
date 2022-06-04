@@ -71,12 +71,12 @@ format_table = [
     ("Letter",216,279),
     ("Legal",216,356),
     ("Tabloid",279,432),
-    ("Gov Letter",203,267),
-    ("Gov Legal",216,279),
+    ("GOV Letter",203,267),
+    ("GOV Legal",216,279),
     ("ANSI A",216,279),
     ("ANSI B",279,432),
-    ("Arch A",229,305),
-    ("Arch B",305,457)
+    ("ARCH A",229,305),
+    ("ARCH B",305,457)
 ]
 
 PaperFormat = { #mm
