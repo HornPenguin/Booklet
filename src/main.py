@@ -105,11 +105,14 @@ class HP_Booklet:
 
         #input_file info
 
-        self.title = tk.StringVar()
-        self.author = tk.StringVar()
-        self.page_n = tk.IntVar()
-        self.page_format = tk.StringVar()
-        self.filename = tk.StringVar()
+        self.title = tk.StringVar('')
+        self.author = tk.StringVar('')
+        self.page_n = tk.IntVar(0)
+        self.page_format = tk.StringVar('x')
+        self.filename = tk.StringVar('')
+
+        self.addBlankpages = tk.IntVar(0)
+        self.foldvalue = tk.BooleanVar(False)
 
         #Advanced variables
         # Paper size: h x w
@@ -119,18 +122,8 @@ class HP_Booklet:
         # Sig Proof: color option
         # Attachement PDF: Cover and back: front, back, none
 
+        self.pagerange_var = tk.StringVar('')
 
-        self.page_size = {"width": tk.IntVar(), "height": tk.IntVar()}
-        self.page_range = tk.StringVar()
-        self.sig_n1 = tk.IntVar()
-        self.sig_n2 = tk.IntVar()
-        self.imposition = tk.BooleanVar()
-        self.sig_proof = tk.StringVar()
-
-        self.mark_info = tk.BooleanVar()
-        self.mark_trim = tk.BooleanVar()
-        self.mark_registration = tk.BooleanVar()
-        self.mark_cymk_bar = tk.BooleanVar()
         
     def initiate_window(self):
         self.window.winfo_height
@@ -166,7 +159,7 @@ class HP_Booklet:
             self.window.wait_window(sub_window)
         return 0
 
-# Popup table routines
+    # Popup table routines
     def popup_window_table(self, width, height, column_names, data, title, tpadx=10, tpady=2.5, fix=False, align = 'center'):
         sub_window = tk.Toplevel(self.window)
         sub_window.title(title)
@@ -254,7 +247,7 @@ class HP_Booklet:
         self.canvas.grid(row=row, column=column)
         return 0
 
-# Tab Basic
+    # Tab Basic
     def basic_inputbox(self, row, column, padx, pady, width, height, relief, padding, entry_width =41):
 
         self.Frame_input = ttk.Frame(
@@ -331,7 +324,6 @@ class HP_Booklet:
         self.format.current(0)
 
         self.text_fold = ttk.Label(self.Frame_output, text="Fold", justify=tk.LEFT, anchor='w') 
-        self.foldvalue = tk.IntVar()
         self.fold = Checkbutton(self.Frame_output, variable=self.foldvalue, state= tk.DISABLED)
         self.leaves.bind("<<ComboboxSelected>>", self.fold_enable)
 
@@ -355,6 +347,66 @@ class HP_Booklet:
 
 
         self.Frame_output.grid(row=row, column=column, padx=padx, pady=pady)
+
+    def advanced_imposition(self, row, column, padx, pady, width, height, relief, padding, entry_width =41):
+        
+        self.Frame_ad_imposition =ttk.Frame(
+            master  = self.tab_advance, 
+            width   = width, 
+            height  = height, 
+            relief  = relief, 
+            padding = padding
+        )
+
+        self.blankpage_label = ttk.Label(self.Frame_ad_imposition, text = "Blank page(s)",justify=tk.LEFT, anchor='w')
+        self.bp_modes = ["back", "front", "both"]
+        self.blankpage = ttk.Combobox(self.Frame_ad_imposition, value = self.bp_modes, state='readonly')
+
+        self.pagerange_label = ttk.Label(self.Frame_ad_imposition, text="Page range",justify=tk.LEFT, anchor='w')
+        self.pagerange = ttk.Entry(self.Frame_ad_imposition, textvariable=self.pagerange_var, width = int(entry_width/2))
+        self.pagerange_example = ttk.Label(self.Frame_ad_imposition, text="1, 3-5, 10",justify=tk.LEFT, anchor='w') 
+
+        self.foldcomposition_label = ttk.Label(self.Frame_ad_imposition, text="Fold composition",justify=tk.LEFT, anchor='w')
+        self.foldcomposition_nn_combo = ttk.Combobox(self.Frame_ad_imposition, value = )
+        self.foldcomposition_ns_label = ttk.Label(self.Frame_ad_imposition, text=self.ns, )
+        self.foldcomposition_example = ttk.Label(self.Frame_ad_imposition, text="nn x ns",justify=tk.LEFT, anchor='w')
+
+        self.customformat_label = ttk.Label(self.Frame_ad_imposition, text="Custom Format",justify=tk.LEFT, anchor='w')
+        self.customformat_width_entry = ttk.Entry(self.Frame_ad_imposition, textvariable = self.custom_width, width = int(entry_width/5))
+        self.customformat_times = ttk.Label(self.Frame_ad_imposition, text="x",justify=tk.LEFT, anchor='w')
+        self.customformat_height_entry = ttk.Entry(self.Frame_ad_imposition, textvariable = self.custom_height, width = int(entry_width/5))
+        self.customformat_check = ttk.Checkbutton(self.Frame_ad_imposition, variable = self.customformatbool, command=self.customformat_entry_enalbe_f)
+        self.customformat_example = ttk.Label(self.Frame_ad_imposition, text="(mm)x(mm)",justify=tk.LEFT, anchor='w')
+        
+        self.imposition_label = ttk.Label(self.Frame_ad_imposition, text="Imposition",justify=tk.LEFT, anchor='w')
+        self.imposition = ttk.Checkbutton(self.Frame_ad_imposition, variable=self.impositonbool)
+        self.imposition_icon - ttk.Label(self.Frame_ad_imposition)
+        self.imposition_icon.config(image= self.image["imposition"])
+
+        self.splitpersig_label = ttk.Label(self.Frame_ad_imposition, text="Split per sig",justify=tk.LEFT, anchor='w')
+        self.splitpersig = ttk.Checkbutton(self.Frame_ad_imposition, variable=self.splitpersigbool)
+        self.splitpersig_icon - ttk.Label(self.Frame_ad_imposition)
+        self.splitpersig_icon.config(image= self.image["splitpersig"])
+
+        self.Frame_ad_imposition.grid(row=row, column=column, padx=padx, pady=pady)
+    
+    def advanced_printing(self, row, column, padx, pady, width, height, relief, padding, entry_width =41):
+        self.Frame_ad_printing =ttk.Frame(
+            master  = self.tab_advance, 
+            width   = width, 
+            height  = height, 
+            relief  = relief, 
+            padding = padding
+        )
+
+        self.Frame_ad_printing.grid(row=row, column=column, padx=padx, pady=pady)
+
+
+    def fold_enable(self, event):
+        if 'f' in self.leaves.get():
+            self.fold.config(state=tk.NORMAL)
+        else:
+            self.fold.config(state=tk.DISABLED)
 
 # Tab Advanced
 
@@ -456,11 +508,7 @@ class HP_Booklet:
             self.popup_window(250, 100, routines.status_code[status], "Error", align = "center", button_text= "Ok")
         return 0
 
-    def fold_enable(self, event):
-        if 'f' in self.leaves.get():
-            self.fold.config(state=tk.NORMAL)
-        else:
-            self.fold.config(state=tk.DISABLED)
+
 
 
         
