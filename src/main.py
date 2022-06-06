@@ -37,6 +37,7 @@ __license__ = "BSD license"
 
 import tkinter as tk
 from tkinter import NW, Checkbutton, ttk, filedialog
+from tkinter.colorchooser import askcolor
 from PIL import Image, ImageTk
 from functools import partial
 import os
@@ -135,6 +136,8 @@ class HP_Booklet:
 
 
         self.splitpersigbool = tk.BooleanVar(value=False)
+
+        self.sig_color = tk.StringVar(value='#ffffff')
 
         
     def initiate_window(self):
@@ -262,16 +265,17 @@ class HP_Booklet:
     # Tab Basic
     def basic_inputbox(self, row, column, padx, pady, width, height, relief, padding, entry_width =41):
 
-        self.Frame_input = ttk.Frame(
+        self.Frame_input = ttk.LabelFrame(
             master  = self.tab_basic,
+            text    = "Manuscript",
             width   = width,
             height  = height,
             relief  = relief,
             padding = padding
         )
 
-        self.input_text = ttk.Label(self.Frame_input, text="Manuscript", justify=tk.LEFT, anchor='w')
-        self.input_text.grid(row=0, column=0, sticky = tk.W, padx =3)
+        #self.input_text = ttk.Label(self.Frame_input, text="Manuscript", justify=tk.LEFT, anchor='w')
+        #self.input_text.grid(row=0, column=0, sticky = tk.W, padx =3)
         self.input_entry = ttk.Entry(self.Frame_input, width = entry_width)
         self.input_entry.grid(row=1, column=0, columnspan=3, padx =3, ipadx=5)
         ttk.Button(self.Frame_input, text="...", width = 3, command=partial(self.open_file)).grid(row=1, column = 3)
@@ -305,8 +309,9 @@ class HP_Booklet:
 
     def basic_outputbox(self,row, column, padx, pady, width, height, relief, padding, entry_width =41):
 
-        self.Frame_output = ttk.Frame(
+        self.Frame_output = ttk.LabelFrame(
             master  = self.tab_basic, 
+            text    = "Output",
             width   = width, 
             height  = height, 
             relief  = relief, 
@@ -314,8 +319,8 @@ class HP_Booklet:
         )
 
 
-        self.output_text = ttk.Label(self.Frame_output, text="Output", justify=tk.LEFT, anchor='w')
-        self.output_text.grid(row=0, column=0, sticky = tk.W, padx =3)
+        #self.output_text = ttk.Label(self.Frame_output, text="Output", justify=tk.LEFT, anchor='w')
+        #self.output_text.grid(row=0, column=0, sticky = tk.W, padx =3)
         self.output_entry = ttk.Entry(self.Frame_output, width = entry_width)
         self.output_entry.grid(row=1, column=0, columnspan=3, padx =3, ipadx=5)
         ttk.Button(self.Frame_output, text="...", width = 3, command=partial(self.open_output_directory)).grid(row=1, column = 3)
@@ -336,7 +341,7 @@ class HP_Booklet:
         self.format.current(0)
 
         self.text_fold = ttk.Label(self.Frame_output, text="Fold", justify=tk.LEFT, anchor='w') 
-        self.fold = Checkbutton(self.Frame_output, variable=self.foldvalue, state= tk.DISABLED)
+        self.fold = ttk.Checkbutton(self.Frame_output, variable=self.foldvalue, state= tk.DISABLED)
         self.leaves.bind("<<ComboboxSelected>>", self.fold_enable)
 
         self.text_riffle = ttk.Label(self.Frame_output, text="Riffling direction", justify=tk.LEFT, anchor='w') 
@@ -363,19 +368,21 @@ class HP_Booklet:
     # Tab Advanced
     def advanced_imposition(self, row, column, padx, pady, width, height, relief, padding, entry_width =41):
         
-        self.Frame_ad_imposition =ttk.Frame(
+        self.Frame_ad_imposition =ttk.LabelFrame(
             master  = self.tab_advance, 
+            text    = "Sheet Work",
             width   = width, 
             height  = height, 
             relief  = relief, 
             padding = padding
         )
 
-        self.FrameText_impositon = ttk.Label(self.Frame_ad_imposition, text="Sheet work setting",justify=tk.LEFT, anchor='w')
+        #self.FrameText_impositon = ttk.Label(self.Frame_ad_imposition, text="Sheet work setting",justify=tk.LEFT, anchor='w')
 
         self.blankpage_label = ttk.Label(self.Frame_ad_imposition, text = "Blank page(s)",justify=tk.LEFT, anchor='w')
         self.bp_modes = ["back", "front", "both"]
         self.blankpage = ttk.Combobox(self.Frame_ad_imposition, value = self.bp_modes, state='readonly')
+        self.blankpage.current(0)
 
         self.pagerange_label = ttk.Label(self.Frame_ad_imposition, text="Page range",justify=tk.LEFT, anchor='w')
         self.pagerange = ttk.Entry(self.Frame_ad_imposition, textvariable=self.pagerange_var, width = int(entry_width/2))
@@ -387,7 +394,7 @@ class HP_Booklet:
         self.foldcomposition_ns_label = ttk.Label(self.Frame_ad_imposition, text=self.ns)
         self.foldcomposition_example = ttk.Label(self.Frame_ad_imposition, text="nn x ns",justify=tk.LEFT, anchor='w')
 
-        self.customformat_label = ttk.Label(self.Frame_ad_imposition, text="Custom Format",justify=tk.LEFT, anchor='w')
+        self.customformat_label = ttk.Label(self.Frame_ad_imposition, text="Custom format",justify=tk.LEFT, anchor='w')
         self.customformat_width_entry = ttk.Entry(self.Frame_ad_imposition, textvariable = self.custom_width, width = int(entry_width/5))
         self.customformat_times = ttk.Label(self.Frame_ad_imposition, text="x",justify=tk.LEFT, anchor='w')
         self.customformat_height_entry = ttk.Entry(self.Frame_ad_imposition, textvariable = self.custom_height, width = int(entry_width/5))
@@ -405,30 +412,45 @@ class HP_Booklet:
         self.splitpersig_icon.config(image= self.image["splitpersig"])
 
         #Grid
-        self.FrameText_impositon.grid(row=0, column=0, pady=2*self.text_pady)
+        #self.FrameText_impositon.grid(row=0, column=0, pady=2*self.text_pady)
 
         self.blankpage_label.grid(row=1, column=0, pady=self.text_pady)
-        self.blankpage.grid(row=1, column=1, columnspan=2, pady=self.text_pady)
+        self.blankpage.grid(row=1, column=1, columnspan=4, pady=self.text_pady)
 
-        self.pagerange_label.grid(row=2, column = 0)
-        self.pagerange.grid(row=2, column = 1, columnspan=2)
-        self.pagerange_example.grid(row=2, column = 3)
+        self.pagerange_label.grid(row=2, column = 0, pady=self.text_pady)
+        self.pagerange.grid(row=2, column = 1, columnspan=4, pady=self.text_pady)
+        self.pagerange_example.grid(row=2, column = 5, pady=self.text_pady)
+
+        self.customformat_label.grid(row=3, column=0, pady=self.text_pady)
+        self.customformat_check.grid(row=3, column=1, pady=self.text_pady)
+        self.customformat_width_entry.grid(row=3 ,column=2, pady=self.text_pady)
+        self.customformat_times.grid(row =3 ,column=3, pady=self.text_pady)
+        self.customformat_height_entry.grid(row=3, column=4, pady=self.text_pady)
+        self.customformat_example.grid(row=3, column=5, pady=self.text_pady)
+
+        self.imposition_label.grid(row = 4, column = 0, pady=self.text_pady)
+        self.imposition.grid(row= 4, column=1, columnspan=4, pady=self.text_pady)
+        self.imposition_icon.grid(row=4, column=5)
+
+        self.splitpersig_label.grid(row = 5, column = 0, pady=self.text_pady)
+        self.splitpersig.grid(row= 5, column=1, columnspan=4, pady=self.text_pady)
+        self.splitpersig_icon.grid(row=5, column=5, pady= self.text_pady)
 
         self.Frame_ad_imposition.grid(row=row, column=column, padx=padx, pady=pady, sticky="ew")
     
     def advanced_printing(self, row, column, padx, pady, width, height, relief, padding, entry_width =41):
         self.Frame_ad_printing =ttk.LabelFrame(
             master  = self.tab_advance, 
-            text    = "Printing setting",
+            text    = "Printing",
             width   = width, 
             height  = height, 
             relief  = relief, 
             padding = padding
         )
 
-        self.sigproof_label = ttk.Label(self.Frame_ad_printing, text="Signaure proof", justify=tk.LEFT, anchor="w")
+        self.sigproof_label = ttk.Label(self.Frame_ad_printing, text="Signature proof", justify=tk.LEFT, anchor="w")
         self.sigproof_checkbox = ttk.Checkbutton(self.Frame_ad_printing)
-        self.sigproof_button = ttk.Button(self.Frame_ad_printing)
+        self.sigproof_button = tk.Button(self.Frame_ad_printing, width=3 , height =1 , text='  ', bg=self.sig_color.get(), command=self.sig_color_set)
         self.sigproof_icon = ttk.Label(self.Frame_ad_printing)
 
         self.trim_label = ttk.Label(self.Frame_ad_printing, text="Trim mark", justify=tk.LEFT, anchor="w")
@@ -443,6 +465,23 @@ class HP_Booklet:
         self.cymk_checkbox = ttk.Checkbutton(self.Frame_ad_printing)
         self.cymk_icon = ttk.Label(self.Frame_ad_printing)
 
+        self.sigproof_label.grid(row=0, column=0, pady=self.text_pady)
+        self.sigproof_checkbox.grid(row=0, column=1, pady=self.text_pady)
+        self.sigproof_button.grid(row=0, column=2, pady=self.text_pady,  sticky = 'nesw')
+        self.sigproof_icon.grid(row=0, column=3, pady=self.text_pady)
+
+        self.trim_label.grid(row=1, column= 0, pady=self.text_pady)
+        self.trim_checkbox.grid(row=1, column= 1, columnspan =2, pady=self.text_pady)
+        self.trim_icon.grid(row=1, column= 3, pady=self.text_pady)
+
+        self.registration_label.grid(row=2, column= 0, pady=self.text_pady)
+        self.registration_checkbox.grid(row=2, column= 1,columnspan =2,  pady=self.text_pady)
+        self.registration_icon.grid(row=2, column= 3, pady=self.text_pady)
+
+        self.cymk_label.grid(row=3, column= 0, pady=self.text_pady)
+        self.cymk_checkbox.grid(row=3, column= 1, columnspan =2, pady=self.text_pady)
+        self.cymk_icon.grid(row=3, column= 3, pady=self.text_pady)
+
         self.Frame_ad_printing.grid(row=row, column=column, padx=padx, pady=pady, sticky="ew")
 
 
@@ -454,6 +493,15 @@ class HP_Booklet:
 
     def customformat_entry_enable_f(self):
         pass
+
+    def sig_color_set(self):
+        color = askcolor()
+        if color != None:
+             self.sig_color = color[1]
+             self.sigproof_button.configure(bg=color[1])
+             return 0
+        return 1
+
 
 
     def genbutton(self, row, column, width, height, padding):
