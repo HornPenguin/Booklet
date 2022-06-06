@@ -137,7 +137,14 @@ class HP_Booklet:
 
         self.splitpersigbool = tk.BooleanVar(value=False)
 
-        self.sig_color = tk.StringVar(value='#ffffff')
+        self.sig_color = tk.StringVar(value='#729fcf')
+
+        #Printing--------------------------------------------------------
+
+        self.sigproofbool = tk.BooleanVar(value=False)
+        self.trimbool = tk.BooleanVar(value=False)
+        self.registrationbool = tk.BooleanVar(value=False)
+        self.cymkbool = tk.BooleanVar(value=False)
 
         
     def initiate_window(self):
@@ -147,12 +154,13 @@ class HP_Booklet:
 
         if self.fix:
             self.window.geometry(f'{self.window_width}x{self.window.winfo_height}+{x}+{y}')
-        self.window.resizable(False,True)
+        self.window.resizable(True,True)
 
         #Stack top of windows arrangement at beginning of program 
         self.window.attributes('-topmost', True)
         self.window.update()
         self.window.attributes('-topmost', False)
+        self.window.resizable(False,False)
     
     def popup_window(self, width, height, text, title, tpadx=10, tpady=2.5, fix=False, align='center', button_text = "Ok"):
         sub_window = tk.Toplevel(self.window)
@@ -303,7 +311,7 @@ class HP_Booklet:
         page_for_value.grid(row=5, column = 1, pady=self.text_pady)
 
 
-        self.Frame_input.grid(row=row, column=column, padx=padx, pady=pady, sticky="ew")
+        self.Frame_input.grid(row=row, column=column, padx=padx, pady=pady, sticky="nsew")
 
         return 0
 
@@ -363,10 +371,10 @@ class HP_Booklet:
         self.riffle.grid(        row=6, column=1, pady=self.text_pady)
 
 
-        self.Frame_output.grid(row=row, column=column, padx=padx, pady=pady, sticky="ew")
+        self.Frame_output.grid(row=row, column=column, padx=padx, pady=pady, sticky="we")
     
     # Tab Advanced
-    def advanced_imposition(self, row, column, padx, pady, width, height, relief, padding, entry_width =41):
+    def advanced_imposition(self, icons:dict, row, column, padx, pady, width, height, relief, padding, entry_width =41):
         
         self.Frame_ad_imposition =ttk.LabelFrame(
             master  = self.tab_advance, 
@@ -376,6 +384,8 @@ class HP_Booklet:
             relief  = relief, 
             padding = padding
         )
+        imposition_icon = ImageTk.PhotoImage(icons["imposition"], master=self.Frame_ad_imposition)
+        split_icon = ImageTk.PhotoImage(icons["split"], master=self.Frame_ad_imposition)
 
         #self.FrameText_impositon = ttk.Label(self.Frame_ad_imposition, text="Sheet work setting",justify=tk.LEFT, anchor='w')
 
@@ -395,50 +405,51 @@ class HP_Booklet:
         self.foldcomposition_example = ttk.Label(self.Frame_ad_imposition, text="nn x ns",justify=tk.LEFT, anchor='w')
 
         self.customformat_label = ttk.Label(self.Frame_ad_imposition, text="Custom format",justify=tk.LEFT, anchor='w')
-        self.customformat_width_entry = ttk.Entry(self.Frame_ad_imposition, textvariable = self.custom_width, width = int(entry_width/5))
+        self.customformat_width_entry = ttk.Entry(self.Frame_ad_imposition, textvariable = self.custom_width, width = int(entry_width/8))
         self.customformat_times = ttk.Label(self.Frame_ad_imposition, text="x",justify=tk.LEFT, anchor='w')
-        self.customformat_height_entry = ttk.Entry(self.Frame_ad_imposition, textvariable = self.custom_height, width = int(entry_width/5))
+        self.customformat_height_entry = ttk.Entry(self.Frame_ad_imposition, textvariable = self.custom_height, width = int(entry_width/8))
         self.customformat_check = ttk.Checkbutton(self.Frame_ad_imposition, variable = self.customformatbool, command=self.customformat_entry_enable_f)
         self.customformat_example = ttk.Label(self.Frame_ad_imposition, text="(mm)x(mm)",justify=tk.LEFT, anchor='w')
         
         self.imposition_label = ttk.Label(self.Frame_ad_imposition, text="Imposition",justify=tk.LEFT, anchor='w')
         self.imposition = ttk.Checkbutton(self.Frame_ad_imposition, variable=self.impositionbool)
-        self.imposition_icon = ttk.Label(self.Frame_ad_imposition)
-        self.imposition_icon.config(image= self.image["imposition"])
+        self.imposition_icon = ttk.Label(self.Frame_ad_imposition, image= imposition_icon)
+        self.imposition_icon.photo = imposition_icon
 
         self.splitpersig_label = ttk.Label(self.Frame_ad_imposition, text="Split per sig",justify=tk.LEFT, anchor='w')
         self.splitpersig = ttk.Checkbutton(self.Frame_ad_imposition, variable=self.splitpersigbool)
         self.splitpersig_icon = ttk.Label(self.Frame_ad_imposition)
-        self.splitpersig_icon.config(image= self.image["splitpersig"])
+        self.splitpersig_icon.config(image= split_icon)
+        self.splitpersig_icon.photo = split_icon
 
         #Grid
         #self.FrameText_impositon.grid(row=0, column=0, pady=2*self.text_pady)
 
-        self.blankpage_label.grid(row=1, column=0, pady=self.text_pady)
-        self.blankpage.grid(row=1, column=1, columnspan=4, pady=self.text_pady)
+        self.blankpage_label.grid(          row=1, column=0, pady=self.text_pady)
+        self.blankpage.grid(                row=1, column=1, columnspan=4, pady=self.text_pady)
 
-        self.pagerange_label.grid(row=2, column = 0, pady=self.text_pady)
-        self.pagerange.grid(row=2, column = 1, columnspan=4, pady=self.text_pady)
-        self.pagerange_example.grid(row=2, column = 5, pady=self.text_pady)
+        self.pagerange_label.grid(          row=2, column = 0, pady=self.text_pady)
+        self.pagerange.grid(                row=2, column = 1, columnspan=4, pady=self.text_pady)
+        self.pagerange_example.grid(        row=2, column = 5, columnspan=2, pady=self.text_pady)
 
-        self.customformat_label.grid(row=3, column=0, pady=self.text_pady)
-        self.customformat_check.grid(row=3, column=1, pady=self.text_pady)
-        self.customformat_width_entry.grid(row=3 ,column=2, pady=self.text_pady)
-        self.customformat_times.grid(row =3 ,column=3, pady=self.text_pady)
+        self.customformat_label.grid(       row=3, column=0, pady=self.text_pady)
+        self.customformat_check.grid(       row=3, column=1, pady=self.text_pady)
+        self.customformat_width_entry.grid( row=3 ,column=2, pady=self.text_pady)
+        self.customformat_times.grid(       row=3 ,column=3, pady=self.text_pady)
         self.customformat_height_entry.grid(row=3, column=4, pady=self.text_pady)
-        self.customformat_example.grid(row=3, column=5, pady=self.text_pady)
+        self.customformat_example.grid(     row=3, column=5, columnspan=2, pady=self.text_pady)
 
-        self.imposition_label.grid(row = 4, column = 0, pady=self.text_pady)
-        self.imposition.grid(row= 4, column=1, columnspan=4, pady=self.text_pady)
-        self.imposition_icon.grid(row=4, column=5)
+        self.imposition_label.grid(         row=4, column = 0, pady=self.text_pady)
+        self.imposition.grid(               row=4, column=1, columnspan=4, pady=self.text_pady)
+        self.imposition_icon.grid(          row=4, column=5, columnspan=2, pady=self.text_pady)
 
-        self.splitpersig_label.grid(row = 5, column = 0, pady=self.text_pady)
-        self.splitpersig.grid(row= 5, column=1, columnspan=4, pady=self.text_pady)
-        self.splitpersig_icon.grid(row=5, column=5, pady= self.text_pady)
+        self.splitpersig_label.grid(        row=5, column = 0, pady=self.text_pady)
+        self.splitpersig.grid(              row= 5, column=1, columnspan=4, pady=self.text_pady)
+        self.splitpersig_icon.grid(         row=5, column=5, columnspan=2, pady= self.text_pady)
 
-        self.Frame_ad_imposition.grid(row=row, column=column, padx=padx, pady=pady, sticky="ew")
+        self.Frame_ad_imposition.grid(row=row, column=column, padx=padx, pady=pady, sticky="we")
     
-    def advanced_printing(self, row, column, padx, pady, width, height, relief, padding, entry_width =41):
+    def advanced_printing(self, icons:dict, row, column, padx, pady, width, height, relief, padding, entry_width =41):
         self.Frame_ad_printing =ttk.LabelFrame(
             master  = self.tab_advance, 
             text    = "Printing",
@@ -448,41 +459,52 @@ class HP_Booklet:
             padding = padding
         )
 
+        #Imagesetting
+        sigproof_icon = ImageTk.PhotoImage(icons["proof"], master=self.Frame_ad_printing)
+        trim_icon = ImageTk.PhotoImage(icons["trim"], master=self.Frame_ad_printing)
+        registration_icon =  ImageTk.PhotoImage(icons["registration"], master=self.Frame_ad_printing)
+        cmyk_icon = ImageTk.PhotoImage(icons["cmyk"], master=self.Frame_ad_printing)
+
         self.sigproof_label = ttk.Label(self.Frame_ad_printing, text="Signature proof", justify=tk.LEFT, anchor="w")
-        self.sigproof_checkbox = ttk.Checkbutton(self.Frame_ad_printing)
+        self.sigproof_checkbox = ttk.Checkbutton(self.Frame_ad_printing, variable=self.sigproofbool)
         self.sigproof_button = tk.Button(self.Frame_ad_printing, width=3 , height =1 , text='  ', bg=self.sig_color.get(), command=self.sig_color_set)
-        self.sigproof_icon = ttk.Label(self.Frame_ad_printing)
+        self.sigproof_icon = ttk.Label(self.Frame_ad_printing, image=sigproof_icon)
+        self.sigproof_icon.photo = sigproof_icon
 
         self.trim_label = ttk.Label(self.Frame_ad_printing, text="Trim mark", justify=tk.LEFT, anchor="w")
-        self.trim_checkbox = ttk.Checkbutton(self.Frame_ad_printing)
-        self.trim_icon = ttk.Label(self.Frame_ad_printing)
+        self.trim_checkbox = ttk.Checkbutton(self.Frame_ad_printing, variable=self.trimbool)
+        self.trim_icon = ttk.Label(self.Frame_ad_printing, image= trim_icon)
+        self.trim_icon.photo = trim_icon
 
         self.registration_label = ttk.Label(self.Frame_ad_printing, text="Registration mark", justify=tk.LEFT, anchor="w")
-        self.registration_checkbox = ttk.Checkbutton(self.Frame_ad_printing)
-        self.registration_icon = ttk.Label(self.Frame_ad_printing)
+        self.registration_checkbox = ttk.Checkbutton(self.Frame_ad_printing, variable=self.registrationbool)
+        self.registration_icon = ttk.Label(self.Frame_ad_printing, image=registration_icon)
+        self.registration_icon.photo = registration_icon
 
-        self.cymk_label = ttk.Label(self.Frame_ad_printing, text="CYMK mark", justify=tk.LEFT, anchor="w")
-        self.cymk_checkbox = ttk.Checkbutton(self.Frame_ad_printing)
-        self.cymk_icon = ttk.Label(self.Frame_ad_printing)
+        self.cmyk_label = ttk.Label(self.Frame_ad_printing, text="CYMK mark", justify=tk.LEFT, anchor="w")
+        self.cmyk_checkbox = ttk.Checkbutton(self.Frame_ad_printing, variable=self.cymkbool)
+        self.cmyk_icon = ttk.Label(self.Frame_ad_printing, image=cmyk_icon)
+        self.cmyk_icon.photo = cmyk_icon
 
-        self.sigproof_label.grid(row=0, column=0, pady=self.text_pady)
-        self.sigproof_checkbox.grid(row=0, column=1, pady=self.text_pady)
-        self.sigproof_button.grid(row=0, column=2, pady=self.text_pady,  sticky = 'nesw')
-        self.sigproof_icon.grid(row=0, column=3, pady=self.text_pady)
 
-        self.trim_label.grid(row=1, column= 0, pady=self.text_pady)
-        self.trim_checkbox.grid(row=1, column= 1, columnspan =2, pady=self.text_pady)
-        self.trim_icon.grid(row=1, column= 3, pady=self.text_pady)
+        self.sigproof_label.grid(   row=0, column=0, pady=self.text_pady)
+        self.sigproof_checkbox.grid(row=0, column=1, columnspan=2, pady=self.text_pady)
+        self.sigproof_button.grid(  row=0, column=3,  padx =self.text_pady*6, pady=self.text_pady*6, sticky = 'n')
+        self.sigproof_icon.grid(    row=0, column=4, pady=self.text_pady)
 
-        self.registration_label.grid(row=2, column= 0, pady=self.text_pady)
+        self.trim_label.grid(       row=1, column= 0, pady=self.text_pady)
+        self.trim_checkbox.grid(    row=1, column= 1, columnspan =2, pady=self.text_pady)
+        self.trim_icon.grid(        row=1, column= 3,  columnspan =4, pady=self.text_pady)
+
+        self.registration_label.grid(   row=2, column= 0, pady=self.text_pady)
         self.registration_checkbox.grid(row=2, column= 1,columnspan =2,  pady=self.text_pady)
-        self.registration_icon.grid(row=2, column= 3, pady=self.text_pady)
+        self.registration_icon.grid(    row=2, column= 3,  columnspan =4,  pady=self.text_pady)
 
-        self.cymk_label.grid(row=3, column= 0, pady=self.text_pady)
-        self.cymk_checkbox.grid(row=3, column= 1, columnspan =2, pady=self.text_pady)
-        self.cymk_icon.grid(row=3, column= 3, pady=self.text_pady)
+        self.cmyk_label.grid(           row=3, column= 0, pady=self.text_pady)
+        self.cmyk_checkbox.grid(        row=3, column= 1, columnspan =2, pady=self.text_pady)
+        self.cmyk_icon.grid(            row=3, column= 3, columnspan =4, pady=self.text_pady)
 
-        self.Frame_ad_printing.grid(row=row, column=column, padx=padx, pady=pady, sticky="ew")
+        self.Frame_ad_printing.grid(row=row, column=column, padx=padx, pady=pady, sticky="we")
 
 
     def fold_enable(self, event):
@@ -606,6 +628,18 @@ if __name__ == "__main__":
 
     icon_name = 'hp_booklet.ico'
     icon_path = routines.resource_path(icon_name, 'resource')
+
+    #resources image names
+    imposition_icon_names = [
+        "imposition",
+        "split"
+    ]
+    printing_icon_names = [
+        "proof",
+        "cmyk",
+        "registration",
+        "trim"
+    ]
     
     logo_data_byte = base64.b64decode(logo)
     logo_data = BytesIO(logo_data_byte)
@@ -622,8 +656,14 @@ if __name__ == "__main__":
     hpbooklet.basic_inputbox( row=1, column=0, padx = 5, pady =10, width = 370, height = 160, relief="solid", padding="4 4 10 10")
     hpbooklet.basic_outputbox( row=2, column=0, padx = 5, pady =10, width = 370, height = 200, relief="solid", padding="4 4 10 10")
 
-    hpbooklet.advanced_imposition(row= 1, column=0, padx = 5, pady= 10, width = 370, height = 220, relief = "solid", padding = "4 4 10 10")
-    hpbooklet.advanced_printing(row= 2, column=0, padx = 5, pady= 10, width = 370, height = 140, relief = "solid", padding = "4 4 10 10")
+    imposition_iconpaths =  { name: routines.resource_path(f"{name}.png", 'resource') for name in imposition_icon_names}
+    imposition_icons = { name: Image.open(imposition_iconpaths[name]) for name in imposition_icon_names}
+
+    hpbooklet.advanced_imposition(imposition_icons, row= 1, column=0, padx = 5, pady= 10, width = 370, height = 220, relief = "solid", padding = "4 4 10 10")
+    
+    printing_iconpaths =  { name: routines.resource_path(f"{name}.png", 'resource') for name in printing_icon_names}
+    printing_icons = { name: Image.open(printing_iconpaths[name]) for name in printing_icon_names}
+    hpbooklet.advanced_printing(printing_icons, row= 2, column=0, padx = 5, pady= 10, width = 370, height = 140, relief = "solid", padding = "4 4 10 10")
     
     hpbooklet.genbutton(row=3, column=0, width = 370, height = 50, padding="2 2 2 2")
 
