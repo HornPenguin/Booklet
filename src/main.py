@@ -63,7 +63,7 @@ import routines
 
 #UI--------------------------------------------------------------------------------------------
 class HP_Booklet:
-    def __init__(self, icon_path, homepage, source, tutorial, textpady, fix = False, width = 404, height =780):
+    def __init__(self, icon_path, homepage, source, tutorial, textpady, fix = False, width = 390, height =780):
         self.url_homepage = homepage
         self.url_source = source
         self.url_tutorial = tutorial
@@ -131,12 +131,7 @@ class HP_Booklet:
 
         self.customformatbool = tk.BooleanVar(value=False)
         self.impositionbool = tk.BooleanVar(value=False)
-        
-        self.image={"imposition":'', "splitpersig":''}
-
-
         self.splitpersigbool = tk.BooleanVar(value=False)
-
         self.sig_color = tk.StringVar(value='#729fcf')
 
         #Printing--------------------------------------------------------
@@ -153,14 +148,13 @@ class HP_Booklet:
         y = int((self.window.winfo_screenheight() - self.window.winfo_height())/2)
 
         if self.fix:
-            self.window.geometry(f'{self.window_width}x{self.window.winfo_height}+{x}+{y}')
-        self.window.resizable(True,True)
+            self.window.geometry(f'{self.window_width}x{self.window_height}+{x}+{y}')
+        self.window.resizable(False,True)
 
         #Stack top of windows arrangement at beginning of program 
         self.window.attributes('-topmost', True)
         self.window.update()
         self.window.attributes('-topmost', False)
-        self.window.resizable(False,False)
     
     def popup_window(self, width, height, text, title, tpadx=10, tpady=2.5, fix=False, align='center', button_text = "Ok"):
         sub_window = tk.Toplevel(self.window)
@@ -242,16 +236,23 @@ class HP_Booklet:
                 self.title.set(title)
                 self.author.set(author)
                 self.page_n.set(int(page_num))
+                self.pagerange.delete(0,tk.END)
+                self.pagerange.insert(0, f"1-{self.page_n.get()}")
                 self.page_format.set(f'{page_size[0]}x{page_size[1]}')
                 textdata.PaperFormat["Default"] = f'{page_size[0]}x{page_size[1]}'
+                self.custom_width.set(page_size[0])
+                self.custom_height.set(page_size[1])
 
                 file_name_with_format = os.path.split(str(filename))[1]
-                file_name = file_name_with_format.split('.')
-                self.filename.set(file_name[0] + '_HPBooklet'+'.'+file_name[1])
+                file_name = file_name_with_format.split('.pdf')
+                self.filename.set(file_name[0] + '_HPBooklet'+'.pdf')
 
                 print(f'title:{self.title.get()}\nfile:{filename}')
+                self.Generate_button.config(state=tk.ACTIVE)
+                
             else:
                 print(f"Not a vaild PDF file: file ({filename})")
+                self.Generate_button.config(state=tk.DISABLED)
         return 0
     def open_output_directory(self):
         directory = filedialog.askdirectory(
@@ -267,7 +268,7 @@ class HP_Booklet:
         self.canvas = tk.Canvas(self.window, width = self.window_width, height = 170)
         self.canvas.create_image(self.window_width - 220, 10, anchor=NW, image= self.logo)
         
-        self.canvas.grid(row=row, column=column)
+        self.canvas.grid(row=row, column=column, sticky="e")
         return 0
 
     # Tab Basic
@@ -338,15 +339,17 @@ class HP_Booklet:
         self.filename_entry = ttk.Entry(self.Frame_output, textvariable=self.filename, width = int(entry_width/2))
 
         self.text_leaves = ttk.Label(self.Frame_output, text="Leaves", justify=tk.LEFT, anchor='w') 
-        self.lvalues = [f"{4*(i+1)}" if (i+1)%2 else f"{4*(i+1)}f" for i in range(0,8)]
+        self.lvalues = [f"{4*(i+1)}" if (i+1)%2 else f"{4*(i+1)}f" for i in range(0,8)] + ["1"]
         self.leaves = ttk.Combobox(self.Frame_output, value= self.lvalues, state='readonly')
         self.leaves.current(0)
+        self.addblankpages_label = ttk.Label(self.Frame_output, textvariable=self.addBlankpages)
        
 
         self.text_format = ttk.Label(self.Frame_output, text="Book Format", justify=tk.LEFT, anchor='w') 
         self.format_list = [x for x in textdata.PaperFormat.keys()]
         self.format = ttk.Combobox(self.Frame_output, value= self.format_list, state='readonly')
         self.format.current(0)
+        self.format.bind("<<ComboboxSelected>>", self.set_format_values)
 
         self.text_fold = ttk.Label(self.Frame_output, text="Fold", justify=tk.LEFT, anchor='w') 
         self.fold = ttk.Checkbutton(self.Frame_output, variable=self.foldvalue, state= tk.DISABLED)
@@ -361,6 +364,8 @@ class HP_Booklet:
 
         self.text_leaves.grid(   row=3, column=0, pady=self.text_pady)
         self.leaves.grid(        row=3, column=1, pady=self.text_pady)
+        self.addblankpages_label.grid(row=3, column=2, pady=self.text_pady)
+
         self.text_format.grid(   row=4, column=0, pady=self.text_pady)
         self.format.grid(        row=4, column=1, pady=self.text_pady)
 
@@ -393,6 +398,7 @@ class HP_Booklet:
         self.bp_modes = ["back", "front", "both"]
         self.blankpage = ttk.Combobox(self.Frame_ad_imposition, value = self.bp_modes, state='readonly')
         self.blankpage.current(0)
+        self.blankpage_label2 = ttk.Label(self.Frame_ad_imposition, text = "back > front \nfor odd in \'both\' mode",justify=tk.LEFT, anchor='w')
 
         self.pagerange_label = ttk.Label(self.Frame_ad_imposition, text="Page range",justify=tk.LEFT, anchor='w')
         self.pagerange = ttk.Entry(self.Frame_ad_imposition, textvariable=self.pagerange_var, width = int(entry_width/2))
@@ -410,7 +416,10 @@ class HP_Booklet:
         self.customformat_height_entry = ttk.Entry(self.Frame_ad_imposition, textvariable = self.custom_height, width = int(entry_width/8))
         self.customformat_check = ttk.Checkbutton(self.Frame_ad_imposition, variable = self.customformatbool, command=self.customformat_entry_enable_f)
         self.customformat_example = ttk.Label(self.Frame_ad_imposition, text="(mm)x(mm)",justify=tk.LEFT, anchor='w')
-        
+        self.customformat_width_entry.config(state=tk.DISABLED)
+        self.customformat_height_entry.config(state=tk.DISABLED)
+
+
         self.imposition_label = ttk.Label(self.Frame_ad_imposition, text="Imposition",justify=tk.LEFT, anchor='w')
         self.imposition = ttk.Checkbutton(self.Frame_ad_imposition, variable=self.impositionbool)
         self.imposition_icon = ttk.Label(self.Frame_ad_imposition, image= imposition_icon)
@@ -427,6 +436,7 @@ class HP_Booklet:
 
         self.blankpage_label.grid(          row=1, column=0, pady=self.text_pady)
         self.blankpage.grid(                row=1, column=1, columnspan=4, pady=self.text_pady)
+        self.blankpage_label2.grid(         row=1, column=5, columnspan=2, ipadx = self.text_pady, pady=self.text_pady)
 
         self.pagerange_label.grid(          row=2, column = 0, pady=self.text_pady)
         self.pagerange.grid(                row=2, column = 1, columnspan=4, pady=self.text_pady)
@@ -447,7 +457,7 @@ class HP_Booklet:
         self.splitpersig.grid(              row= 5, column=1, columnspan=4, pady=self.text_pady)
         self.splitpersig_icon.grid(         row=5, column=5, columnspan=2, pady= self.text_pady)
 
-        self.Frame_ad_imposition.grid(row=row, column=column, padx=padx, pady=pady, sticky="we")
+        self.Frame_ad_imposition.grid(row=row, column=column,ipadx =padx, padx=(4*padx,4*padx), pady=pady, sticky="ns")
     
     def advanced_printing(self, icons:dict, row, column, padx, pady, width, height, relief, padding, entry_width =41):
         self.Frame_ad_printing =ttk.LabelFrame(
@@ -471,17 +481,17 @@ class HP_Booklet:
         self.sigproof_icon = ttk.Label(self.Frame_ad_printing, image=sigproof_icon)
         self.sigproof_icon.photo = sigproof_icon
 
-        self.trim_label = ttk.Label(self.Frame_ad_printing, text="Trim mark", justify=tk.LEFT, anchor="w")
+        self.trim_label = ttk.Label(self.Frame_ad_printing, text="Trim", justify=tk.LEFT, anchor="w")
         self.trim_checkbox = ttk.Checkbutton(self.Frame_ad_printing, variable=self.trimbool)
         self.trim_icon = ttk.Label(self.Frame_ad_printing, image= trim_icon)
         self.trim_icon.photo = trim_icon
 
-        self.registration_label = ttk.Label(self.Frame_ad_printing, text="Registration mark", justify=tk.LEFT, anchor="w")
+        self.registration_label = ttk.Label(self.Frame_ad_printing, text="Registration", justify=tk.LEFT, anchor="w")
         self.registration_checkbox = ttk.Checkbutton(self.Frame_ad_printing, variable=self.registrationbool)
         self.registration_icon = ttk.Label(self.Frame_ad_printing, image=registration_icon)
         self.registration_icon.photo = registration_icon
 
-        self.cmyk_label = ttk.Label(self.Frame_ad_printing, text="CYMK mark", justify=tk.LEFT, anchor="w")
+        self.cmyk_label = ttk.Label(self.Frame_ad_printing, text="CYMK(mark)", justify=tk.LEFT, anchor="w")
         self.cmyk_checkbox = ttk.Checkbutton(self.Frame_ad_printing, variable=self.cymkbool)
         self.cmyk_icon = ttk.Label(self.Frame_ad_printing, image=cmyk_icon)
         self.cmyk_icon.photo = cmyk_icon
@@ -504,19 +514,25 @@ class HP_Booklet:
         self.cmyk_checkbox.grid(        row=3, column= 1, columnspan =2, pady=self.text_pady)
         self.cmyk_icon.grid(            row=3, column= 3, columnspan =4, pady=self.text_pady)
 
-        self.Frame_ad_printing.grid(row=row, column=column, padx=padx, pady=pady, sticky="we")
+        self.Frame_ad_printing.grid(row=row, column=column, ipadx =padx,  padx=(2*padx,2*padx), pady=pady, sticky="ns")
 
 
     def fold_enable(self, event):
         if 'f' in self.leaves.get():
             self.fold.config(state=tk.NORMAL)
         else:
-            self.fold.config(state=tk.DISABLED)
+            self.fold.config(variable=False, state=tk.DISABLED)
 
     def customformat_entry_enable_f(self):
-        pass
+        if self.customformatbool.get():
+            self.customformat_width_entry.config(state=tk.ACTIVE)
+            self.customformat_height_entry.config(state=tk.ACTIVE)
+        else:
+            self.customformat_width_entry.config(state=tk.DISABLED)
+            self.customformat_height_entry.config(state=tk.DISABLED)
 
-    def sig_color_set(self):
+
+    def sig_color_set(self, event):
         color = askcolor()
         if color != None:
              self.sig_color = color[1]
@@ -524,9 +540,20 @@ class HP_Booklet:
              return 0
         return 1
 
+    def set_format_values(self, event):
+        formatname = self.format.get()
+        if formatname =="Default":
+            return 1
+        else:
+            width, height = textdata.PaperFormat[formatname].split("x")
+
+            self.custom_width.set(width)
+            self.custom_height.set(height)
+
+            return 0
 
 
-    def genbutton(self, row, column, width, height, padding):
+    def genbutton(self, row, column, width, height, padding, columnspan=1):
         self.Frame_button = ttk.Frame(
             master = self.window,
             width = width,
@@ -537,10 +564,13 @@ class HP_Booklet:
 
         self.Generate_button = ttk.Button(self.Frame_button, text="Generate", width = 25, command=partial(self.gen_button_action))
         self.Generate_button.pack(side=tk.RIGHT, pady=18, anchor="e")
+        self.Generate_button.config(state=tk.DISABLED)
 
-        self.Frame_button.grid(row=row, column=column)
+        self.Frame_button.grid(row=row, column=column, columnspan= columnspan)
     
+    #Pass to parameters to PDF routine
     def gen_button_action(self):
+        
 
         input_file = self.input_entry.get()
         
@@ -649,23 +679,29 @@ if __name__ == "__main__":
     logo_width = int(logo_height*1.380952380952381)
     resize_logo = logo_image.resize((logo_width, logo_height), Image.Resampling(1))
 
-    hpbooklet = HP_Booklet(icon_path, homepage= textdata.homepage, source = textdata.git_repository, tutorial = textdata.git_repository, textpady= text_pady)
+    hpbooklet = HP_Booklet(
+        icon_path, 
+        homepage= textdata.homepage, 
+        source = textdata.git_repository, 
+        tutorial = textdata.git_repository, 
+        textpady= text_pady
+    )
     
     logo = ImageTk.PhotoImage(resize_logo, master = hpbooklet.window)
     hpbooklet.logo_display(logo)
     hpbooklet.basic_inputbox( row=1, column=0, padx = 5, pady =10, width = 370, height = 160, relief="solid", padding="4 4 10 10")
-    hpbooklet.basic_outputbox( row=2, column=0, padx = 5, pady =10, width = 370, height = 200, relief="solid", padding="4 4 10 10")
+    hpbooklet.basic_outputbox( row=1, column=1, padx = 5, pady =10, width = 370, height = 200, relief="solid", padding="4 4 10 10")
 
     imposition_iconpaths =  { name: routines.resource_path(f"{name}.png", 'resource') for name in imposition_icon_names}
     imposition_icons = { name: Image.open(imposition_iconpaths[name]) for name in imposition_icon_names}
 
-    hpbooklet.advanced_imposition(imposition_icons, row= 1, column=0, padx = 5, pady= 10, width = 370, height = 220, relief = "solid", padding = "4 4 10 10")
+    hpbooklet.advanced_imposition(imposition_icons, row= 1, column=0, padx = 5, pady= 10, width = 450, height = 220, relief = "solid", padding="4 4 10 10")
     
     printing_iconpaths =  { name: routines.resource_path(f"{name}.png", 'resource') for name in printing_icon_names}
     printing_icons = { name: Image.open(printing_iconpaths[name]) for name in printing_icon_names}
-    hpbooklet.advanced_printing(printing_icons, row= 2, column=0, padx = 5, pady= 10, width = 370, height = 140, relief = "solid", padding = "4 4 10 10")
+    hpbooklet.advanced_printing(printing_icons, row= 1, column=1, padx = 5, pady= 10, width = 450, height = 140, relief = "solid", padding="4 4 10 10")
     
-    hpbooklet.genbutton(row=3, column=0, width = 370, height = 50, padding="2 2 2 2")
+    hpbooklet.genbutton(row=2, column=0, columnspan =2 ,width = 370, height = 50, padding="2 2 2 2")
 
     hpbooklet.window.mainloop()
     
