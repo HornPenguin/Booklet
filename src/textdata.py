@@ -4,16 +4,16 @@ git_repository = r"https://github.com/HornPenguin/Booklet"
 homepage = r"https://www.hornpenguin.com/%EC%84%9C%EB%B9%84%EC%8A%A4/booklet"
 
 
-about_text= r'''
-HornPenguin Booklet provides various routines for printing and press.
+about_text= [
+    " ",
+    "HornPenguin Booklet is a pdf modifer for printing and press",
+    " ",
+    "Copyright (c) 2022 HornPenguin Co.\n All right reserved.",
+    "Contact: support@hornpenguin.com"
+]
 
-Copyright (c) 2022 HornPenguin Co.
-All right reserved.
 
-Contact: support@hornpenguin.com
-'''
-
-license = r'''
+license = [r'''
 BSD 3-Clause License
 
 Copyright (c) 2022, HornPenguin Co.
@@ -43,17 +43,7 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-----------------------------------------------------------------------------------
-    This program uses PyPDF2 module which is distributed under BSD-3 license. 
-    Below part is a credit for original authors of PYPDF2
-
-    Copyright (c) 2006-2008, Mathieu Fenniak
-    Some contributions copyright (c) 2007, Ashish Kulkarni <kulkarni.ashish@gmail.com>
-    Some contributions copyright (c) 2014, Steve Witham <switham_github@mac-guyver.com>
-
-     Full texts of the license is same with above texts 
-'''
+''']
 
 format_head = ["Format", "width(mm)", "height(mm)"]
 format_table = [

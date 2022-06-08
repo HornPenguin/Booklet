@@ -41,14 +41,13 @@ from tkinter.colorchooser import askcolor
 from PIL import Image, ImageTk
 from functools import partial
 import os
+from math import log2
+from sys import float_info 
 
-import textdata
-from image_data import logo
-import base64
-from io import BytesIO
 #---------------------------------------------------------
-import routines
+import routines, textdata
 
+EPS = float_info.epsilon *100
 
 # Tab_advanced
 #===========================================================
@@ -63,7 +62,19 @@ import routines
 
 #UI--------------------------------------------------------------------------------------------
 class HP_Booklet:
-    def __init__(self, icon_path, homepage, source, tutorial, textpady, fix = False, width = 390, height =780):
+    def __init__(
+            self, 
+            icon_path, 
+            homepage, 
+            source, 
+            tutorial, 
+            textpady, 
+            logo,
+            fix = False,
+            width = 390, 
+            height =780
+        ):
+
         self.url_homepage = homepage
         self.url_source = source
         self.url_tutorial = tutorial
@@ -76,6 +87,9 @@ class HP_Booklet:
         self.window.call('source', routines.resource_path('azure.tcl','resource'))
         self.window.call("set_theme", "light")
         self.window.title('HornPenguin Booklet')
+
+
+        self.logo = ImageTk.PhotoImage(logo, master = self.window)
 
         # Tab: basic, Advanced
         self.Tabwindow = ttk.Notebook(self.window)
@@ -124,7 +138,7 @@ class HP_Booklet:
         # Attachement PDF: Cover and back: front, back, none
 
         self.pagerange_var = tk.StringVar(value = '')
-        self.ns = tk.IntVar(value=0)
+        self.ns = tk.IntVar(value=4)
 
         self.custom_width = tk.IntVar(value=0)
         self.custom_height = tk.IntVar(value=0)
@@ -156,16 +170,18 @@ class HP_Booklet:
         self.window.update()
         self.window.attributes('-topmost', False)
     
-    def popup_window(self, width, height, text, title, tpadx=10, tpady=2.5, fix=False, align='center', button_text = "Ok"):
+    def popup_window(self, width, height, text, title, tpadx=10, tpady=20, fix=False, align='center', button_text = "Ok"):
         sub_window = tk.Toplevel(self.window)
         sub_window.title(title)
         #sub_window.geometry(f'{width}x{height}')
         sub_window.resizable(False,True)
         sub_window.iconbitmap(self.icon_path)
 
-        text_label = ttk.Label(sub_window, text= text, wraplengt=width -20)
-        text_label.configure(anchor=align)
-        text_label.pack(padx=tpadx, pady = tpady)
+        if not hasattr(text, '__iter__'):
+            text = [text]
+
+        for te in text:
+            ttk.Label(sub_window, text= te, wraplengt=width -20, anchor=align).pack(padx=tpadx, pady = tpady)
 
         destorybutton = ttk.Button(sub_window, text=button_text , width=15, comman=sub_window.destroy)
         destorybutton.pack(padx=int(2*tpadx),pady=int(2*tpady))
@@ -213,9 +229,7 @@ class HP_Booklet:
         
         format_window = partial(self.popup_window_table, 320, 480, textdata.format_head, textdata.format_table, "Paper Format", 30, 2.5, False)
         self.menu_help.add_command(label="Paper Format", command=format_window)
-
         self.menu_help.add_command(label="Tutorial", command = partial(routines.open_url, self.url_tutorial))
-        self.menu_help.add_command(label="Homepage", command = partial(routines.open_url,self.url_homepage))
         self.menu_help.add_command(label="Source", command = partial(routines.open_url,self.url_source))
 
         license = partial(self.popup_window, 600, 800, textdata.license, "License", 10, 2.5, False)
@@ -263,13 +277,13 @@ class HP_Booklet:
         self.output_entry.insert(0, directory)
         
         return 0
-    def logo_display(self, logo, row=0, column=0):
-        self.logo = logo
-        self.canvas = tk.Canvas(self.window, width = self.window_width, height = 170)
-        self.canvas.create_image(self.window_width - 220, 10, anchor=NW, image= self.logo)
-        
-        self.canvas.grid(row=row, column=column, sticky="e")
-        return 0
+    #def logo_display(self, logo, logo_width, logo_height, row=0, column=0):
+    #    self.logo = logo
+    #    self.canvas = tk.Canvas(self.window, width = self.window_width*2, height = 170)
+    #    self.canvas.create_image(self.window_width-logo_width/2, 10, anchor=NW, image= self.logo)
+    #    
+    #    self.canvas.grid(row=row, column=column, sticky="e")
+    #    return 0
 
     # Tab Basic
     def basic_inputbox(self, row, column, padx, pady, width, height, relief, padding, entry_width =41):
@@ -286,33 +300,43 @@ class HP_Booklet:
         #self.input_text = ttk.Label(self.Frame_input, text="Manuscript", justify=tk.LEFT, anchor='w')
         #self.input_text.grid(row=0, column=0, sticky = tk.W, padx =3)
         self.input_entry = ttk.Entry(self.Frame_input, width = entry_width)
-        self.input_entry.grid(row=1, column=0, columnspan=3, padx =3, ipadx=5)
-        ttk.Button(self.Frame_input, text="...", width = 3, command=partial(self.open_file)).grid(row=1, column = 3)
+        self.input_button = ttk.Button(self.Frame_input, text="...", width = 3, command=partial(self.open_file))
 
 
-        title_value     = ttk.Label(self.Frame_input,      textvariable=self.title, wraplengt=200)
-        author_value    = ttk.Label(self.Frame_input,      textvariable=self.author, wraplengt=200)
-        page_n_value    = ttk.Label(self.Frame_input,      textvariable=self.page_n, wraplengt=200)
-        page_for_value  = ttk.Label(self.Frame_input,      textvariable=self.page_format, wraplengt=200)
+        self.title_value     = ttk.Label(self.Frame_input,      textvariable=self.title, wraplengt=200)
+        self.author_value    = ttk.Label(self.Frame_input,      textvariable=self.author, wraplengt=200)
+        self.page_n_value    = ttk.Label(self.Frame_input,      textvariable=self.page_n, wraplengt=200)
+        self.page_for_value  = ttk.Label(self.Frame_input,      textvariable=self.page_format, wraplengt=200)
 
-        title_label     = ttk.Label(self.Frame_input, text=f"Title")
-        author_label    = ttk.Label(self.Frame_input, text=f"Author(s)")
-        page_n_label    = ttk.Label(self.Frame_input, text=f"Pages")
-        page_for_label  = ttk.Label(self.Frame_input, text=f"Format")
+        self.title_label     = ttk.Label(self.Frame_input, text=f"Title")
+        self.author_label    = ttk.Label(self.Frame_input, text=f"Author(s)")
+        self.page_n_label    = ttk.Label(self.Frame_input, text=f"Pages")
+        self.page_for_label  = ttk.Label(self.Frame_input, text=f"Format")
+
+        self.logo_icon = ttk.Label(self.Frame_input, image= self.logo, cursor="hand2")
+        self.logo_icon.photo = self.logo
+        self.logo_icon.bind("<Button-1>", lambda e: routines.open_url(self.url_homepage)) 
 
         
-        title_label.grid(row=2, column = 0,  pady=self.text_pady)
-        author_label.grid(row=3, column = 0,  pady=self.text_pady)
-        page_n_label.grid(row=4, column = 0,  pady=self.text_pady)
-        page_for_label.grid(row=5, column = 0,  pady=self.text_pady)
+        self.input_entry.grid(row=1, column=0, columnspan=3, padx =3, ipadx=5)
+        self.input_button.grid(row=1, column = 3)
 
-        title_value.grid(row=2, column = 1, pady=self.text_pady)
-        author_value.grid(row=3, column = 1, pady=self.text_pady)
-        page_n_value.grid(row=4, column = 1, pady=self.text_pady)
-        page_for_value.grid(row=5, column = 1, pady=self.text_pady)
+        self.title_label.grid(row=2, column = 0, pady=self.text_pady)
+        self.title_value.grid(row=2, column = 1, columnspan=5, pady=self.text_pady)
+
+        self.author_label.grid(row=3, column = 0, pady=self.text_pady)
+        self.author_value.grid(row=3, column = 1, columnspan=5, pady=self.text_pady)
+
+        self.page_n_label.grid(row=4, column = 0, pady=self.text_pady)
+        self.page_n_value.grid(row=4, column = 1, columnspan=5, pady=self.text_pady)
+
+        self.page_for_label.grid(row=5, column = 0, pady=self.text_pady)
+        self.page_for_value.grid(row=5, column = 1, columnspan=5, pady=self.text_pady)
+
+        self.logo_icon.grid(row=6, column= 0, columnspan=6, pady=self.text_pady)
 
 
-        self.Frame_input.grid(row=row, column=column, padx=padx, pady=pady, sticky="nsew")
+        self.Frame_input.grid(row=row, column=column, ipadx =padx,  padx=(3*padx,3*padx), pady=(3*pady,3*pady), sticky="ns")
 
         return 0
 
@@ -342,7 +366,7 @@ class HP_Booklet:
         self.lvalues = [f"{4*(i+1)}" if (i+1)%2 else f"{4*(i+1)}f" for i in range(0,8)] + ["1"]
         self.leaves = ttk.Combobox(self.Frame_output, value= self.lvalues, state='readonly')
         self.leaves.current(0)
-        self.addblankpages_label = ttk.Label(self.Frame_output, textvariable=self.addBlankpages)
+        self.addblankpages_label = ttk.Label(self.Frame_output, textvariable=self.addBlankpages, width=3)
        
 
         self.text_format = ttk.Label(self.Frame_output, text="Book Format", justify=tk.LEFT, anchor='w') 
@@ -376,7 +400,7 @@ class HP_Booklet:
         self.riffle.grid(        row=6, column=1, pady=self.text_pady)
 
 
-        self.Frame_output.grid(row=row, column=column, padx=padx, pady=pady, sticky="we")
+        self.Frame_output.grid(row=row, column=column, ipadx =padx,  padx=(3*padx,3*padx), pady=(3*pady,3*pady), sticky="ns")
     
     # Tab Advanced
     def advanced_imposition(self, icons:dict, row, column, padx, pady, width, height, relief, padding, entry_width =41):
@@ -404,11 +428,14 @@ class HP_Booklet:
         self.pagerange = ttk.Entry(self.Frame_ad_imposition, textvariable=self.pagerange_var, width = int(entry_width/2))
         self.pagerange_example = ttk.Label(self.Frame_ad_imposition, text="1, 3-5, 10",justify=tk.LEFT, anchor='w') 
 
-        self.foldcomposition_label = ttk.Label(self.Frame_ad_imposition, text="Fold composition",justify=tk.LEFT, anchor='w')
-        self.foldcomposition_nn_combo = ttk.Combobox(self.Frame_ad_imposition)
-        #self.foldcomposition_nn_combo.current(0)
-        self.foldcomposition_ns_label = ttk.Label(self.Frame_ad_imposition, text=self.ns)
-        self.foldcomposition_example = ttk.Label(self.Frame_ad_imposition, text="nn x ns",justify=tk.LEFT, anchor='w')
+        self.sigcomposition_label = ttk.Label(self.Frame_ad_imposition, text="Sig composition",justify=tk.LEFT, anchor='w')
+        self.sigcomposition_nl = ttk.Label(self.Frame_ad_imposition, text='4=',justify=tk.LEFT, anchor='w')
+        self.sigcomposition_nn_combo = ttk.Combobox(self.Frame_ad_imposition, value=[1], state='readonly', width=3)
+        self.sigcomposition_nn_combo.current(0)
+        self.sigcomposition_nn_combo.bind("<<ComboboxSelected>>", self.ns_set)
+        self.sigcomposition_times = ttk.Label(self.Frame_ad_imposition, text="x",justify=tk.LEFT, anchor='w')
+        self.sigcomposition_ns_label = ttk.Label(self.Frame_ad_imposition, textvariable=self.ns)
+        self.sigcomposition_example = ttk.Label(self.Frame_ad_imposition, text="(insert)x(fold)",justify=tk.LEFT, anchor='w')
 
         self.customformat_label = ttk.Label(self.Frame_ad_imposition, text="Custom format",justify=tk.LEFT, anchor='w')
         self.customformat_width_entry = ttk.Entry(self.Frame_ad_imposition, textvariable = self.custom_width, width = int(entry_width/8))
@@ -434,30 +461,37 @@ class HP_Booklet:
         #Grid
         #self.FrameText_impositon.grid(row=0, column=0, pady=2*self.text_pady)
 
-        self.blankpage_label.grid(          row=1, column=0, pady=self.text_pady)
-        self.blankpage.grid(                row=1, column=1, columnspan=4, pady=self.text_pady)
-        self.blankpage_label2.grid(         row=1, column=5, columnspan=2, ipadx = self.text_pady, pady=self.text_pady)
+        self.blankpage_label.grid(          row=1, column=0, pady=self.text_pady, ipadx=self.text_pady)
+        self.blankpage.grid(                row=1, column=1, columnspan=4, pady=self.text_pady, ipadx=self.text_pady)
+        self.blankpage_label2.grid(         row=1, column=5, columnspan=2, pady=self.text_pady, ipadx=self.text_pady)
 
-        self.pagerange_label.grid(          row=2, column = 0, pady=self.text_pady)
-        self.pagerange.grid(                row=2, column = 1, columnspan=4, pady=self.text_pady)
-        self.pagerange_example.grid(        row=2, column = 5, columnspan=2, pady=self.text_pady)
+        self.pagerange_label.grid(          row=2, column = 0, pady=self.text_pady, ipadx=self.text_pady)
+        self.pagerange.grid(                row=2, column = 1, columnspan=4, pady=self.text_pady, ipadx=self.text_pady)
+        self.pagerange_example.grid(        row=2, column = 5, columnspan=2, pady=self.text_pady, ipadx=self.text_pady)
 
-        self.customformat_label.grid(       row=3, column=0, pady=self.text_pady)
-        self.customformat_check.grid(       row=3, column=1, pady=self.text_pady)
-        self.customformat_width_entry.grid( row=3 ,column=2, pady=self.text_pady)
-        self.customformat_times.grid(       row=3 ,column=3, pady=self.text_pady)
-        self.customformat_height_entry.grid(row=3, column=4, pady=self.text_pady)
-        self.customformat_example.grid(     row=3, column=5, columnspan=2, pady=self.text_pady)
+        self.customformat_label.grid(       row=3, column=0, pady=self.text_pady, ipadx=self.text_pady)
+        self.customformat_check.grid(       row=3, column=1, pady=self.text_pady, ipadx=self.text_pady)
+        self.customformat_width_entry.grid( row=3 ,column=2, pady=self.text_pady, ipadx=self.text_pady)
+        self.customformat_times.grid(       row=3 ,column=3, pady=self.text_pady, ipadx=self.text_pady)
+        self.customformat_height_entry.grid(row=3, column=4, pady=self.text_pady, ipadx=self.text_pady)
+        self.customformat_example.grid(     row=3, column=5, columnspan=2, pady=self.text_pady, ipadx=self.text_pady)
 
-        self.imposition_label.grid(         row=4, column = 0, pady=self.text_pady)
-        self.imposition.grid(               row=4, column=1, columnspan=4, pady=self.text_pady)
-        self.imposition_icon.grid(          row=4, column=5, columnspan=2, pady=self.text_pady)
+        self.sigcomposition_label.grid(    row= 4, column= 0, pady=self.text_pady, ipadx=self.text_pady)
+        self.sigcomposition_nl.grid(       row= 4, column= 1, pady=self.text_pady, ipadx=self.text_pady)
+        self.sigcomposition_nn_combo.grid( row= 4, column= 2, pady=self.text_pady, ipadx=self.text_pady)
+        self.sigcomposition_times.grid(    row= 4, column= 3, pady=self.text_pady, ipadx=self.text_pady)
+        self.sigcomposition_ns_label.grid( row= 4, column= 4, pady=self.text_pady, ipadx=self.text_pady)
+        self.sigcomposition_example.grid(  row= 4, column= 5, columnspan=2, pady=self.text_pady, ipadx=self.text_pady)
 
-        self.splitpersig_label.grid(        row=5, column = 0, pady=self.text_pady)
-        self.splitpersig.grid(              row= 5, column=1, columnspan=4, pady=self.text_pady)
-        self.splitpersig_icon.grid(         row=5, column=5, columnspan=2, pady= self.text_pady)
+        self.imposition_label.grid(         row=5, column = 0, pady=self.text_pady, ipadx=self.text_pady)
+        self.imposition.grid(               row=5, column=1, columnspan=4, pady=self.text_pady, ipadx=self.text_pady)
+        self.imposition_icon.grid(          row=5, column=5, columnspan=2, pady=self.text_pady, ipadx=self.text_pady)
 
-        self.Frame_ad_imposition.grid(row=row, column=column,ipadx =padx, padx=(4*padx,4*padx), pady=pady, sticky="ns")
+        self.splitpersig_label.grid(        row=6, column = 0, pady=self.text_pady, ipadx=self.text_pady)
+        self.splitpersig.grid(              row=6, column=1, columnspan=4, pady=self.text_pady, ipadx=self.text_pady)
+        self.splitpersig_icon.grid(         row=6, column=5, columnspan=2, pady=self.text_pady, ipadx=self.text_pady)
+
+        self.Frame_ad_imposition.grid(row=row, column=column, ipadx =padx, padx=(4*padx,4*padx), pady=pady, sticky="ns")
     
     def advanced_printing(self, icons:dict, row, column, padx, pady, width, height, relief, padding, entry_width =41):
         self.Frame_ad_printing =ttk.LabelFrame(
@@ -520,9 +554,11 @@ class HP_Booklet:
     def fold_enable(self, event):
 
         leaves = self.leaves.get()
+        fcheck = False
         if 'f' in leaves:
             self.fold.config(state=tk.NORMAL)
             n_l = int(leaves.split("f")[0])
+            fcheck =True
         else:
             self.foldvalue.set(False)
             self.fold.config(state=tk.DISABLED)
@@ -530,12 +566,35 @@ class HP_Booklet:
 
         pagenumber = self.page_n.get()
 
+        #calculate blank page
         if pagenumber < n_l:
             addb=n_l - pagenumber
         else:
             addb=n_l - pagenumber%n_l
         print(f"Addtional Blank Page: {addb}")
         self.addBlankpages.set(addb)
+
+        #Signature composition
+        self.sigcomposition_nl.configure(text=f"{n_l} =")
+
+        if n_l ==1:
+            self.sigcomposition_nn_combo.config(value=[1])
+            self.ns.set(1)
+        elif fcheck:
+            self.sigcomposition_nn_combo.config(value=[int(2**i) for i in range(0,int(log2(n_l)-1))])
+            self.ns.set(n_l)
+        else:
+            self.sigcomposition_nn_combo.config(value=[int(n_l/4)])
+            self.ns.set(4)
+        
+        self.sigcomposition_nn_combo.current(0)
+    def ns_set(self, event):
+        nl = int(self.sigcomposition_nl.cget("text").split("=")[0])
+        nn =int(self.sigcomposition_nn_combo.get())
+
+        self.ns.set(int(nl/nn))
+
+            
 
         
         
@@ -688,25 +747,22 @@ if __name__ == "__main__":
         "registration",
         "trim"
     ]
-    
-    logo_data_byte = base64.b64decode(logo)
-    logo_data = BytesIO(logo_data_byte)
-    logo_image = Image.open(logo_data)
-    
-    logo_height = 150
-    logo_width = int(logo_height*1.380952380952381)
-    resize_logo = logo_image.resize((logo_width, logo_height), Image.Resampling(1))
+
+    logo_width = logo_height = 70
+    logo = Image.open(routines.resource_path('logo.png','resource')).resize((logo_width, logo_height), Image.Resampling(1))
 
     hpbooklet = HP_Booklet(
         icon_path, 
         homepage= textdata.homepage, 
         source = textdata.git_repository, 
         tutorial = textdata.git_repository, 
-        textpady= text_pady
+        textpady= text_pady,
+        logo=logo
     )
+
     
-    logo = ImageTk.PhotoImage(resize_logo, master = hpbooklet.window)
-    hpbooklet.logo_display(logo)
+    #hpbooklet.logo_display(logo, logo_width=logo_width, logo_height=logo_height, column=0)
+
     hpbooklet.basic_inputbox( row=1, column=0, padx = 5, pady =10, width = 370, height = 160, relief="solid", padding="4 4 10 10")
     hpbooklet.basic_outputbox( row=1, column=1, padx = 5, pady =10, width = 370, height = 200, relief="solid", padding="4 4 10 10")
 
