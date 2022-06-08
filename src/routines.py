@@ -16,8 +16,8 @@ status_code = {
     1: "Invaild page range"
 }
 
-#Utils===============================================================================
 
+# System directory
 def resource_path(relative_path, directory):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     try:
@@ -28,24 +28,23 @@ def resource_path(relative_path, directory):
 
     return os.path.join(base_path, directory, relative_path)
 
+
+#Utils===============================================================================
 def open_url(url):
         return webbrowser.open(url)
 
-def get_pdf_info(pdf_path):
-        pdf = pypdf.PdfFileReader(pdf_path)
-        page_num = pdf.getNumPages()
-        
-        if page_num != 0:
-            pdfinfo = pdf.metadata
+def split_list(li:list, n:int)->list: #n: length of sub list
+    if len(li) %n !=0:
+        raise ValueError(f"The length of sublist, {n}, must be a divider of original list, {len(li)}. ")
+    
+    rlist =[]
+    for i in range(0, int(len(li)/n)):
+        ni = n*i
+        rlist.append([li[ni: ni+n]][0])
 
-            title = pdfinfo['/Title'] if '/Title' in pdfinfo.keys() else 'None'
-            authors = pdfinfo['/Author'] if '/Author' in pdfinfo.keys() else 'Unkown'
-            page_size=  pdf.getPage(0).mediaBox[2:]
-            return title, authors, page_num, page_size
-        return False, False, False, False
+    return rlist
 
-#Permutations and generating functions for signature routines
-
+#Permutations and generating functions for signature routines-------------------------
 class Permutation:
     @classmethod
     def get_permutations(cls, n, per=False): # get list of permutations for given 'n'
@@ -57,6 +56,7 @@ class Permutation:
     @classmethod
     def reverse_permutation(cls, n):
         return cls(n, range(n, 0, -1)) 
+
 
     def __init__(self, n, plist):
         if len(plist) != n:
@@ -80,7 +80,41 @@ class Permutation:
         
         rlist = [other[x] for x in self.plist]
         return Permutation(self.n, rlist)
-    
+
+    def index_mul(self, other, oper=False):
+
+        rlist = [self[x] for x in other.plist]
+        if oper:
+            self.plist= rlist
+        else:
+            return Permutation(self.n, rlist)
+
+    def index_mul_partial(self, sub_permutation, oper = False): #Work on indexing
+        if not isinstance( sub_permutation, Permutation):
+            raise ValueError(f"Given parameter must be \'Permutation\' object. \n Current object:{type(sub_permutation)}")
+        if self.n %sub_permutation.n != 0:
+            raise ValueError(f"Sub permutation must have a divisor of main permuatain size as its size\n main:{self.n}, sub:{sub_permutation.n}")
+
+        n = int(self.n / sub_permutation.n)
+        m = sub_permutation.n
+        
+        rlist = []
+        for i in range(0,n):
+            tem_rlist = [self.plist[x+m*i -1] for x in sub_permutation.plist]
+            rlist = rlist + tem_rlist
+        
+        if oper:
+            self.plist = rlist
+        else:
+            return Permutation(self.n, rlist)
+
+    def permute_to_list_index(self, li):
+        if len(li) != self.n:
+            raise ValueError(f"{len(li)} ! = {self.n}")
+        
+        rlist = [li[x-1] for x in self.plist ]
+        return rlist
+
     def inverse(self)-> Permutation:
         ilist= [self.plist.index(x)+1 for x in range(1, self.n+1)]
         return Permutation(self.n, ilist)
@@ -138,83 +172,143 @@ class Permutation:
             return cycliclist
 
 
-per_fold ={
-    4: [
-        [4,1],
-        [2,3]
-    ],
-    8: [
-        [8,1,5,4],
-        [2,7,3,9]
-    ],
-    16: [
-        [16,1,4,13,9,8,5,12],
-        [10,7,6,11,15,2,3,14]
-    ],
-    32: [
-        [44,21,28,37,40,25,24,41,53,12,5,60,57,8,9,56,52,13,4,61,64,1,16,49,45,20,29,36,33,32,17,48],
-        [46,19,30,35,34,31,18,47,51,14,3,62,63,2,15,50,54,11,6,59,58,7,10,55,43,22,27,38,39,26,23,42]
-    ]
-}
+#PDF Utils=================================================================================
 
-def sig_layout(n):
-    if type(n) != int or n<4 or n%4 !=0:
-        raise ValueError(f"n:{n} must be a positive integer that multiple of 4.")
+class PDFsig:
+    _fold_arrange = {
+        4: [
+            [4,1],
+            [2,3]
+        ],
+        8: [
+            [8,1,5,4],
+            [2,7,3,9]
+        ],
+        16: [
+            [16,1,4,13,9,8,5,12],
+            [10,7,6,11,15,2,3,14]
+        ],
+        32: [
+            [44,21,28,37,40,25,24,41,53,12,5,60,57,8,9,56,52,13,4,61,64,1,16,49,45,20,29,36,33,32,17,48],
+            [46,19,30,35,34,31,18,47,51,14,3,62,63,2,15,50,54,11,6,59,58,7,10,55,43,22,27,38,39,26,23,42]
+        ]
+    }
+
+    def __fold_matrix_update(n, matrix):
+        n_1 = np.flip(matrix.T, axis=0)
+        len_n = len(n_1[0])
+        l = int(len_n/2)
+
+        rows =[]
+        for row in n_1:
+            r_split = np.split(row,l)
+            row_appended = []
+
+            for tu in r_split:
+                tem = np.array([n-tu[0] +1,n-tu[1] +1])
+                row_appended.append(np.insert(tem, 1, tu))    
+            rows.append(np.concatenate(row_appended, axis=None))     
+        return np.stack(rows)
+
+    @staticmethod
+    def get_info(path:str) -> tuple:
+        pdf = pypdf.PdfFileReader(path)
+
+        page_num = pdf.getNumPages()
+
+        if page_num != 0:
+            pdfinfo = pdf.metadata
+
+            title = pdfinfo['/Title'] if '/Title' in pdfinfo.keys() else 'None'
+            authors = pdfinfo['/Author'] if '/Author' in pdfinfo.keys() else 'Unkown'
+            page_size=  pdf.getPage(0).mediaBox[2:]
+            return title, authors, page_num, page_size
+        
+        return False, False, False, False
+    @staticmethod
+    def sig_layout(n:int) -> tuple:
+        if type(n) != int or n<4 or n%4 !=0:
+            raise ValueError(f"n:{n} must be a positive integer that multiple of 4.")
     
-    i = int(math.log(n/4 ,2))
-    if i%2 :
-        k = kp = int((i+1)/2)
-    else:
-        k = int(i/2)
-        kp = k+1
-    return (int(2**k), int(2**kp))
-
-
-def __fold_matrix_update(n, matrix):
-    n_1 = np.flip(matrix.T, axis=0)
-    len_n = len(n_1[0])
-    l = int(len_n/2)
-
-    rows =[]
-    for row in n_1:
-        r_split = np.split(row,l)
-        row_appended = []
-
-        for tu in r_split:
-            tem = np.array([n-tu[0] +1,n-tu[1] +1])
-            row_appended.append(np.insert(tem, 1, tu))    
-        rows.append(np.concatenate(row_appended, axis=None))     
-    return np.stack(rows)
-
-def per_fold_n(n):
-    if n % 4 !=0:
-        raise ValueError("Fold sheets must be 4*2^k for k= 0, 1, 2, .... \n Current value is {n}")
+        i = int(math.log(n/4 ,2))
+        if i%2 :
+            k = kp = int((i+1)/2)
+        else:
+            k = int(i/2)
+            kp = k+1
+        return (int(2**k), int(2**kp))
+    @classmethod
+    def fold_arrange_n(cls,n: int) -> list:
+        if n % 4 !=0:
+            raise ValueError("Fold sheets must be 4*2^k for k= 0, 1, 2, .... \n Current value is {n}")
     
-    if n <64:
-        return per_fold[n]
-    else:
-        n_iter = int(math.log(n/16,2))
-        n_i = 32
-        per_n_1 = [per_fold[n_i][0], per_fold[n_i][1]]
+        if n <64:
+            return cls._fold_arrange[n]
+        else:
+            n_iter = int(math.log(n/16,2))
+            n_i = 32
+            per_n_1 = [cls._fold_arrange[n_i][0], cls._fold_arrange[n_i][1]]
+    
+            #permutation to matrix
+            layout_n_1 = cls.sig_layout(n_i)
+            front_matrix = np.array(per_n_1[0]).reshape(layout_n_1)
+            back_matrix = np.array(per_n_1[1]).reshape(layout_n_1)
+            for i in range(0, n_iter):
+                n_i = 2*n_i
+                front_matrix = cls.__fold_matrix_update(n_i, front_matrix)
+                back_matrix = cls.__fold_matrix_update(n_i, back_matrix)   
+        per_fn = np.concatenate(front_matrix).tolist() 
+        per_bn = np.concatenate(back_matrix).tolist()
+    
+        return [per_fn, per_bn]       
+    @classmethod
+    def fold_list_n(cls, n, per=False):
+        if n % 4 !=0:
+            raise ValueError("Fold sheets must be 4*2^k for k= 0, 1, 2, .... \n Current value is {n}")
+        
+        if n < 64:
+            return cls._fold_arrange[n]
+        else:
+            n_iter = int(math.log(n/16,2))
+            n_i = 32
+            per_n_1 = [cls._fold_arrange[n_i][0], cls._fold_arrange[n_i][1]]
 
-        #permutation to matrix
-        layout_n_1 = sig_layout(n_i)
-        front_matrix = np.array(per_n_1[0]).reshape(layout_n_1)
-        back_matrix = np.array(per_n_1[1]).reshape(layout_n_1)
-        for i in range(0, n_iter):
-            n_i = 2*n_i
-            front_matrix = __fold_matrix_update(n_i, front_matrix)
-            back_matrix = __fold_matrix_update(n_i, back_matrix)   
-    per_fn = np.concatenate(front_matrix).tolist() 
-    per_bn = np.concatenate(back_matrix).tolist()
+            #permutation to matrix
+            layout_n_1 = cls.sig_layout(n_i)
+            front_matrix = np.array(per_n_1[0]).reshape(layout_n_1)
+            back_matrix = np.array(per_n_1[1]).reshape(layout_n_1)
+            for i in range(0, n_iter):
+                n_i = 2*n_i
+                front_matrix = cls.__fold_matrix_update(n_i, front_matrix)
+                back_matrix = cls.__fold_matrix_update(n_i, back_matrix)   
+        per_fn = np.concatenate(front_matrix).tolist() 
+        per_bn = np.concatenate(back_matrix).tolist()
 
-    return [per_fn, per_bn]    
+        if per:
+            Permutation(n, per_fn+per_bn )
+        else:
+            return [per_fn, per_bn]      
+    @classmethod
+    def sig_rearrange(cls, nn, ns): #1
+        n_l = nn*ns
 
-def fold_permutation(n):
-    per_sep = per_fold_n(n)
-    per = per_sep[0]  + per_sep[1]
+        nlist = [i+1 for i in range(0, n_l)]
+        nlist_splited = split_list(nlist, int(ns/2))
+        rlist=[]
 
-    return Permutation(n, per)         
+        n_splited = 2*nn
+        for i in range(0,nn):
+            rlist = rlist + nlist_splited[i] + nlist_splited[n_splited-i-1]
+
+        return rlist
+    @classmethod
+    def signature_permutation(cls, n, nn, ns, riffle=True):
+        permutation_riffle = Permutation(n, range(1, n+1)) if riffle else  Permutation.reverse_permutation(n)
+        permutation_signature = Permutation(n, cls.sig_rearrange(nn,ns)).index_mul_partial(cls.fold_list_n(ns, per=True))
+
+        return permutation_riffle * permutation_signature
+
+       
 
 
 # Reverse -> Signature gen -> fold permutation
@@ -225,7 +319,7 @@ def sig_permutation(n):
         return per
 
 
-def signature_permutation(n, fold, riffle=True):
+def signature_permutation(n, fold, riffle=True): # riffle: right=True, left=False
     per_riffle = Permutation(n, range(1, n+1)) if riffle else  Permutation.reverse_permutation(n)
     per_sig = Permutation(n, sig_permutation(n))
 
@@ -300,5 +394,4 @@ def gen_signature(input_file, output_file, **parameters):
         output.close()
 
         return 0
-
 

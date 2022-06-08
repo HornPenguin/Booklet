@@ -231,7 +231,7 @@ class HP_Booklet:
             self.input_entry.delete(0, tk.END)
             self.input_entry.insert(0, filename)
 
-            title, author, page_num, page_size = routines.get_pdf_info(filename)
+            title, author, page_num, page_size = routines.PDFsig.get_info(filename)
             if title != False:
                 self.title.set(title)
                 self.author.set(author)
@@ -518,10 +518,28 @@ class HP_Booklet:
 
 
     def fold_enable(self, event):
-        if 'f' in self.leaves.get():
+
+        leaves = self.leaves.get()
+        if 'f' in leaves:
             self.fold.config(state=tk.NORMAL)
+            n_l = int(leaves.split("f")[0])
         else:
-            self.fold.config(variable=False, state=tk.DISABLED)
+            self.foldvalue.set(False)
+            self.fold.config(state=tk.DISABLED)
+            n_l = int(leaves)
+
+        pagenumber = self.page_n.get()
+
+        if pagenumber < n_l:
+            addb=n_l - pagenumber
+        else:
+            addb=n_l - pagenumber%n_l
+        print(f"Addtional Blank Page: {addb}")
+        self.addBlankpages.set(addb)
+
+        
+        
+            
 
     def customformat_entry_enable_f(self):
         if self.customformatbool.get():
@@ -532,7 +550,7 @@ class HP_Booklet:
             self.customformat_height_entry.config(state=tk.DISABLED)
 
 
-    def sig_color_set(self, event):
+    def sig_color_set(self):
         color = askcolor()
         if color != None:
              self.sig_color = color[1]
