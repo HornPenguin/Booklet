@@ -36,7 +36,7 @@ __version__ = "0.0.1"
 __license__ = "BSD license"
 
 import tkinter as tk
-from tkinter import NW, Checkbutton, ttk, filedialog
+from tkinter import ttk, filedialog
 from tkinter.colorchooser import askcolor
 from PIL import Image, ImageTk
 from functools import partial
@@ -363,7 +363,7 @@ class HP_Booklet:
         self.filename_entry = ttk.Entry(self.Frame_output, textvariable=self.filename, width = int(entry_width/2))
 
         self.text_leaves = ttk.Label(self.Frame_output, text="Leaves", justify=tk.LEFT, anchor='w') 
-        self.lvalues = [f"{4*(i+1)}" if (i+1)%2 else f"{4*(i+1)}f" for i in range(0,8)] + ["1"]
+        self.lvalues = [f"{4*(i+1)}" if (i+1)%2 and i!=2  else f"{4*(i+1)}f" for i in range(0,8)] + ["1"]
         self.leaves = ttk.Combobox(self.Frame_output, value= self.lvalues, state='readonly')
         self.leaves.current(0)
         self.addblankpages_label = ttk.Label(self.Frame_output, textvariable=self.addBlankpages, width=3)
@@ -581,16 +581,29 @@ class HP_Booklet:
             self.sigcomposition_nn_combo.config(value=[1])
             self.ns.set(1)
         elif fcheck:
-            self.sigcomposition_nn_combo.config(value=[int(2**i) for i in range(0,int(log2(n_l)-1))])
+            if n_l == 12:
+                self.sigcomposition_nn_combo.config(value=[1, 3])
+            elif n_l == 24:
+                self.sigcomposition_nn_combo.config(value=[1, 2, 3, 6])
+            else:
+                self.sigcomposition_nn_combo.config(value=[int(2**i) for i in range(0,int(log2(n_l)-1))])
             self.ns.set(n_l)
         else:
             self.sigcomposition_nn_combo.config(value=[int(n_l/4)])
             self.ns.set(4)
         
         self.sigcomposition_nn_combo.current(0)
+
     def ns_set(self, event):
         nl = int(self.sigcomposition_nl.cget("text").split("=")[0])
         nn =int(self.sigcomposition_nn_combo.get())
+
+        ns = int(nl/nn)
+
+        if ns == 4:
+            self.foldvalue.set(False)
+        else:
+            self.foldvalue(True)
 
         self.ns.set(int(nl/nn))
 

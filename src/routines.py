@@ -184,9 +184,17 @@ class PDFsig:
             [8,1,5,4],
             [2,7,3,9]
         ],
+        12: [
+            [12,1,9,4,8,5],
+            [2,11,3,10,6,7]
+        ],
         16: [
             [16,1,4,13,9,8,5,12],
             [10,7,6,11,15,2,3,14]
+        ],
+        24: [
+            [24, 1, 12, 13, 21, 4, 9, 16, 20, 5, 8, 17],
+            [14, 11, 2, 23, 15, 10, 3, 22, 18, 7, 6, 19]
         ],
         32: [
             [44,21,28,37,40,25,24,41,53,12,5,60,57,8,9,56,52,13,4,61,64,1,16,49,45,20,29,36,33,32,17,48],
@@ -194,7 +202,7 @@ class PDFsig:
         ]
     }
 
-    def __fold_matrix_update(n, matrix):
+    def __fold_matrix_update(self, n, matrix):
         n_1 = np.flip(matrix.T, axis=0)
         len_n = len(n_1[0])
         l = int(len_n/2)
@@ -229,14 +237,18 @@ class PDFsig:
     def sig_layout(n:int) -> tuple:
         if type(n) != int or n<4 or n%4 !=0:
             raise ValueError(f"n:{n} must be a positive integer that multiple of 4.")
-    
-        i = int(math.log(n/4 ,2))
-        if i%2 :
-            k = kp = int((i+1)/2)
+
+        if n%3 ==0:
+            i = math.log2(n) - math.log2(3) -1
+            return(3, int(2**i))
         else:
-            k = int(i/2)
-            kp = k+1
-        return (int(2**k), int(2**kp))
+            i = int(math.log2(n/4))
+            if i%2 :
+                k = kp = int((i+1)/2)
+            else:
+                k = int(i/2)
+                kp = k+1
+            return (int(2**k), int(2**kp))
     @classmethod
     def fold_arrange_n(cls,n: int) -> list:
         if n % 4 !=0:
@@ -308,22 +320,71 @@ class PDFsig:
 
         return permutation_riffle * permutation_signature
 
-       
+    def generate_signature(
+                            self,
+                            inputfile:str,
+                            outputfile:str,
+                            pagerange:str,
+                            leaves:list,
+                            fold:bool,
+                            riffle:bool,
+                            format:list,
+                            imposition:bool,
+                            blank:list,
+                            split:bool,
+                            sigproof:list, #Printing marks
+                            trim:bool,
+                            registration:bool,
+                            cmyk:bool
+        ):
+
+        manuscript_pdf = pypdf.PdfFileReader(str(inputfile))
+        output_pdf = pypdf.PdfFileWriter()
+
+        #Copy meta datas and add modificaion 'date' and 'producer'
+        # PyPDF@ has an error for directly put PdfReader class meta to PdfWriter calss'
+        # We have to convert them with string variable.
+
+        meta = {}
+        for key in manuscript_pdf.metadata.keys():
+            val = manuscript_pdf.metadata.raw_get(key)
+            meta[key] = str(val) #converting to string
+        
+        output_pdf.addmetadata(meta)
+        output_pdf.addmetadata({"/Producer": "HornPenguin Booklet"})
+        output_pdf.addmetadata({"/ModDate": f"{datetime.now()}"})
+
+        #Calculate page range
+        manuscript_pages = manuscript_pdf.getNumPages()
+        page_range = self.cal_page_range(pagerange) #Implementation is needed
+
+        #Get permutation of given range and signature.
+        sig_permutation = self.signature_permutation(leaves[1], leaves[2], riffle=riffle)
+
+        #Format scale
+        if format[0]:
+            f_dim = textdata.PaperFormat[format].split("x")
+            width = float(f_dim[0])
+            height = float(f_dim[1])
+            scale_x = width  / format[1]
+            scale_y = height / format[2]
+        else:
+            scale_x = scale_y = 1.0
+
+        #------------------------------------------------------------------------
+
+        if imposition:
+            pass
+        else:
+            pass
+
+        #Save files
+        with open(outputfile, "wb") as f:
+            output_pdf.write(f)
+        
 
 
-# Reverse -> Signature gen -> fold permutation
-def sig_permutation(n):
-        per = [n,1]
-        for i in range(1, int(n/2)):
-            per.extend([1+i, n-i])
-        return per
 
-
-def signature_permutation(n, fold, riffle=True): # riffle: right=True, left=False
-    per_riffle = Permutation(n, range(1, n+1)) if riffle else  Permutation.reverse_permutation(n)
-    per_sig = Permutation(n, sig_permutation(n))
-
-    return per_sig * per_riffle
 
 def gen_signature(input_file, output_file, **parameters):
         #Parameters
