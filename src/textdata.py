@@ -1,4 +1,5 @@
-
+re_get_ranges = r"([ ]{0,}\d+[ ]{0,}-{1,1}[ ]{0,}\d+[ ]{0,}|[ ]{0,}\d+[ ]{0,}[^,-])"
+re_check_permited_character=  r"([^-,\d\s])+?"
 
 git_repository = r"https://github.com/HornPenguin/Booklet"
 homepage = r"https://www.hornpenguin.com/%EC%84%9C%EB%B9%84%EC%8A%A4/booklet"

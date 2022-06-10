@@ -35,12 +35,14 @@ __company__ = "HornPenguin"
 __version__ = "0.0.1"
 __license__ = "BSD license"
 
+
 import tkinter as tk
 from tkinter import ttk, filedialog
 from tkinter.colorchooser import askcolor
+from typing import runtime_checkable
 from PIL import Image, ImageTk
 from functools import partial
-import os
+import os, re
 from math import log2
 from sys import float_info 
 
@@ -70,6 +72,8 @@ class HP_Booklet:
             tutorial, 
             textpady, 
             logo,
+            re_range_validation = textdata.re_get_ranges,
+            re_character_validation = textdata.re_check_permited_character,
             fix = False,
             width = 390, 
             height =780
@@ -90,6 +94,9 @@ class HP_Booklet:
 
 
         self.logo = ImageTk.PhotoImage(logo, master = self.window)
+
+        self.range_vaildation = re.compile(re_range_validation)
+        self.character_vailidation = re.compile(re_character_validation)
 
         # Tab: basic, Advanced
         self.Tabwindow = ttk.Notebook(self.window)
@@ -123,6 +130,7 @@ class HP_Booklet:
         self.title = tk.StringVar(value = '')
         self.author = tk.StringVar(value = '')
         self.page_n = tk.IntVar(value = 0)
+        self.page_range_size = tk.IntVar(value=0)
         self.page_format = tk.StringVar(value = '')
         self.filename = tk.StringVar(value = '')
 
@@ -250,8 +258,11 @@ class HP_Booklet:
                 self.title.set(title)
                 self.author.set(author)
                 self.page_n.set(int(page_num))
-                self.pagerange.delete(0,tk.END)
-                self.pagerange.insert(0, f"1-{self.page_n.get()}")
+                self.page_range_size.set(int(page_num))
+                
+                self.pagerange_var.set(f"1-{self.page_n.get()}")
+
+
                 self.page_format.set(f'{page_size[0]}x{page_size[1]}')
                 textdata.PaperFormat["Default"] = f'{page_size[0]}x{page_size[1]}'
                 self.custom_width.set(page_size[0])
@@ -425,8 +436,9 @@ class HP_Booklet:
         self.blankpage_label2 = ttk.Label(self.Frame_ad_imposition, text = "back > front \nfor odd in \'both\' mode",justify=tk.LEFT, anchor='w')
 
         self.pagerange_label = ttk.Label(self.Frame_ad_imposition, text="Page range",justify=tk.LEFT, anchor='w')
-        self.pagerange = ttk.Entry(self.Frame_ad_imposition, textvariable=self.pagerange_var, width = int(entry_width/2))
-        self.pagerange_example = ttk.Label(self.Frame_ad_imposition, text="1, 3-5, 10",justify=tk.LEFT, anchor='w') 
+        self.pagerange = ttk.Entry(self.Frame_ad_imposition, textvariable=self.pagerange_var, width = int(entry_width/2), validate="all", validatecommand=self.range_validation)
+        self.pagerange_size = ttk.Label(self.Frame_ad_imposition, textvariable=self.page_range_size,justify=tk.LEFT, anchor='w') 
+        self.pagerange_example = tk.Label(self.Frame_ad_imposition, text="1, 3-5, 10",justify=tk.LEFT, anchor='w', bg="white") 
 
         self.sigcomposition_label = ttk.Label(self.Frame_ad_imposition, text="Sig composition",justify=tk.LEFT, anchor='w')
         self.sigcomposition_nl = ttk.Label(self.Frame_ad_imposition, text='4=',justify=tk.LEFT, anchor='w')
@@ -467,7 +479,8 @@ class HP_Booklet:
 
         self.pagerange_label.grid(          row=2, column = 0, pady=self.text_pady, ipadx=self.text_pady)
         self.pagerange.grid(                row=2, column = 1, columnspan=4, pady=self.text_pady, ipadx=self.text_pady)
-        self.pagerange_example.grid(        row=2, column = 5, columnspan=2, pady=self.text_pady, ipadx=self.text_pady)
+        self.pagerange_size.grid(           row=2, column = 5, pady=self.text_pady, ipadx=self.text_pady)
+        self.pagerange_example.grid(        row=2, column = 6, pady=self.text_pady, ipadx=self.text_pady)
 
         self.customformat_label.grid(       row=3, column=0, pady=self.text_pady, ipadx=self.text_pady)
         self.customformat_check.grid(       row=3, column=1, pady=self.text_pady, ipadx=self.text_pady)
@@ -564,7 +577,7 @@ class HP_Booklet:
             self.fold.config(state=tk.DISABLED)
             n_l = int(leaves)
 
-        pagenumber = self.page_n.get()
+        pagenumber = self.page_range_size.get()
 
         #calculate blank page
         if pagenumber < n_l:
@@ -603,15 +616,10 @@ class HP_Booklet:
         if ns == 4:
             self.foldvalue.set(False)
         else:
-            self.foldvalue(True)
+            self.foldvalue.set(True)
 
         self.ns.set(int(nl/nn))
 
-            
-
-        
-        
-            
 
     def customformat_entry_enable_f(self):
         if self.customformatbool.get():
@@ -620,6 +628,57 @@ class HP_Booklet:
         else:
             self.customformat_width_entry.config(state=tk.DISABLED)
             self.customformat_height_entry.config(state=tk.DISABLED)
+
+    def range_validation(self, *args):
+        text = self.pagerange.get().replace(" ","")
+        #self.pagerange_var.set(text)
+        vaild= True
+        if self.character_vailidation.search(text) != None:
+            print(self.character_vailidation.findall(text))
+            vaild = False
+        
+        rangelist= self.range_vaildation.findall(text)
+
+        range = 0
+        if vaild == True:
+            pre = 1
+            max = int(self.page_n.get())
+            for st in rangelist:
+                if '-' in st:
+                    i, l = st.split("-")
+
+                    i = int(i)
+                    l = int(l)
+
+                    if (i <= pre and pre > 1) or l > max: 
+                        vaild = False
+                        print(f"{i}-{l}, pre:{pre}, max:{max}")
+                    if i >= l : 
+                        vaild =False
+                        print(f"{i}>{l}")
+
+                    pre = l
+
+                    range += (l-i +1)
+                else:
+                    n = int(st)
+                    if (n <= pre and pre>1) or n> max: 
+                        print(f"{n}")
+                        vaild = False
+                    range +=1
+
+        if vaild:
+            self.page_range_size.set(range)
+            self.fold_enable(True)
+            self.pagerange_example.config(bg="#ffffff")
+            self.Generate_button.config(state=tk.ACTIVE)
+
+        else:
+            self.pagerange_example.config(bg="#d0342c")
+            self.Generate_button.config(state=tk.DISABLED)
+
+        return True
+
 
 
     def sig_color_set(self):

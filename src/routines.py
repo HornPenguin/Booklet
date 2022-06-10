@@ -319,6 +319,26 @@ class PDFsig:
         permutation_signature = Permutation(n, cls.sig_rearrange(nn,ns)).index_mul_partial(cls.fold_list_n(ns, per=True))
 
         return permutation_riffle * permutation_signature
+    @classmethod
+    def get_page_range(cls, pagerange:str):
+
+        pagerange = pagerange.replace(" ","")
+        rlist=  []
+        for st in pagerange.split(","):
+            if '-' in st:
+                i, l = st.split("-")
+                i = int(i)
+                l = int(l)
+                r = l-i+1
+
+                rlist = rlist +[i + d for d in range(0,r)]
+            else:
+                rlist.append(int(st))
+            
+            return rlist
+
+    @classmethod
+    def layout_mark(cls, width, height, imposition, printing_marks)
 
     def generate_signature(
                             self,
@@ -355,11 +375,31 @@ class PDFsig:
         output_pdf.addmetadata({"/ModDate": f"{datetime.now()}"})
 
         #Calculate page range
-        manuscript_pages = manuscript_pdf.getNumPages()
         page_range = self.cal_page_range(pagerange) #Implementation is needed
+        
+        #Blank pages
+        blankmode = blank[0]
+        blanknum = blank[1]
+        if blankmode == "fonrt":
+            blankfront = blanknum
+        elif blankmode == "both":
+            blankfront = int(blanknum/2)
+        else:
+            blankfront = 0
+
+        blankback = blanknum - blankfront
+
+        blankfront_list = [0 for i in range(0, blankfront)] 
+        blankback_list  = [0 for i in range(0, blankback)]
+        page_range = blankfront_list + page_range +blankback_list
+        size_range = len(page_range)
+
 
         #Get permutation of given range and signature.
-        sig_permutation = self.signature_permutation(leaves[1], leaves[2], riffle=riffle)
+        nl = leaves[0]
+        nn = leaves[1]
+        ns = leaves[2]
+        sig_permutation = self.signature_permutation(nn, ns, riffle=riffle)
 
         #Format scale
         if format[0]:
@@ -371,16 +411,37 @@ class PDFsig:
         else:
             scale_x = scale_y = 1.0
 
-        #------------------------------------------------------------------------
+        
+        #-----------------------------------------------------------------------
+        sig_num = len(page_range)/nl
+        pro_blocks = split_list(page_range, nl)
 
-        if imposition:
+        for block in pro_blocks:
+            per_block  = sig_permutation.permute_to_list_index(block)
+            for i in per_block:
+                if i==0:
+                    output_pdf.add_blank_page(width = width, height = height)
+                else:
+                    page = manuscript_pdf.pages[i]
+                    page.scale(scale_x, scale_y)
+                    output_pdf.add_page(manuscript_pdf.pages[i])
+
+            
+
+        #------------------------------------------------------------------------
+        # Todo: using reportlab library generate temper pdf file for printing marks
+        # 
+        
+        printbool = split or sigproof[0] or trim or registration or cmyk
+        if imposition or printbool:
             pass
         else:
-            pass
+            #Save files
+            with open(outputfile, "wb") as f:
+                output_pdf.write(f)
+        
 
-        #Save files
-        with open(outputfile, "wb") as f:
-            output_pdf.write(f)
+        
         
 
 
