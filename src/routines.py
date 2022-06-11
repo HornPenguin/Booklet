@@ -11,6 +11,8 @@ from itertools import permutations
 import numpy as np
 
 
+pts_to_mm = 2.8346456693
+
 status_code = {
     0: "Sucess",
     1: "Invaild page range"
@@ -30,6 +32,17 @@ def resource_path(relative_path, directory):
 
 
 #Utils===============================================================================
+
+def pts_mm(size:tuple, mode=True):
+    if mode: #pts to mm
+        x = round(size[0]/pts_to_mm,2)
+        y = round(size[1]/pts_to_mm,2)
+        return (x,y)
+    else:   #mm to pts
+        x = round(size[0] * pts_to_mm, 2)
+        y = round(size[1] * pts_to_mm, 2)
+        return (x,y)
+
 def open_url(url):
         return webbrowser.open(url)
 
@@ -230,6 +243,8 @@ class PDFsig:
             title = pdfinfo['/Title'] if '/Title' in pdfinfo.keys() else 'None'
             authors = pdfinfo['/Author'] if '/Author' in pdfinfo.keys() else 'Unkown'
             page_size=  pdf.getPage(0).mediaBox[2:]
+            page_size[0] = float(page_size[0]) 
+            page_size[1] = float(page_size[1]) 
             return title, authors, page_num, page_size
         
         return False, False, False, False
@@ -337,8 +352,8 @@ class PDFsig:
             
             return rlist
 
-    @classmethod
-    def layout_mark(cls, width, height, imposition, printing_marks)
+    #@classmethod
+    #def layout_mark(cls, width, height, imposition, printing_marks)
 
     def generate_signature(
                             self,
@@ -392,7 +407,6 @@ class PDFsig:
         blankfront_list = [0 for i in range(0, blankfront)] 
         blankback_list  = [0 for i in range(0, blankback)]
         page_range = blankfront_list + page_range +blankback_list
-        size_range = len(page_range)
 
 
         #Get permutation of given range and signature.
@@ -406,8 +420,8 @@ class PDFsig:
             f_dim = textdata.PaperFormat[format].split("x")
             width = float(f_dim[0])
             height = float(f_dim[1])
-            scale_x = width  / format[1]
-            scale_y = height / format[2]
+            scale_x = round(width / pts_to_mm, 2)  / format[1]
+            scale_y = round(height / pts_to_mm, 2) / format[2]
         else:
             scale_x = scale_y = 1.0
 

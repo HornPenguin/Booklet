@@ -44,12 +44,10 @@ from PIL import Image, ImageTk
 from functools import partial
 import os, re
 from math import log2
-from sys import float_info 
 
 #---------------------------------------------------------
 import routines, textdata
 
-EPS = float_info.epsilon *100
 
 # Tab_advanced
 #===========================================================
@@ -262,11 +260,13 @@ class HP_Booklet:
                 
                 self.pagerange_var.set(f"1-{self.page_n.get()}")
 
-
-                self.page_format.set(f'{page_size[0]}x{page_size[1]}')
+                width = round(page_size[0]/routines.pts_to_mm, 2)
+                height = round(page_size[1]/routines.pts_to_mm, 2)
+                self.page_format.set(f'{width}x{height}')
                 textdata.PaperFormat["Default"] = f'{page_size[0]}x{page_size[1]}'
-                self.custom_width.set(page_size[0])
-                self.custom_height.set(page_size[1])
+
+                self.custom_width.set(width)
+                self.custom_height.set(height)
 
                 file_name_with_format = os.path.split(str(filename))[1]
                 file_name = file_name_with_format.split('.pdf')
