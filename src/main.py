@@ -538,7 +538,7 @@ class HP_Booklet:
         self.registration_icon = ttk.Label(self.Frame_ad_printing, image=registration_icon)
         self.registration_icon.photo = registration_icon
 
-        self.cmyk_label = ttk.Label(self.Frame_ad_printing, text="CYMK(mark)", justify=tk.LEFT, anchor="w")
+        self.cmyk_label = ttk.Label(self.Frame_ad_printing, text="CMYK(mark)", justify=tk.LEFT, anchor="w")
         self.cmyk_checkbox = ttk.Checkbutton(self.Frame_ad_printing, variable=self.cymkbool)
         self.cmyk_icon = ttk.Label(self.Frame_ad_printing, image=cmyk_icon)
         self.cmyk_icon.photo = cmyk_icon
