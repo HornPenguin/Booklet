@@ -4,14 +4,26 @@ import PyPDF2 as pypdf
 import webbrowser
 from datetime import datetime
 import textdata
-import sys, os, math
+import sys, os, math, io, tempfile
 
 from itertools import permutations
+
+import svglib
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import mm
+from reportlab.lib.colors import CMYKColor
+
+
 
 import numpy as np
 
 
-pts_to_mm = 2.8346456693
+
+
+color_black = CMYKColor(0, 0, 0, 1)
+color_cyan = CMYKColor(1, 0, 0, 0)
+color_magenta = CMYKColor(0, 1, 0, 0)
+color_yellow = CMYKColor(0, 0, 1, 0)
 
 status_code = {
     0: "Sucess",
@@ -32,7 +44,7 @@ def resource_path(relative_path, directory):
 
 
 #Utils===============================================================================
-
+pts_to_mm = mm
 def pts_mm(size:tuple, mode=True):
     if mode: #pts to mm
         x = round(size[0]/pts_to_mm,2)
@@ -352,8 +364,106 @@ class PDFsig:
             
             return rlist
 
-    #@classmethod
-    #def layout_mark(cls, width, height, imposition, printing_marks)
+    @classmethod
+    def generate_layout(cls, #All dimensions are written in pts unit
+        pagesize:tuple, n:tuple, nd:int, d:int, 
+        proof:bool, proofcode:str, 
+        trim:bool, 
+        registration:bool, 
+        cmyk:bool
+    ):
+        #Paper Dimension
+        arrange = PDFsig.sig_layout(ns)
+        nx = arrange[0]
+        ny = arrange[1]
+        x = 2*nd + nx*pagesize[0] + (nx-1)*d    
+        y = 2*nd + ny*pagesize[1] + (ny-1)*d
+
+        #Signature composition
+        ni = n[0]
+        ns = n[1]
+
+        n_block = ni * ns
+
+        #Signature proof
+        if proof:
+            proof_height = pagesize[1]/n_block
+            proof_width = d
+            cmyk_proof = cls.convert(proofcode)
+            proof_position = (nd+pagesize[0], nd+ny*pagesize[1] + (ny-1)*d-proof_height)
+        #trim
+        if trim:
+            trim_l = nd*(3/4)
+            #horizontal line
+            x1 = nd/4
+            x2 = nd + nx*pagesize[0] + (nx-1)*d +x1
+            y1 = nd + ny*pagesize[1] + (ny-1)*d
+            y2 = nd
+            #vertical line
+            x3 = nd
+            x4 = x2 - x1
+            y3 = nd/4
+            y4 = y1 + y3
+
+            trim_lines = [
+                (x1,y1, x1 + trim_l, y1), # h, u l
+                (x1,y2, x1 + trim_l, y2), # h, d l
+                (x2,y1, x2 + trim_l, y1), # h, u r
+                (x2,y2, x2 + trim_l, y2), # h, d r
+                (x3,y4, x3, y4 + trim_l), # v, u l
+                (x3,y3, x3, y3 + trim_l), # v, d l
+                (x4,y4, x4, y4 + trim_l), # v, u r
+                (x4,y3, x4, y3 + trim_l)  # v, d r
+            ]
+        if registration:
+            reg_l = nd/2
+            pass
+        if cmyk:
+            rec_l = nd/2
+            rec_d = nd/8
+            cmyk_position = (nd/4, y1-rec_l*2)
+
+        tem_pdf_byte = io.BytesIO()
+
+        layout = canvas.Canvas(tem_pdf_byte, pagesize = (x,y))
+
+        for i in range(0, n_block):
+            for j in range(0, ni):
+
+                #fill basic layout components
+                if proof: # draw rectangle
+                    layout.setFillColorCMYK(cmyk_proof[0], cmyk_proof[1] ,cmyk_proof[2], cmyk_proof[3])
+                    layout.rect(proof_position[0], proof_position[1], proof_width, proof_height, fill=1)
+
+                    proof_position[1] -= proof_height
+                    
+                if trim: # draw line
+                    layout.setlineWidth(1*mm)
+                    layout.lines(trim_lines)
+                if registration: # add image
+                    pass
+                if cmyk: 
+                    layout.setFillColorCMYK(color_cyan)
+                    layout.rect(x, y, rec_l, rec_l, fill=1)
+                    x+=rec_d
+                    layout.setFillColorCMYK(color_magenta)
+                    layout.rect(x, y, rec_l, rec_l, fill=1)
+                    x+=rec_d
+                    layout.setFillColorCMYK(color_yellow)
+                    layout.rect(x, y, rec_l, rec_l, fill=1)
+                    x+=rec_d
+                    layout.setFillColorCMYK(color_black)
+                    layout.rect(x, y, rec_l, rec_l, fill=1)
+
+
+                layout.showPage()
+
+        #----------------------------
+        layout.save()
+        tem_pdf_byte.seek(0)
+        tem_pdf  = pypdf.PdfReader(tem_pdf_byte)
+        tem_pdf_byte.close()
+        return tem_pdf
 
     def generate_signature(
                             self,
