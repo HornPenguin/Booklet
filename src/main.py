@@ -260,8 +260,11 @@ class HP_Booklet:
                 
                 self.pagerange_var.set(f"1-{self.page_n.get()}")
 
-                width = round(page_size[0]/routines.pts_to_mm, 2)
-                height = round(page_size[1]/routines.pts_to_mm, 2)
+                width, height = routines.pts_mm(page_size)
+
+                #width = round(page_size[0]/routines.pts_to_mm, 2)
+                #height = round(page_size[1]/routines.pts_to_mm, 2)
+                
                 self.page_format.set(f'{width}x{height}')
                 textdata.PaperFormat["Default"] = f'{page_size[0]}x{page_size[1]}'
 
@@ -739,6 +742,7 @@ class HP_Booklet:
         formatbool = False
         format_width = 0.0
         format_height = 0.0
+        formatname = ''
         if self.custom_format.get():
             formatbool = True
             format_width = self.custom_format_width.get()
@@ -782,7 +786,7 @@ class HP_Booklet:
             leaves = [nl, nn, ns], 
             fold = fold, 
             riffle = rifflebool,
-            format = [formatbool, format_width , format_height],
+            format = [formatbool, format_width , format_height, formatname],
             imposition = impositionbool,
             split = splitbool,
             sigproof = [sigproofbool, sig_color],

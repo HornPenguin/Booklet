@@ -1,4 +1,5 @@
 from __future__ import annotations
+import re
 
 import PyPDF2 as pypdf
 import webbrowser
@@ -47,12 +48,12 @@ def resource_path(relative_path, directory):
 pts_to_mm = mm
 def pts_mm(size:tuple, mode=True):
     if mode: #pts to mm
-        x = round(size[0]/pts_to_mm,2)
-        y = round(size[1]/pts_to_mm,2)
+        x = round(size[0]/pts_to_mm,0)
+        y = round(size[1]/pts_to_mm,0)
         return (x,y)
     else:   #mm to pts
-        x = round(size[0] * pts_to_mm, 2)
-        y = round(size[1] * pts_to_mm, 2)
+        x = size[0] * pts_to_mm
+        y = size[1] * pts_to_mm
         return (x,y)
 
 def open_url(url):
@@ -68,6 +69,21 @@ def split_list(li:list, n:int)->list: #n: length of sub list
         rlist.append([li[ni: ni+n]][0])
 
     return rlist
+
+def convert(hex:str)->tuple:
+    if "#" in hex:
+        hex= hex.replace("#","")
+    R, G, B  = int(hex[0:2],16), int(hex[2:4],16), int(hex[4:6],16)
+    
+    R = R/255
+    G = G/255
+    B = B/255
+
+    K = 1- max(R,G,B)
+    C = (1-R-K)/(1 - K)
+    M = (1-G-K)/(1 - K)
+    Y = (1-B-K)/(1 - K)
+    return C, M, Y, K
 
 #Permutations and generating functions for signature routines-------------------------
 class Permutation:
@@ -365,35 +381,40 @@ class PDFsig:
             return rlist
 
     @classmethod
-    def generate_layout(cls, #All dimensions are written in pts unit
-        pagesize:tuple, n:tuple, nd:int, d:int, 
+    def generate_layout(#All dimensions are written in pts unit
+        cls,
+        pagesize:tuple, 
+        pagenum:int,
+        n:tuple, nd:int, d:int, 
         proof:bool, proofcode:str, 
         trim:bool, 
         registration:bool, 
         cmyk:bool
     ):
-        #Paper Dimension
-        arrange = PDFsig.sig_layout(ns)
-        nx = arrange[0]
-        ny = arrange[1]
-        x = 2*nd + nx*pagesize[0] + (nx-1)*d    
-        y = 2*nd + ny*pagesize[1] + (ny-1)*d
 
         #Signature composition
         ni = n[0]
         ns = n[1]
 
-        n_block = ni * ns
+        n_block = int(pagenum/(ni * ns))
+
+        
+        #Paper Dimension
+        arrange =PDFsig.sig_layout(ns)
+        ny = arrange[0]
+        nx = arrange[1]
+        x = 2*nd + nx*pagesize[0] + (nx-1)*d    
+        y = 2*nd + ny*pagesize[1] + (ny-1)*d
 
         #Signature proof
         if proof:
             proof_height = pagesize[1]/n_block
             proof_width = d
-            cmyk_proof = cls.convert(proofcode)
-            proof_position = (nd+pagesize[0], nd+ny*pagesize[1] + (ny-1)*d-proof_height)
+            cmyk_proof = convert(proofcode)
+            proof_position = [nd+pagesize[0], nd+ny*pagesize[1] + (ny-1)*d-proof_height]
         #trim
         if trim:
-            trim_l = nd*(3/4)
+            trim_l = nd*(1/2)
             #horizontal line
             x1 = nd/4
             x2 = nd + nx*pagesize[0] + (nx-1)*d +x1
@@ -421,7 +442,7 @@ class PDFsig:
         if cmyk:
             rec_l = nd/2
             rec_d = nd/8
-            cmyk_position = (nd/4, y1-rec_l*2)
+            cmyk_position = [nd/4, y1-rec_l*2]
 
         tem_pdf_byte = io.BytesIO()
 
@@ -431,39 +452,41 @@ class PDFsig:
             for j in range(0, ni):
 
                 #fill basic layout components
-                if proof: # draw rectangle
+                if proof and j==0 : # draw rectangle
+                    layout.setLineWidth(0)
                     layout.setFillColorCMYK(cmyk_proof[0], cmyk_proof[1] ,cmyk_proof[2], cmyk_proof[3])
                     layout.rect(proof_position[0], proof_position[1], proof_width, proof_height, fill=1)
 
-                    proof_position[1] -= proof_height
-                    
-                if trim: # draw line
-                    layout.setlineWidth(1*mm)
-                    layout.lines(trim_lines)
-                if registration: # add image
-                    pass
-                if cmyk: 
-                    layout.setFillColorCMYK(color_cyan)
-                    layout.rect(x, y, rec_l, rec_l, fill=1)
-                    x+=rec_d
-                    layout.setFillColorCMYK(color_magenta)
-                    layout.rect(x, y, rec_l, rec_l, fill=1)
-                    x+=rec_d
-                    layout.setFillColorCMYK(color_yellow)
-                    layout.rect(x, y, rec_l, rec_l, fill=1)
-                    x+=rec_d
-                    layout.setFillColorCMYK(color_black)
-                    layout.rect(x, y, rec_l, rec_l, fill=1)
+                    proof_position[1] = proof_position[1] - proof_height
+                for k in range(0,2):  
+                    if trim: # draw line
+                        layout.setLineWidth(0.5*mm)
+                        layout.lines(trim_lines)
+                    if registration: # add image
+                        pass
+                    if cmyk: 
+                        layout.setLineWidth(0)
+                        layout.setFillColor(color_cyan)
+                        layout.rect(cmyk_position[0], cmyk_position[1], rec_l, rec_l, fill=1)
+                        cmyk_position[1] -=(rec_d + rec_l)
+                        layout.setFillColor(color_magenta)
+                        layout.rect(cmyk_position[0], cmyk_position[1], rec_l, rec_l, fill=1)
+                        cmyk_position[1] -=(rec_d + rec_l)
+                        layout.setFillColor(color_yellow)
+                        layout.rect(cmyk_position[0], cmyk_position[1], rec_l, rec_l, fill=1)
+                        cmyk_position[1] -=(rec_d + rec_l)
+                        layout.setFillColor(color_black)
+                        layout.rect(cmyk_position[0], cmyk_position[1], rec_l, rec_l, fill=1)
+                        cmyk_position[1] = y1-rec_l*2
 
 
-                layout.showPage()
+                    layout.showPage()
 
         #----------------------------
         layout.save()
         tem_pdf_byte.seek(0)
         tem_pdf  = pypdf.PdfReader(tem_pdf_byte)
-        tem_pdf_byte.close()
-        return tem_pdf
+        return tem_pdf, tem_pdf_byte
 
     def generate_signature(
                             self,
@@ -482,6 +505,26 @@ class PDFsig:
                             registration:bool,
                             cmyk:bool
         ):
+        #Parameters
+        # 1. filename(str): File name of output
+        # 1. leaves(list(nl, nn, ns)) 
+        #               nl(int): number of leaves per signature
+        #               nn(int): number of sub signature
+        #               ns(int): number of leaves per subsignature: nl = nn x ns
+        # 2. fold(bool): determines n-fold book or not( fold more than 1 per each papaer)
+        # 3. riffle(bool): determines reiffle direction of pages, default = False(left to right)
+        # 4. format(list(formatbool, width, height)): paper format dimension
+        # 5. imposition(bool):
+        # 6. blank(list(mode, n))
+        #               mode(str): determines distribution of additional blank page to its value(front, back, both(=equal)).
+        #               n(int): number of additional blank page(s).
+        # 7. split(bool): determines whether split each signatures as disfferent files or not.
+        # 8. sigproof(list(sigproofbool sig_color)) 
+        #               sigproofbool(bool): determines add sigproof or not
+        #               sig_color: hex color code
+        # 9. trim(bool): add trim or not
+        # 10. registration(bool): add registration or not
+        # 11. cymk(bool): add cymk proof or not  
 
         manuscript_pdf = pypdf.PdfFileReader(str(inputfile))
         output_pdf = pypdf.PdfFileWriter()
@@ -527,11 +570,14 @@ class PDFsig:
 
         #Format scale
         if format[0]:
-            f_dim = textdata.PaperFormat[format].split("x")
-            width = float(f_dim[0])
-            height = float(f_dim[1])
-            scale_x = round(width / pts_to_mm, 2)  / format[1]
-            scale_y = round(height / pts_to_mm, 2) / format[2]
+
+            pPage_width, pPage_height = pts_mm(format[1], format[2], False)
+            f_dim = textdata.PaperFormat[format[3]].split("x")
+            pFormat_width, pFormat_height  = pts_mm(int(f_dim[0]), int(f_dim[1]), False)
+
+            scale_x = pFormat_width  / pPage_width 
+            scale_y = pFormat_height / pPage_height 
+
         else:
             scale_x = scale_y = 1.0
 
@@ -557,12 +603,26 @@ class PDFsig:
         # 
         
         printbool = split or sigproof[0] or trim or registration or cmyk
+        bool2 = split or trim or registration or cmyk
+        nd = 40 if bool2 else 0
         if imposition or printbool:
-            pass
+            imposition_pdf, temfile = self.generate_layout(
+                    pagesize,
+                    page_range,
+                    (nn,ns),
+                    nd = nd,
+                    d =5,
+                    proof = sigproof[0],
+                    proofcode= sigproof[1],
+                    trim = trim,
+                    registration=registration,
+                    cmyk = cmyk
+            )
         else:
             #Save files
             with open(outputfile, "wb") as f:
                 output_pdf.write(f)
+
         
 
         
@@ -572,26 +632,7 @@ class PDFsig:
 
 
 def gen_signature(input_file, output_file, **parameters):
-        #Parameters
-        # 1. filename(str): File name of output
-        # 1. leaves(list(nl, nn, ns)) 
-        #               nl(int): number of leaves per signature
-        #               nn(int): number of sub signature
-        #               ns(int): number of leaves per subsignature: nl = nn x ns
-        # 2. fold(bool): determines n-fold book or not( fold more than 1 per each papaer)
-        # 3. riffle(bool): determines reiffle direction of pages, default = False(left to right)
-        # 4. format(list(formatbool, width, height)): paper format dimension
-        # 5. imposition(bool):
-        # 6. blank(list(mode, n))
-        #               mode(str): determines distribution of additional blank page to its value(front, back, both(=equal)).
-        #               n(int): number of additional blank page(s).
-        # 7. split(bool): determines whether split each signatures as disfferent files or not.
-        # 8. sigproof(list(sigproofbool sig_color)) 
-        #               sigproofbool(bool): determines add sigproof or not
-        #               sig_color: hex color code
-        # 9. trim(bool): add trim or not
-        # 10. registration(bool): add registration or not
-        # 11. cymk(bool): add cymk proof or not  
+        
 
         pdf = pypdf.PdfFileReader(str((input_file)))
         pdf_sig = pypdf.PdfFileWriter()
