@@ -9,22 +9,29 @@ import sys, os, math, io, tempfile
 
 from itertools import permutations
 
-import svglib
+from svglib.svglib import svg2rlg
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import mm
-from reportlab.lib.colors import CMYKColor
+from reportlab.lib.colors import CMYKColor, CMYKColorSep
+from reportlab.graphics.shapes import *
 
 
 
 import numpy as np
 
 
-
+registration_svg= 'registration.svg'
 
 color_black = CMYKColor(0, 0, 0, 1)
 color_cyan = CMYKColor(1, 0, 0, 0)
 color_magenta = CMYKColor(0, 1, 0, 0)
 color_yellow = CMYKColor(0, 0, 1, 0)
+
+color_sep_cyan =    CMYKColorSep(1, 0, 0, 0, spotName='cyan')
+color_sep_magenta = CMYKColorSep(0, 1, 0, 0, spotName='magenta')
+color_sep_yellow =  CMYKColorSep(0, 0, 1, 0, spotName='yellow')
+color_sep_black =   CMYKColorSep(0, 0, 0, 1, spotName='black')
+registration_black = CMYKColor(1,1,1,1)
 
 status_code = {
     0: "Sucess",
@@ -84,6 +91,31 @@ def convert(hex:str)->tuple:
     M = (1-G-K)/(1 - K)
     Y = (1-B-K)/(1 - K)
     return C, M, Y, K
+
+def drawRegistrationMark(canvas, x, y, l):
+    origin = (x,y)
+    
+    def get_abpath(x0,y0,x1, y1):
+        return (x+x0, y+y0, x+x1, y+y1)
+
+    line_t = l/25
+    line_l = l*(3/16)
+    circle_r1 = l*(5/16)
+    circle_r2 = circle_r1 - line_t*(5/2)
+
+    lines = [
+        get_abpath(0,l/2, line_l, l/2),
+        get_abpath(l-line_l, l/2, l,l/2),
+        get_abpath(l/2,0, l/2, line_l),
+        get_abpath(l/2,l-line_l,l/2,l)
+    ]
+
+    canvas.setLineWidth(line_t)
+    canvas.setStrokeColor(registration_black)
+    canvas.lines(lines)
+
+    
+    return 0
 
 #Permutations and generating functions for signature routines-------------------------
 class Permutation:
@@ -437,7 +469,8 @@ class PDFsig:
                 (x4,y3, x4, y3 + trim_l)  # v, d r
             ]
         if registration:
-            reg_l = nd/2
+            reg_l = nd*(3/5)
+            registration_mark = svg2rlg(resource_path(registration_svg))
             pass
         if cmyk:
             rec_l = nd/2
@@ -463,6 +496,9 @@ class PDFsig:
                         layout.setLineWidth(0.5*mm)
                         layout.lines(trim_lines)
                     if registration: # add image
+                        layout.setFillOverprint(True)
+
+                        layout.setFillOverprint(False)
                         pass
                     if cmyk: 
                         layout.setLineWidth(0)
