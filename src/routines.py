@@ -15,28 +15,15 @@ from reportlab.lib.units import mm
 from reportlab.lib.colors import CMYKColor, CMYKColorSep
 from reportlab.graphics.shapes import *
 
-
-
 import numpy as np
 
-
-registration_svg= 'registration.svg'
 
 color_black = CMYKColor(0, 0, 0, 1)
 color_cyan = CMYKColor(1, 0, 0, 0)
 color_magenta = CMYKColor(0, 1, 0, 0)
 color_yellow = CMYKColor(0, 0, 1, 0)
 
-color_sep_cyan =    CMYKColorSep(1, 0, 0, 0, spotName='cyan')
-color_sep_magenta = CMYKColorSep(0, 1, 0, 0, spotName='magenta')
-color_sep_yellow =  CMYKColorSep(0, 0, 1, 0, spotName='yellow')
-color_sep_black =   CMYKColorSep(0, 0, 0, 1, spotName='black')
 registration_black = CMYKColor(1,1,1,1)
-
-status_code = {
-    0: "Sucess",
-    1: "Invaild page range"
-}
 
 
 # System directory
@@ -91,31 +78,6 @@ def convert(hex:str)->tuple:
     M = (1-G-K)/(1 - K)
     Y = (1-B-K)/(1 - K)
     return C, M, Y, K
-
-def drawRegistrationMark(canvas, x, y, l):
-    origin = (x,y)
-    
-    def get_abpath(x0,y0,x1, y1):
-        return (x+x0, y+y0, x+x1, y+y1)
-
-    line_t = l/25
-    line_l = l*(3/16)
-    circle_r1 = l*(5/16)
-    circle_r2 = circle_r1 - line_t*(5/2)
-
-    lines = [
-        get_abpath(0,l/2, line_l, l/2),
-        get_abpath(l-line_l, l/2, l,l/2),
-        get_abpath(l/2,0, l/2, line_l),
-        get_abpath(l/2,l-line_l,l/2,l)
-    ]
-
-    canvas.setLineWidth(line_t)
-    canvas.setStrokeColor(registration_black)
-    canvas.lines(lines)
-
-    
-    return 0
 
 #Permutations and generating functions for signature routines-------------------------
 class Permutation:
@@ -432,7 +394,7 @@ class PDFsig:
 
         
         #Paper Dimension
-        arrange =PDFsig.sig_layout(ns)
+        arrange = cls.sig_layout(ns)
         ny = arrange[0]
         nx = arrange[1]
         x = 2*nd + nx*pagesize[0] + (nx-1)*d    
@@ -469,9 +431,30 @@ class PDFsig:
                 (x4,y3, x4, y3 + trim_l)  # v, d r
             ]
         if registration:
-            reg_l = nd*(3/5)
-            registration_mark = svg2rlg(resource_path(registration_svg))
-            pass
+            l = (4/5) * nd
+            dis = nd/2
+
+            if not trim:
+                #horizontal line
+                x1 = nd/4
+                x2 = nd + nx*pagesize[0] + (nx-1)*d +x1
+                y1 = nd + ny*pagesize[1] + (ny-1)*d
+                y2 = nd
+                #vertical line
+                x3 = nd
+                x4 = x2 - x1
+                y3 = nd/4
+                y4 = y1 + y3
+            regist_coords =[
+                (dis - l/2, y1-dis - l),
+                (dis - l/2, y2 + dis),
+                (x2 + trim_l/2 - l/2, y1-dis - l),
+                (x2 + trim_l/2 - l/2, y2 + dis),
+                (x3 + dis, y4+trim_l/2 - l/2),
+                (x3 + dis, dis - l/2),
+                (x4 - dis -l, y4+trim_l/2 - l/2),
+                (x4 - dis -l, dis - l/2),
+            ]
         if cmyk:
             rec_l = nd/2
             rec_d = nd/8
@@ -496,10 +479,14 @@ class PDFsig:
                         layout.setLineWidth(0.5*mm)
                         layout.lines(trim_lines)
                     if registration: # add image
-                        layout.setFillOverprint(True)
-
-                        layout.setFillOverprint(False)
-                        pass
+                        cls._drawRegistrationMark(layout, regist_coords[0][0], regist_coords[0][1], l)
+                        cls._drawRegistrationMark(layout, regist_coords[1][0], regist_coords[1][1], l)
+                        cls._drawRegistrationMark(layout, regist_coords[2][0], regist_coords[2][1], l)
+                        cls._drawRegistrationMark(layout, regist_coords[3][0], regist_coords[3][1], l)
+                        cls._drawRegistrationMark(layout, regist_coords[4][0], regist_coords[4][1], l)
+                        cls._drawRegistrationMark(layout, regist_coords[5][0], regist_coords[5][1], l)
+                        cls._drawRegistrationMark(layout, regist_coords[6][0], regist_coords[6][1], l)
+                        cls._drawRegistrationMark(layout, regist_coords[7][0], regist_coords[7][1], l)
                     if cmyk: 
                         layout.setLineWidth(0)
                         layout.setFillColor(color_cyan)
@@ -523,6 +510,82 @@ class PDFsig:
         tem_pdf_byte.seek(0)
         tem_pdf  = pypdf.PdfReader(tem_pdf_byte)
         return tem_pdf, tem_pdf_byte
+
+    def _drawRegistrationMark(self, canvas, x, y, l):
+
+        def get_abpath4(x0,y0,x1, y1):
+            return (x+x0, y+y0, x+x1, y+y1)
+
+        def get_abpath2(x0,y0):
+            return x+x0, y+y0
+
+        line_t = l/15 #/25
+        line_l = l*(3/16)
+        circle_r1 = l*(5/16) - line_t
+        circle_r2 = circle_r1 - line_t*(1.5)
+
+        lines = [
+            get_abpath4(0,l/2, line_l, l/2),
+            get_abpath4(l-line_l, l/2, l,l/2),
+            get_abpath4(l/2,0, l/2, line_l),
+            get_abpath4(l/2,l-line_l,l/2,l)
+        ]
+
+        canvas.setLineWidth(line_t)
+        canvas.setStrokeColor(registration_black)
+        canvas.setFillColor(registration_black)
+        #lines
+        canvas.lines(lines)
+
+        #outter
+        arcs = canvas.beginPath()
+        #arcs.circle(x+l/2+line_t, y+l/2+line_t, circle_r1)
+        c = l/2 - line_t/2
+        #x1 = c - circle_r1
+        #x2 = c + circle_r1
+        #x1, x2 = get_abpath2(x1, x2)
+        #arcs.circle(x+ c, y+c , circle_r1)
+        x1 = c- circle_r1
+        x2 = c+ circle_r1
+        #상대 경로는 같아도 절대 경로에서는 x,y값이 같지 않음
+        x1, y1 = get_abpath2(x1, x1)
+        x2, y2 = get_abpath2(x2, x2)
+        arcs.arc(x1,        y1,         x2,         y2,         startAng=180,   extent=90)
+        arcs.arc(x1+line_t, y1,         x2+line_t,  y2,         startAng=270,   extent=90)
+        arcs.arc(x1+line_t, y1+line_t,  x2+line_t,  y2+line_t,  startAng=0,     extent=90)
+        arcs.arc(x1,        y1+line_t,  x2,         y2+line_t,  startAng=90,   extent=90)
+        canvas.drawPath(arcs, fill=0, stroke=1)
+
+        #inner
+        arcs_fill = canvas.beginPath()
+        #arcs_fill.circle(x+l/2, y+l/2, circle_r2)
+        x1 = c - circle_r2
+        x2 = c + circle_r2
+        x1, y1 = get_abpath2(x1, x1)
+        x2, y2 = get_abpath2(x2, x2)
+
+        xc , yc = get_abpath2(l/2, l/2)
+
+        d= line_t/2
+
+        arcs_fill.moveTo(xc-d, yc-d)
+        arcs_fill.arcTo(x1,        y1,         x2,         y2,         startAng=180,   extent=90)
+        
+
+        arcs_fill.moveTo(xc +d, yc-d)
+        arcs_fill.arcTo(x1+line_t, y1,         x2+line_t,  y2,         startAng=270,   extent=90)
+        
+
+        arcs_fill.moveTo(xc +d, yc +d)
+        arcs_fill.arcTo(x1+line_t, y1+line_t,  x2+line_t,  y2+line_t,  startAng=0,     extent=90)
+        
+        
+        arcs_fill.moveTo(xc -d, yc +d)
+        arcs_fill.arcTo(x1,        y1+line_t,  x2,         y2+line_t,  startAng=90,    extent=90)
+        
+        canvas.drawPath(arcs_fill, fill=1, stroke=0)
+
+        return 0
 
     def generate_signature(
                             self,
@@ -561,6 +624,9 @@ class PDFsig:
         # 9. trim(bool): add trim or not
         # 10. registration(bool): add registration or not
         # 11. cymk(bool): add cymk proof or not  
+
+        if imposition:
+            fold = True
 
         manuscript_pdf = pypdf.PdfFileReader(str(inputfile))
         output_pdf = pypdf.PdfFileWriter()
@@ -619,18 +685,30 @@ class PDFsig:
 
         
         #-----------------------------------------------------------------------
-        sig_num = len(page_range)/nl
         pro_blocks = split_list(page_range, nl)
 
-        for block in pro_blocks:
-            per_block  = sig_permutation.permute_to_list_index(block)
-            for i in per_block:
-                if i==0:
-                    output_pdf.add_blank_page(width = width, height = height)
-                else:
-                    page = manuscript_pdf.pages[i]
-                    page.scale(scale_x, scale_y)
-                    output_pdf.add_page(manuscript_pdf.pages[i])
+        if fold:
+            #layout = self.generate_layout()
+            for block in pro_blocks:
+                per_block  = sig_permutation.permute_to_list_index(block)
+                foldlist = split_list(per_block, 2*nl)[1::2]
+                for i in per_block:
+                    if i==0:
+                        output_pdf.add_blank_page(width = pFormat_width, height = pFormat_height)
+                    else:
+                        page = manuscript_pdf.pages[i] if i in foldlist else manuscript_pdf.pages[i].rotate_clockwise(180)
+                        page.scale(scale_x, scale_y)
+                        output_pdf.add_page(manuscript_pdf.pages[i])
+        else:
+            for block in pro_blocks:
+                per_block  = sig_permutation.permute_to_list_index(block)
+                for i in per_block:
+                    if i==0:
+                        output_pdf.add_blank_page(width = pFormat_width, height = pFormat_height)
+                    else:
+                        page = manuscript_pdf.pages[i]
+                        page.scale(scale_x, scale_y)
+                        output_pdf.add_page(manuscript_pdf.pages[i])
 
             
 
@@ -638,14 +716,21 @@ class PDFsig:
         # Todo: using reportlab library generate temper pdf file for printing marks
         # 
         
-        printbool = split or sigproof[0] or trim or registration or cmyk
-        bool2 = split or trim or registration or cmyk
-        nd = 40 if bool2 else 0
+        ndbool = trim or registration or cmyk
+        printbool = sigproof[0] or ndbool
+        
+        nd = 40 if ndbool else 0
+
         if imposition or printbool:
-            imposition_pdf, temfile = self.generate_layout(
-                    pagesize,
-                    page_range,
-                    (nn,ns),
+            if imposition:
+                composition = (nn,ns)
+            else:
+                composition = (1,1)
+        
+            tem_pdf, temfile = self.generate_layout(
+                    (pFormat_width, pFormat_height),
+                    len(page_range),
+                    composition,
                     nd = nd,
                     d =5,
                     proof = sigproof[0],
@@ -654,67 +739,19 @@ class PDFsig:
                     registration=registration,
                     cmyk = cmyk
             )
+
+            layout = self.sig_layout(ns) if composition[0] != 1 else (1,1)
+
+            def position(i, layout):
+                nx = layout[0]
+                ny = layout[1]
+                r = i % nx
+            for i in range(0,len(tem_pdf.pages)):
+                page = tem_pdf.pages[i]
+                for 
+                    page.merge_page()
+
         else:
             #Save files
             with open(outputfile, "wb") as f:
                 output_pdf.write(f)
-
-        
-
-        
-        
-
-
-
-
-def gen_signature(input_file, output_file, **parameters):
-        
-
-        pdf = pypdf.PdfFileReader(str((input_file)))
-        pdf_sig = pypdf.PdfFileWriter()
-
-        #Copy metadata and add 'producer' and 'moddata'
-        meta = {}
-        for key in pdf.metadata.keys():
-            val = pdf.metadata.raw_get(key)
-            meta[key] = str(val) 
-        pdf_sig.add_metadata(meta)
-        pdf_sig.add_metadata({"/Producer": "HornPenguin Booklet"})
-        pdf_sig.add_metadata({"/ModDate": f"{datetime.now()}"})
-
-        #Get number of pages
-        page_n = pdf.getNumPages()
-
-        #Generates signatures
-        per_n = sig_permutation(leaves, riffle)
-        #Calculate addtional pages
-        re_n = int(page_n /leaves) + (1 if page_n%leaves else 0)
-
-        #Format 
-        f_dim = textdata.PaperFormat[format].split("x")
-        width = float(f_dim[0])
-        height = float(f_dim[1])
-        scale_x = scale_y = 1.0
-
-
-        scale_x = width/parameters["format"][0]
-        scale_y = height/parameters["format"][1]
-
-        
-        for i in range(0, re_n):
-            for j in range(0, leaves):
-                l  =  leaves* i + per_n[j] -1
-                if l >= page_n:
-                    pdf_sig.add_blank_page(width = width, height= height)
-                else:
-                    page =pdf.pages[l]
-                    page.scale(scale_x, scale_y)
-                    pdf_sig.add_page(pdf.pages[l])
-        
-
-        output = open(output_file, "wb")
-        pdf_sig.write(output)
-        output.close()
-
-        return 0
-
