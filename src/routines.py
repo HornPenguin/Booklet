@@ -320,7 +320,11 @@ class PDFsig:
             raise ValueError("Fold sheets must be 4*2^k for k= 0, 1, 2, .... \n Current value is {n}")
         
         if n < 64:
-            return cls._fold_arrange[n]
+            fn = cls._fold_arrange[n]
+            if per:
+                return Permutation(n, fn[0]+fn[1])
+            else:
+                return fn
         else:
             n_iter = int(math.log(n/16,2))
             n_i = 32
@@ -334,11 +338,12 @@ class PDFsig:
                 n_i = 2*n_i
                 front_matrix = cls.__fold_matrix_update(n_i, front_matrix)
                 back_matrix = cls.__fold_matrix_update(n_i, back_matrix)   
+
         per_fn = np.concatenate(front_matrix).tolist() 
         per_bn = np.concatenate(back_matrix).tolist()
 
         if per:
-            Permutation(n, per_fn+per_bn )
+            return Permutation(n, per_fn+per_bn )
         else:
             return [per_fn, per_bn]      
     @classmethod
@@ -357,7 +362,7 @@ class PDFsig:
     @classmethod
     def signature_permutation(cls, n, nn, ns, riffle=True):
         permutation_riffle = Permutation(n, range(1, n+1)) if riffle else  Permutation.reverse_permutation(n)
-        permutation_signature = Permutation(n, cls.sig_rearrange(nn,ns)).index_mul_partial(cls.fold_list_n(ns, per=True))
+        permutation_signature = Permutation(n, cls.sig_rearrange(nn,ns)).index_mul_partial(cls.fold_list_n(ns, per=True), oper=False)
 
         return permutation_riffle * permutation_signature
     @classmethod
@@ -591,8 +596,9 @@ class PDFsig:
 
         return 0
 
+    @classmethod
     def generate_signature(
-                            self,
+                            cls,
                             inputfile:str,
                             outputfile:str,
                             pagerange:str,
@@ -610,7 +616,8 @@ class PDFsig:
         ):
         #Parameters
         # 1. filename(str): File name of output
-        # 1. leaves(list(nl, nn, ns)) 
+        # 2. pagerange: 
+        # 3. leaves(list(nl, nn, ns)) 
         #               nl(int): number of leaves per signature
         #               nn(int): number of sub signature
         #               ns(int): number of leaves per subsignature: nl = nn x ns
@@ -644,12 +651,12 @@ class PDFsig:
             val = manuscript_pdf.metadata.raw_get(key)
             meta[key] = str(val) #converting to string
         
-        output_pdf.addmetadata(meta)
-        output_pdf.addmetadata({"/Producer": "HornPenguin Booklet"})
-        output_pdf.addmetadata({"/ModDate": f"{datetime.now()}"})
+        output_pdf.add_metadata(meta)
+        output_pdf.add_metadata({"/Producer": "HornPenguin Booklet"})
+        output_pdf.add_metadata({"/ModDate": f"{datetime.now()}"})
 
         #Calculate page range
-        page_range = self.cal_page_range(pagerange) #Implementation is needed
+        page_range = cls.get_page_range(pagerange) #Implementation is needed
         
         #Blank pages
         blankmode = blank[0]
@@ -669,10 +676,10 @@ class PDFsig:
 
 
         #Get permutation of given range and signature.
-        nl = leaves[0]
-        nn = leaves[1]
-        ns = leaves[2]
-        sig_permutation = self.signature_permutation(nn, ns, riffle=riffle)
+        nl = int(leaves[0])
+        nn = int(leaves[1])
+        ns = int(leaves[2])
+        sig_permutation = cls.signature_permutation(nl, nn, ns, riffle=riffle)
 
         #Format scale
         if format[0]:
@@ -732,7 +739,7 @@ class PDFsig:
             else:
                 composition = (1,1)
         
-            tem_pdf, temfile = self.generate_layout(
+            tem_pdf, temfile = cls.generate_layout(
                     (pFormat_width, pFormat_height),
                     len(page_range),
                     composition,
@@ -745,7 +752,7 @@ class PDFsig:
                     cmyk = cmyk
             )
 
-            layout = self.sig_layout(ns) if composition[0] != 1 else (1,1)
+            layout = cls.sig_layout(ns) if composition[0] != 1 else (1,1)
 
             def position(i, layout):
                 nx = layout[0]
@@ -778,9 +785,9 @@ class PDFsig:
                     pass
             else:
                 tem_pdf_Writer = pypdf.PdfWriter()
-                tem_pdf_Writer.addmetadata(meta)
-                tem_pdf_Writer.addmetadata({"/Producer": "HornPenguin Booklet"})
-                tem_pdf_Writer.addmetadata({"/ModDate": f"{datetime.now()}"})
+                tem_pdf_Writer.add_metadata(meta)
+                tem_pdf_Writer.add_metadata({"/Producer": "HornPenguin Booklet"})
+                tem_pdf_Writer.add_metadata({"/ModDate": f"{datetime.now()}"})
 
                 tem_pdf_Writer.append_pages_from_reader(tem_pdf)
 

@@ -281,6 +281,7 @@ class HP_Booklet:
             else:
                 print(f"Not a vaild PDF file: file ({filename})")
                 self.Generate_button.config(state=tk.DISABLED)
+        self.fold_enable(False)
         return 0
     def open_output_directory(self):
         directory = filedialog.askdirectory(
@@ -586,7 +587,8 @@ class HP_Booklet:
         if pagenumber < n_l:
             addb=n_l - pagenumber
         else:
-            addb=n_l - pagenumber%n_l
+            k = pagenumber%n_l
+            addb=(n_l - k) if n_l >1 and k!=0 else 0
         print(f"Addtional Blank Page: {addb}")
         self.addBlankpages.set(addb)
 
@@ -687,7 +689,7 @@ class HP_Booklet:
     def sig_color_set(self):
         color = askcolor()
         if color != None:
-             self.sig_color = color[1]
+             self.sig_color.set(color[1])
              self.sigproof_button.configure(bg=color[1])
              return 0
         return 1
@@ -735,7 +737,7 @@ class HP_Booklet:
         #Leaves and sub signature---------------------------------------------------------------
         leaves = (self.leaves.get()).split('f')
         nl = int(leaves[0])
-        nn = self.nn.get()
+        nn = self.sigcomposition_nn_combo.get()
         ns = self.ns.get()
 
         #Format----------------------------------------------------------------------------------
@@ -743,10 +745,10 @@ class HP_Booklet:
         format_width = 0.0
         format_height = 0.0
         formatname = ''
-        if self.custom_format.get():
+        if self.customformatbool.get():
             formatbool = True
-            format_width = self.custom_format_width.get()
-            format_height = self.custom_format_height.get()
+            format_width = self.custom_width.get()
+            format_height = self.custom_height.get()
         else:
             formatname = self.format.get()
             if formatname == "Default":
@@ -755,42 +757,49 @@ class HP_Booklet:
                 formatbool = True
                 wh = textdata.PaperFromat[formatname].split('x')
                 format_width, format_height = routines.pts_mm((int(wh[0]), int(wh[1])), mode=True)
+        
+        pagerange = self.pagerange.get()
         #Fold----------------------------------------------------------------------------------
         foldbool = self.foldvalue.get()
 
         #Riffle direction----------------------------------------------------------------------
         rifflebool = True if self.riffle.get() == "right" else False
         #Imposition----------------------------------------------------------------------------
-        impositionbool = self.imposition.get()
+        impositionbool = self.impositionbool.get()
+        #blank
+        blankmode =  self.blankpage.get()
+        blanknumber = self.addBlankpages.get()
         #Split---------------------------------------------------------------------------------
-        splitbool = self.split.get()
+        splitbool = self.splitpersigbool.get()
         #Signature Proof-----------------------------------------------------------------------
-        sigproofbool = self.sigproof.get()
-        sig_color = hex
+        sigproofbool = self.sigproofbool.get()
+        sig_color = self.sig_color.get()
         #Trim Mark-----------------------------------------------------------------------------
-        trimbool = self.trim.get()
+        trimbool = self.trimbool.get()
         #Registration Mark---------------------------------------------------------------------
-        registrationbool = self.registration.get()
+        registrationbool = self.registrationbool.get()
         #CYMK Mark-----------------------------------------------------------------------------
-        cymkbool = self.cymk.get()
+        cymkbool = self.cymkbool.get()
 
         
 
         print(f'Document:{filename}\n signature leaves: {nl} \n direction: {self.riffle.get()}')
 
-        status = routines.gen_signature(
-            input_file, 
-            output_path,
+        status = routines.PDFsig.generate_signature(
+            inputfile=input_file, 
+            outputfile=output_path,
+            pagerange=pagerange ,
             leaves = [nl, nn, ns], 
             fold = foldbool, 
             riffle = rifflebool,
             format = [formatbool, format_width , format_height, formatname],
             imposition = impositionbool,
+            blank = [blankmode,blanknumber],
             split = splitbool,
             sigproof = [sigproofbool, sig_color],
             trim = trimbool,
             registration = registrationbool,
-            cymk = cymkbool
+            cmyk = cymkbool
             )
 
         if status == 0:
