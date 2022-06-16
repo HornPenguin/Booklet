@@ -53,6 +53,8 @@ def open_url(url):
         return webbrowser.open(url)
 
 def split_list(li:list, n:int)->list: #n: length of sub list
+    if n <=1:
+        return li
     if len(li) %n !=0:
         raise ValueError(f"The length of sublist, {n}, must be a divider of original list, {len(li)}. ")
     
@@ -105,7 +107,10 @@ class Permutation:
             raise ValueError(f"plist does not satisfy permutation proeprty.\n All [0, n-1] values must be in plist. \n {plist}")
 
         self.n = n
-        self.plist = plist
+        if type(plist) == int:
+            self.plist = [1]
+        else: 
+            self.plist = plist
     def __getitem__(self, key):
         if type(key) != int:
             raise ValueError(f"key must be an integer type element: {key}")
@@ -147,7 +152,9 @@ class Permutation:
         else:
             return Permutation(self.n, rlist)
 
-    def permute_to_list_index(self, li):
+    def permute_to_list_index(self, li:list):
+        if not hasattr(li, '__iter__'):
+            li = [li]
         if len(li) != self.n:
             raise ValueError(f"{len(li)} ! = {self.n}")
         
@@ -241,7 +248,8 @@ class PDFsig:
         ]
     }
 
-    def __fold_matrix_update(self, n, matrix):
+    @classmethod
+    def __fold_matrix_update(cls, n, matrix):
         n_1 = np.flip(matrix.T, axis=0)
         len_n = len(n_1[0])
         l = int(len_n/2)
@@ -256,6 +264,82 @@ class PDFsig:
                 row_appended.append(np.insert(tem, 1, tu))    
             rows.append(np.concatenate(row_appended, axis=None))     
         return np.stack(rows)
+    @classmethod
+    def __drawRegistrationMark(cls, canvas, x, y, l):
+
+        def get_abpath4(x0,y0,x1, y1):
+            return (x+x0, y+y0, x+x1, y+y1)
+
+        def get_abpath2(x0,y0):
+            return x+x0, y+y0
+
+        line_t = l/15 #/25
+        line_l = l*(3/16)
+        circle_r1 = l*(5/16) - line_t
+        circle_r2 = circle_r1 - line_t*(1.5)
+
+        lines = [
+            get_abpath4(0,l/2, line_l, l/2),
+            get_abpath4(l-line_l, l/2, l,l/2),
+            get_abpath4(l/2,0, l/2, line_l),
+            get_abpath4(l/2,l-line_l,l/2,l)
+        ]
+
+        canvas.setLineWidth(line_t)
+        canvas.setStrokeColor(registration_black)
+        canvas.setFillColor(registration_black)
+        #lines
+        canvas.lines(lines)
+
+        #outter
+        arcs = canvas.beginPath()
+        #arcs.circle(x+l/2+line_t, y+l/2+line_t, circle_r1)
+        c = l/2 - line_t/2
+        #x1 = c - circle_r1
+        #x2 = c + circle_r1
+        #x1, x2 = get_abpath2(x1, x2)
+        #arcs.circle(x+ c, y+c , circle_r1)
+        x1 = c- circle_r1
+        x2 = c+ circle_r1
+        #상대 경로는 같아도 절대 경로에서는 x,y값이 같지 않음
+        x1, y1 = get_abpath2(x1, x1)
+        x2, y2 = get_abpath2(x2, x2)
+        arcs.arc(x1,        y1,         x2,         y2,         startAng=180,   extent=90)
+        arcs.arc(x1+line_t, y1,         x2+line_t,  y2,         startAng=270,   extent=90)
+        arcs.arc(x1+line_t, y1+line_t,  x2+line_t,  y2+line_t,  startAng=0,     extent=90)
+        arcs.arc(x1,        y1+line_t,  x2,         y2+line_t,  startAng=90,   extent=90)
+        canvas.drawPath(arcs, fill=0, stroke=1)
+
+        #inner
+        arcs_fill = canvas.beginPath()
+        #arcs_fill.circle(x+l/2, y+l/2, circle_r2)
+        x1 = c - circle_r2
+        x2 = c + circle_r2
+        x1, y1 = get_abpath2(x1, x1)
+        x2, y2 = get_abpath2(x2, x2)
+
+        xc , yc = get_abpath2(l/2, l/2)
+
+        d= line_t/2
+
+        arcs_fill.moveTo(xc-d, yc-d)
+        arcs_fill.arcTo(x1,        y1,         x2,         y2,         startAng=180,   extent=90)
+        
+
+        arcs_fill.moveTo(xc +d, yc-d)
+        arcs_fill.arcTo(x1+line_t, y1,         x2+line_t,  y2,         startAng=270,   extent=90)
+        
+
+        arcs_fill.moveTo(xc +d, yc +d)
+        arcs_fill.arcTo(x1+line_t, y1+line_t,  x2+line_t,  y2+line_t,  startAng=0,     extent=90)
+        
+        
+        arcs_fill.moveTo(xc -d, yc +d)
+        arcs_fill.arcTo(x1,        y1+line_t,  x2,         y2+line_t,  startAng=90,    extent=90)
+        
+        canvas.drawPath(arcs_fill, fill=1, stroke=0)
+
+        return 0
 
     @staticmethod
     def get_info(path:str) -> tuple:
@@ -276,8 +360,11 @@ class PDFsig:
         return False, False, False, False
     @staticmethod
     def sig_layout(n:int) -> tuple:
-        if type(n) != int or n<4 or n%4 !=0:
-            raise ValueError(f"n:{n} must be a positive integer that multiple of 4.")
+        if type(n) != int:
+            if n==1:
+                return (1,1) 
+            elif n<4 or n%4 !=0:
+                raise ValueError(f"n:{n} must be a positive integer that multiple of 4.")
 
         if n%3 ==0:
             i = math.log2(n) - math.log2(3) -1
@@ -316,6 +403,11 @@ class PDFsig:
         return [per_fn, per_bn]       
     @classmethod
     def fold_list_n(cls, n, per=False):
+        if n==2:
+            if per:
+                return Permutation(2, [1,2])
+            else:
+                return [[1],[2]]
         if n % 4 !=0:
             raise ValueError("Fold sheets must be 4*2^k for k= 0, 1, 2, .... \n Current value is {n}")
         
@@ -347,16 +439,26 @@ class PDFsig:
         else:
             return [per_fn, per_bn]      
     @classmethod
-    def sig_rearrange(cls, nn, ns): #1
+    def sig_rearrange(cls, nn, ns, split=False): #1
+        if ns == 2:
+            return [1, 2]
         n_l = nn*ns
 
         nlist = [i+1 for i in range(0, n_l)]
-        nlist_splited = split_list(nlist, int(ns/2))
+        nlist_splited = split_list(nlist, int(ns/2)) if ns != 1 else nlist
         rlist=[]
 
         n_splited = 2*nn
-        for i in range(0,nn):
-            rlist = rlist + nlist_splited[i] + nlist_splited[n_splited-i-1]
+
+        if split:
+            for i in range(0, nn):
+                rlist.append(nlist_splited[i]+nlist_splited[n_splited-i-1])
+        else:
+            for i in range(0,nn):
+                rlist = rlist + nlist_splited[i] + nlist_splited[n_splited-i-1]
+
+        #for i in range(0,nn):
+        #    rlist = rlist + nlist_splited[i] + nlist_splited[n_splited-i-1]
 
         return rlist
     @classmethod
@@ -483,19 +585,20 @@ class PDFsig:
                     layout.rect(proof_position[0], proof_position[1], proof_width, proof_height, fill=1)
 
                     proof_position[1] = proof_position[1] - proof_height
+
                 for k in range(0,2):  
                     if trim: # draw line
                         layout.setLineWidth(0.5*mm)
                         layout.lines(trim_lines)
                     if registration: # add image
-                        cls._drawRegistrationMark(layout, regist_coords[0][0], regist_coords[0][1], l)
-                        cls._drawRegistrationMark(layout, regist_coords[1][0], regist_coords[1][1], l)
-                        cls._drawRegistrationMark(layout, regist_coords[2][0], regist_coords[2][1], l)
-                        cls._drawRegistrationMark(layout, regist_coords[3][0], regist_coords[3][1], l)
-                        cls._drawRegistrationMark(layout, regist_coords[4][0], regist_coords[4][1], l)
-                        cls._drawRegistrationMark(layout, regist_coords[5][0], regist_coords[5][1], l)
-                        cls._drawRegistrationMark(layout, regist_coords[6][0], regist_coords[6][1], l)
-                        cls._drawRegistrationMark(layout, regist_coords[7][0], regist_coords[7][1], l)
+                        cls.__drawRegistrationMark(canvas = layout, x=regist_coords[0][0], y=regist_coords[0][1], l=l)
+                        cls.__drawRegistrationMark(canvas = layout, x=regist_coords[1][0], y=regist_coords[1][1], l=l)
+                        cls.__drawRegistrationMark(canvas = layout, x=regist_coords[2][0], y=regist_coords[2][1], l=l)
+                        cls.__drawRegistrationMark(canvas = layout, x=regist_coords[3][0], y=regist_coords[3][1], l=l)
+                        cls.__drawRegistrationMark(canvas = layout, x=regist_coords[4][0], y=regist_coords[4][1], l=l)
+                        cls.__drawRegistrationMark(canvas = layout, x=regist_coords[5][0], y=regist_coords[5][1], l=l)
+                        cls.__drawRegistrationMark(canvas = layout, x=regist_coords[6][0], y=regist_coords[6][1], l=l)
+                        cls.__drawRegistrationMark(canvas = layout, x=regist_coords[7][0], y=regist_coords[7][1], l=l)
                     if cmyk: 
                         layout.setLineWidth(0)
                         layout.setFillColor(color_cyan)
@@ -519,83 +622,7 @@ class PDFsig:
         tem_pdf_byte.seek(0)
         tem_pdf  = pypdf.PdfReader(tem_pdf_byte)
         return tem_pdf, tem_pdf_byte
-
-    def _drawRegistrationMark(self, canvas, x, y, l):
-
-        def get_abpath4(x0,y0,x1, y1):
-            return (x+x0, y+y0, x+x1, y+y1)
-
-        def get_abpath2(x0,y0):
-            return x+x0, y+y0
-
-        line_t = l/15 #/25
-        line_l = l*(3/16)
-        circle_r1 = l*(5/16) - line_t
-        circle_r2 = circle_r1 - line_t*(1.5)
-
-        lines = [
-            get_abpath4(0,l/2, line_l, l/2),
-            get_abpath4(l-line_l, l/2, l,l/2),
-            get_abpath4(l/2,0, l/2, line_l),
-            get_abpath4(l/2,l-line_l,l/2,l)
-        ]
-
-        canvas.setLineWidth(line_t)
-        canvas.setStrokeColor(registration_black)
-        canvas.setFillColor(registration_black)
-        #lines
-        canvas.lines(lines)
-
-        #outter
-        arcs = canvas.beginPath()
-        #arcs.circle(x+l/2+line_t, y+l/2+line_t, circle_r1)
-        c = l/2 - line_t/2
-        #x1 = c - circle_r1
-        #x2 = c + circle_r1
-        #x1, x2 = get_abpath2(x1, x2)
-        #arcs.circle(x+ c, y+c , circle_r1)
-        x1 = c- circle_r1
-        x2 = c+ circle_r1
-        #상대 경로는 같아도 절대 경로에서는 x,y값이 같지 않음
-        x1, y1 = get_abpath2(x1, x1)
-        x2, y2 = get_abpath2(x2, x2)
-        arcs.arc(x1,        y1,         x2,         y2,         startAng=180,   extent=90)
-        arcs.arc(x1+line_t, y1,         x2+line_t,  y2,         startAng=270,   extent=90)
-        arcs.arc(x1+line_t, y1+line_t,  x2+line_t,  y2+line_t,  startAng=0,     extent=90)
-        arcs.arc(x1,        y1+line_t,  x2,         y2+line_t,  startAng=90,   extent=90)
-        canvas.drawPath(arcs, fill=0, stroke=1)
-
-        #inner
-        arcs_fill = canvas.beginPath()
-        #arcs_fill.circle(x+l/2, y+l/2, circle_r2)
-        x1 = c - circle_r2
-        x2 = c + circle_r2
-        x1, y1 = get_abpath2(x1, x1)
-        x2, y2 = get_abpath2(x2, x2)
-
-        xc , yc = get_abpath2(l/2, l/2)
-
-        d= line_t/2
-
-        arcs_fill.moveTo(xc-d, yc-d)
-        arcs_fill.arcTo(x1,        y1,         x2,         y2,         startAng=180,   extent=90)
-        
-
-        arcs_fill.moveTo(xc +d, yc-d)
-        arcs_fill.arcTo(x1+line_t, y1,         x2+line_t,  y2,         startAng=270,   extent=90)
-        
-
-        arcs_fill.moveTo(xc +d, yc +d)
-        arcs_fill.arcTo(x1+line_t, y1+line_t,  x2+line_t,  y2+line_t,  startAng=0,     extent=90)
-        
-        
-        arcs_fill.moveTo(xc -d, yc +d)
-        arcs_fill.arcTo(x1,        y1+line_t,  x2,         y2+line_t,  startAng=90,    extent=90)
-        
-        canvas.drawPath(arcs_fill, fill=1, stroke=0)
-
-        return 0
-
+    
     @classmethod
     def generate_signature(
                             cls,
@@ -676,6 +703,7 @@ class PDFsig:
 
 
         #Get permutation of given range and signature.
+        print(leaves)
         nl = int(leaves[0])
         nn = int(leaves[1])
         ns = int(leaves[2])
@@ -684,7 +712,7 @@ class PDFsig:
         #Format scale
         if format[0]:
 
-            pPage_width, pPage_height = pts_mm(format[1], format[2], False)
+            pPage_width, pPage_height = pts_mm((format[1], format[2]), False)
             f_dim = textdata.PaperFormat[format[3]].split("x")
             pFormat_width, pFormat_height  = pts_mm(int(f_dim[0]), int(f_dim[1]), False)
 
@@ -692,6 +720,7 @@ class PDFsig:
             scale_y = pFormat_height / pPage_height 
 
         else:
+            pFormat_width, pFormat_height = pts_mm((format[1], format[2]), False)
             scale_x = scale_y = 1.0
 
         
@@ -702,7 +731,7 @@ class PDFsig:
             #layout = self.generate_layout()
             for block in pro_blocks:
                 per_block  = sig_permutation.permute_to_list_index(block)
-                foldlist = split_list(per_block, 2*nl)[1::2]
+                foldlist = split_list(per_block, int(ns/2))[1::2]
                 for i in per_block:
                     if i==0:
                         output_pdf.add_blank_page(width = pFormat_width, height = pFormat_height)
@@ -761,11 +790,13 @@ class PDFsig:
                 y = ny - math.floor(i/ny) -1
                 return(x,y)
 
+            print(len(tem_pdf.pages))
             for i in range(0,len(tem_pdf.pages)):
                 page = tem_pdf.pages[i]
                 for j in range(0, nn):
                     for k in range(0,ns):
                         l = i*(nn*ns) + j*ns +k
+                        print(f"{i}*({nn}*{ns}) + {j}*{ns} + {k}")
                         page_wm = output_pdf.pages[l]
                         x, y = position(k+1, layout)
                         tx = nd +(pFormat_width + d)*x

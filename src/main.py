@@ -378,7 +378,7 @@ class HP_Booklet:
         self.filename_entry = ttk.Entry(self.Frame_output, textvariable=self.filename, width = int(entry_width/2))
 
         self.text_leaves = ttk.Label(self.Frame_output, text="Leaves", justify=tk.LEFT, anchor='w') 
-        self.lvalues = [f"{4*(i+1)}" if (i+1)%2 and i!=2  else f"{4*(i+1)}f" for i in range(0,8)] + ["1"]
+        self.lvalues = [f"{4*(i+1)}" if (i+1)%2 and i!=2  else f"{4*(i+1)}f" for i in range(0,8)] + ["2"]
         self.leaves = ttk.Combobox(self.Frame_output, value= self.lvalues, state='readonly')
         self.leaves.current(0)
         self.addblankpages_label = ttk.Label(self.Frame_output, textvariable=self.addBlankpages, width=3)
@@ -595,9 +595,9 @@ class HP_Booklet:
         #Signature composition
         self.sigcomposition_nl.configure(text=f"{n_l} =")
 
-        if n_l ==1:
+        if n_l ==2:
             self.sigcomposition_nn_combo.config(value=[1])
-            self.ns.set(1)
+            self.ns.set(2)
         elif fcheck:
             if n_l == 12:
                 self.sigcomposition_nn_combo.config(value=[1, 3])
