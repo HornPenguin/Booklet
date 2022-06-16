@@ -754,11 +754,9 @@ class HP_Booklet:
             else:
                 formatbool = True
                 wh = textdata.PaperFromat[formatname].split('x')
-                format_width = int(wh[0])
-                format_height = int(wh[1])
+                format_width, format_height = routines.pts_mm((int(wh[0]), int(wh[1])), mode=True)
         #Fold----------------------------------------------------------------------------------
-        foldbool = (len(leaves) == 2)  and self.fold.get() 
-        fold = self.foldvalue.get()
+        foldbool = self.foldvalue.get()
 
         #Riffle direction----------------------------------------------------------------------
         rifflebool = True if self.riffle.get() == "right" else False
@@ -768,7 +766,7 @@ class HP_Booklet:
         splitbool = self.split.get()
         #Signature Proof-----------------------------------------------------------------------
         sigproofbool = self.sigproof.get()
-        #sig_color = hex
+        sig_color = hex
         #Trim Mark-----------------------------------------------------------------------------
         trimbool = self.trim.get()
         #Registration Mark---------------------------------------------------------------------
@@ -784,7 +782,7 @@ class HP_Booklet:
             input_file, 
             output_path,
             leaves = [nl, nn, ns], 
-            fold = fold, 
+            fold = foldbool, 
             riffle = rifflebool,
             format = [formatbool, format_width , format_height, formatname],
             imposition = impositionbool,

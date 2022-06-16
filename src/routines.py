@@ -5,14 +5,13 @@ import PyPDF2 as pypdf
 import webbrowser
 from datetime import datetime
 import textdata
-import sys, os, math, io, tempfile
+import sys, os, math, io
 
 from itertools import permutations
 
-from svglib.svglib import svg2rlg
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import mm
-from reportlab.lib.colors import CMYKColor, CMYKColorSep
+from reportlab.lib.colors import CMYKColor
 from reportlab.graphics.shapes import *
 
 import numpy as np
@@ -78,6 +77,11 @@ def convert(hex:str)->tuple:
     M = (1-G-K)/(1 - K)
     Y = (1-B-K)/(1 - K)
     return C, M, Y, K
+def CMYKtoRGB(C:float, M:float ,Y:float ,K:float):
+    R = 255*(1- C) * (1-K)
+    G = 255*(1- M) * (1-K)
+    B = 255*(1- Y) * (1-K)
+    return R, G, B
 
 #Permutations and generating functions for signature routines-------------------------
 class Permutation:
@@ -720,6 +724,7 @@ class PDFsig:
         printbool = sigproof[0] or ndbool
         
         nd = 40 if ndbool else 0
+        d = 5
 
         if imposition or printbool:
             if imposition:
@@ -732,7 +737,7 @@ class PDFsig:
                     len(page_range),
                     composition,
                     nd = nd,
-                    d =5,
+                    d =d,
                     proof = sigproof[0],
                     proofcode= sigproof[1],
                     trim = trim,
@@ -745,13 +750,48 @@ class PDFsig:
             def position(i, layout):
                 nx = layout[0]
                 ny = layout[1]
-                r = i % nx
+                x = (i-1) % (nx)
+                y = ny - math.floor(i/ny) -1
+                return(x,y)
+
             for i in range(0,len(tem_pdf.pages)):
                 page = tem_pdf.pages[i]
-                for 
-                    page.merge_page()
+                for j in range(0, nn):
+                    for k in range(0,ns):
+                        l = i*(nn*ns) + j*ns +k
+                        page_wm = output_pdf.pages[l]
+                        x, y = position(k+1, layout)
+                        tx = nd +(pFormat_width + d)*x
+                        ty = nd +(pFormat_height + d)*y
+                        t_page = pypdf.Transformation().translate(tx=tx, ty=ty)
+                        page_wm.add_transformation(t_page)
+                        page.merge_page(page_wm)
+            
+            if split:
+                path_and_name = outputfile.split(".pdf")[0]
+                for i in range(0, len(tem_pdf.pages))[0::2]:
+                    sp_pdf = pypdf.PdfFileWriter()
+                    sp_pdf.add_page(tem_pdf.pages[i])
+                    sp_pdf.add_page(tem_pdf.pages[i+1])
+                    with open(path_and_name+f"_{int(i/2)+1}"+".pdf", "wb") as sp_f:
+                        sp_pdf.write(sp_f)
+                    pass
+            else:
+                tem_pdf_Writer = pypdf.PdfWriter()
+                tem_pdf_Writer.addmetadata(meta)
+                tem_pdf_Writer.addmetadata({"/Producer": "HornPenguin Booklet"})
+                tem_pdf_Writer.addmetadata({"/ModDate": f"{datetime.now()}"})
+
+                tem_pdf_Writer.append_pages_from_reader(tem_pdf)
+
+                with open(outputfile, "wb") as f:
+                    tem_pdf_Writer.write(f)
+            
+            temfile.close()
 
         else:
-            #Save files
-            with open(outputfile, "wb") as f:
-                output_pdf.write(f)
+            if split:
+                pass
+            else:
+                with open(outputfile, "wb") as f:
+                    output_pdf.write(f)
