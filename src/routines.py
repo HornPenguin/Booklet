@@ -4,8 +4,14 @@ import re
 import PyPDF2 as pypdf
 import webbrowser
 from datetime import datetime
-import textdata
+
 import sys, os, math, io
+
+sys.path.append("..")
+sys.path.append(".")
+
+from . import textdata as textdata
+#import textdata
 
 from itertools import permutations
 
@@ -27,7 +33,7 @@ registration_black = CMYKColor(1,1,1,1)
 
 # System directory
 def resource_path(relative_path, directory):
-    """ Get absolute path to resource, works for dev and for PyInstaller """
+        #Get absolute path to resource, works for dev and for PyInstaller
     try:
         # PyInstaller creates a temp folder and stores path in _MEIPASS
         base_path = sys._MEIPASS
@@ -96,15 +102,28 @@ class Permutation:
             return [ p for p in per]
     @classmethod
     def reverse_permutation(cls, n):
-        return cls(n, range(n, 0, -1)) 
+        return cls(n, range(n, 0, -1))
 
+    @classmethod
+    def subpermutation_to_list_index(cls, per:Permutation, li:list):
+        if per.n > len(li):
+            raise ValueError(f"Permutation length is longer than list. {per.n}, {len(li)}") 
+        
+        if len(li) % per.n !=0:
+            raise ValueError(f"Permutation length must be a divider of list length. {per.n}, {len(li)} ")
 
+        split = split_list(li, per.n)
+        rlist = []
+        for subli in split:
+            rlist = rlist + per.permute_to_list_index(subli)
+        
+        return rlist
     def __init__(self, n, plist):
         if len(plist) != n:
             raise ValueError(f"{n} must be same with len(plist) = {len(plist)}")
 
         if sum(plist) != int(n* (n+1)/2):
-            raise ValueError(f"plist does not satisfy permutation proeprty.\n All [0, n-1] values must be in plist. \n {plist}")
+            raise ValueError(f"plist does not satisfy permutation proeprty.\n All [1, n] values must be in plist. \n {plist}")
 
         self.n = n
         if type(plist) == int:
@@ -228,7 +247,7 @@ class PDFsig:
         ],
         8: [
             [8,1,5,4],
-            [2,7,3,9]
+            [2,7,3,6]
         ],
         12: [
             [12,1,9,4,8,5],
@@ -462,11 +481,10 @@ class PDFsig:
 
         return rlist
     @classmethod
-    def signature_permutation(cls, n, nn, ns, riffle=True):
-        permutation_riffle = Permutation(n, range(1, n+1)) if riffle else  Permutation.reverse_permutation(n)
+    def signature_permutation(cls, n, nn, ns):
         permutation_signature = Permutation(n, cls.sig_rearrange(nn,ns)).index_mul_partial(cls.fold_list_n(ns, per=True), oper=False)
 
-        return permutation_riffle * permutation_signature
+        return permutation_signature
     @classmethod
     def get_page_range(cls, pagerange:str):
 
@@ -621,7 +639,7 @@ class PDFsig:
         layout.save()
         tem_pdf_byte.seek(0)
         tem_pdf  = pypdf.PdfReader(tem_pdf_byte)
-        return tem_pdf, tem_pdf_byte
+        return tem_pdf, tem_pdf_byte, (x-nd,y-nd)
     
     @classmethod
     def generate_signature(
@@ -663,8 +681,6 @@ class PDFsig:
         # 10. registration(bool): add registration or not
         # 11. cymk(bool): add cymk proof or not  
 
-        if imposition:
-            fold = True
 
         manuscript_pdf = pypdf.PdfFileReader(str(inputfile))
         output_pdf = pypdf.PdfFileWriter()
@@ -688,7 +704,7 @@ class PDFsig:
         #Blank pages
         blankmode = blank[0]
         blanknum = blank[1]
-        if blankmode == "fonrt":
+        if blankmode == "front":
             blankfront = blanknum
         elif blankmode == "both":
             blankfront = int(blanknum/2)
@@ -707,7 +723,8 @@ class PDFsig:
         nl = int(leaves[0])
         nn = int(leaves[1])
         ns = int(leaves[2])
-        sig_permutation = cls.signature_permutation(nl, nn, ns, riffle=riffle)
+        sig_permutation = cls.signature_permutation(nl, nn, ns)
+        riffle_permutataion = Permutation(2, [1,2]) if riffle else Permutation(2, [2,1])
 
         #Format scale
         if format[0]:
@@ -727,28 +744,41 @@ class PDFsig:
         #-----------------------------------------------------------------------
         pro_blocks = split_list(page_range, nl)
 
-        if fold:
-            #layout = self.generate_layout()
+        composition = (nn, ns) if fold else (1,1)
+        layout = cls.sig_layout(ns) if composition[1] != 2 else (1,1)
+
+        if fold and layout[0] >1:
+            
             for block in pro_blocks:
                 per_block  = sig_permutation.permute_to_list_index(block)
-                foldlist = split_list(per_block, int(ns/2))[1::2]
-                for i in per_block:
-                    if i==0:
-                        output_pdf.add_blank_page(width = pFormat_width, height = pFormat_height)
-                    else:
-                        page = manuscript_pdf.pages[i] if i in foldlist else manuscript_pdf.pages[i].rotate_clockwise(180)
-                        page.scale(scale_x, scale_y)
-                        output_pdf.add_page(manuscript_pdf.pages[i])
+                per_block = Permutation.subpermutation_to_list_index(riffle_permutataion, per_block)
+                pages = split_list(per_block, int(ns/2))
+                for p in range(0,len(pages)):
+                    unfoldlist = split_list(pages[p], layout[1])[0::2]
+                    foldlist = split_list(pages[p], layout[1])[1::2]
+
+                    for k in range(0, len(unfoldlist)):
+
+                        for i in unfoldlist[k]:
+                            page = manuscript_pdf.pages[i-1]
+                            page.scale(scale_x, scale_y)
+                            output_pdf.add_page(page)
+                        for i in foldlist[k]:
+                            page = manuscript_pdf.pages[i-1].rotate_clockwise(180)
+                            page.scale(scale_x, scale_y)
+                            output_pdf.add_page(page)
+                            
         else:
             for block in pro_blocks:
                 per_block  = sig_permutation.permute_to_list_index(block)
+                per_block = Permutation.subpermutation_to_list_index(riffle_permutataion, per_block)
                 for i in per_block:
                     if i==0:
                         output_pdf.add_blank_page(width = pFormat_width, height = pFormat_height)
                     else:
-                        page = manuscript_pdf.pages[i]
+                        page = manuscript_pdf.pages[i-1]
                         page.scale(scale_x, scale_y)
-                        output_pdf.add_page(manuscript_pdf.pages[i])
+                        output_pdf.add_page(page)
 
             
 
@@ -763,12 +793,8 @@ class PDFsig:
         d = 5
 
         if imposition or printbool:
-            if imposition:
-                composition = (nn,ns)
-            else:
-                composition = (1,1)
-        
-            tem_pdf, temfile = cls.generate_layout(
+            
+            tem_pdf, temfile, cropsize = cls.generate_layout(
                     (pFormat_width, pFormat_height),
                     len(page_range),
                     composition,
@@ -781,7 +807,6 @@ class PDFsig:
                     cmyk = cmyk
             )
 
-            layout = cls.sig_layout(ns) if composition[0] != 1 else (1,1)
 
             def position(i, layout):
                 nx = layout[0]
@@ -791,19 +816,19 @@ class PDFsig:
                 return(x,y)
 
             print(len(tem_pdf.pages))
+
             for i in range(0,len(tem_pdf.pages)):
                 page = tem_pdf.pages[i]
-                for j in range(0, nn):
-                    for k in range(0,ns):
-                        l = i*(nn*ns) + j*ns +k
-                        print(f"{i}*({nn}*{ns}) + {j}*{ns} + {k}")
-                        page_wm = output_pdf.pages[l]
-                        x, y = position(k+1, layout)
-                        tx = nd +(pFormat_width + d)*x
-                        ty = nd +(pFormat_height + d)*y
-                        t_page = pypdf.Transformation().translate(tx=tx, ty=ty)
-                        page_wm.add_transformation(t_page)
-                        page.merge_page(page_wm)
+                for k in range(0,int(ns/2)):
+                    l = i*int(ns/2) + k
+                    page_wm = output_pdf.pages[l]
+                    x, y = position(k+1, layout)
+                    tx = nd +(pFormat_width + d)*x
+                    ty = nd +(pFormat_height + d)*y
+                    t_page = pypdf.Transformation().translate(tx=tx, ty=ty)
+                    page_wm.add_transformation(t_page)
+                    page_wm.cropbox.setUpperRight(cropsize)
+                    page.merge_page(page_wm)
             
             if split:
                 path_and_name = outputfile.split(".pdf")[0]
