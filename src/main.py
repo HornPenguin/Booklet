@@ -725,21 +725,27 @@ class HP_Booklet:
     #Pass to parameters to PDF routine
     def gen_button_action(self):
         
-
+        #inputfile----------------------------------------------------
         input_file = self.input_entry.get()
-        
+        #outputfile----------------------------------------------------
         filename = self.filename.get()
         if ".pdf" not in filename:
             filename = filename+".pdf"
         
         output_path = os.path.join(self.output_entry.get(), filename)
         
+        #pagerange--------------------------------------------------------
+        pagerange:str = self.pagerange.get()
         #Leaves and sub signature---------------------------------------------------------------
         leaves = (self.leaves.get()).split('f')
         nl = int(leaves[0])
-        nn = self.sigcomposition_nn_combo.get()
+        nn = int(self.sigcomposition_nn_combo.get())
         ns = self.ns.get()
-
+        #Fold----------------------------------------------------------------------------------
+        foldbool:bool = self.foldvalue.get()
+        #Riffle direction----------------------------------------------------------------------
+        rifflebool:bool = True if self.riffle.get() == "right" else False
+        
         #Format----------------------------------------------------------------------------------
         formatbool = False
         format_width = 0.0
@@ -758,37 +764,30 @@ class HP_Booklet:
                 wh = textdata.PaperFromat[formatname].split('x')
                 format_width, format_height = routines.pts_mm((int(wh[0]), int(wh[1])), mode=True)
         
-        pagerange = self.pagerange.get()
-        #Fold----------------------------------------------------------------------------------
-        foldbool = self.foldvalue.get()
-
-        #Riffle direction----------------------------------------------------------------------
-        rifflebool = True if self.riffle.get() == "right" else False
         #Imposition----------------------------------------------------------------------------
-        impositionbool = self.impositionbool.get()
+        impositionbool:bool = self.impositionbool.get()
         #blank
-        blankmode =  self.blankpage.get()
-        blanknumber = self.addBlankpages.get()
+        blankmode:str =  self.blankpage.get()
+        blanknumber:int = self.addBlankpages.get()
         #Split---------------------------------------------------------------------------------
-        splitbool = self.splitpersigbool.get()
+        splitbool:bool = self.splitpersigbool.get()
         #Signature Proof-----------------------------------------------------------------------
-        sigproofbool = self.sigproofbool.get()
-        sig_color = self.sig_color.get()
+        sigproofbool:bool = self.sigproofbool.get()
+        sig_color:str = self.sig_color.get()
         #Trim Mark-----------------------------------------------------------------------------
-        trimbool = self.trimbool.get()
+        trimbool:bool = self.trimbool.get()
         #Registration Mark---------------------------------------------------------------------
-        registrationbool = self.registrationbool.get()
+        registrationbool:bool = self.registrationbool.get()
         #CYMK Mark-----------------------------------------------------------------------------
-        cymkbool = self.cymkbool.get()
+        cymkbool:bool = self.cymkbool.get()
 
-        
-
+    
         print(f'Document:{filename}\n signature leaves: {nl} \n direction: {self.riffle.get()}')
 
         status = routines.PDFsig.generate_signature(
             inputfile=input_file, 
             outputfile=output_path,
-            pagerange=pagerange ,
+            pagerange=pagerange,
             leaves = [nl, nn, ns], 
             fold = foldbool, 
             riffle = rifflebool,

@@ -10,7 +10,7 @@ import sys, os, math, io
 sys.path.append("..")
 sys.path.append(".")
 
-from . import textdata as textdata
+from . import textdata 
 #import textdata
 
 from itertools import permutations
@@ -30,6 +30,10 @@ color_yellow = CMYKColor(0, 0, 1, 0)
 
 registration_black = CMYKColor(1,1,1,1)
 
+status_code={
+    0:"Done",
+    1:"Error"
+}
 
 # System directory
 def resource_path(relative_path, directory):
@@ -536,8 +540,9 @@ class PDFsig:
             cmyk_proof = convert(proofcode)
             proof_position = [nd+pagesize[0], nd+ny*pagesize[1] + (ny-1)*d-proof_height]
         #trim
+        trim_l = nd*(1/2)
         if trim:
-            trim_l = nd*(1/2)
+            
             #horizontal line
             x1 = nd/4
             x2 = nd + nx*pagesize[0] + (nx-1)*d +x1
@@ -587,7 +592,7 @@ class PDFsig:
         if cmyk:
             rec_l = nd/2
             rec_d = nd/8
-            cmyk_position = [nd/4, y1-rec_l*2]
+            cmyk_position = [nd/4, y1- 2*(nd+rec_l)]
 
         tem_pdf_byte = io.BytesIO()
 
@@ -630,7 +635,7 @@ class PDFsig:
                         cmyk_position[1] -=(rec_d + rec_l)
                         layout.setFillColor(color_black)
                         layout.rect(cmyk_position[0], cmyk_position[1], rec_l, rec_l, fill=1)
-                        cmyk_position[1] = y1-rec_l*2
+                        cmyk_position[1] = y1- 2*(nd+rec_l)
 
 
                     layout.showPage()
@@ -746,13 +751,16 @@ class PDFsig:
 
         composition = (nn, ns) if fold else (1,1)
         layout = cls.sig_layout(ns) if composition[1] != 2 else (1,1)
+        print(f"layout = {layout}")
 
         if fold and layout[0] >1:
+            rotate = pypdf.Transformation().rotate(180).translate(tx=pFormat_width, ty=pFormat_height)
             
             for block in pro_blocks:
                 per_block  = sig_permutation.permute_to_list_index(block)
                 per_block = Permutation.subpermutation_to_list_index(riffle_permutataion, per_block)
                 pages = split_list(per_block, int(ns/2))
+
                 for p in range(0,len(pages)):
                     unfoldlist = split_list(pages[p], layout[1])[0::2]
                     foldlist = split_list(pages[p], layout[1])[1::2]
@@ -763,10 +771,15 @@ class PDFsig:
                             page = manuscript_pdf.pages[i-1]
                             page.scale(scale_x, scale_y)
                             output_pdf.add_page(page)
+                            
+
                         for i in foldlist[k]:
-                            page = manuscript_pdf.pages[i-1].rotate_clockwise(180)
+                            page = manuscript_pdf.pages[i-1]
+                            page.add_transformation(rotate)
                             page.scale(scale_x, scale_y)
+                            page.cropbox.setUpperRight((pFormat_width, pFormat_height))
                             output_pdf.add_page(page)
+                    
                             
         else:
             for block in pro_blocks:
@@ -789,8 +802,8 @@ class PDFsig:
         ndbool = trim or registration or cmyk
         printbool = sigproof[0] or ndbool
         
-        nd = 40 if ndbool else 0
-        d = 5
+        nd = 113 if ndbool else 0
+        d = 30
 
         if imposition or printbool:
             
@@ -805,14 +818,14 @@ class PDFsig:
                     trim = trim,
                     registration=registration,
                     cmyk = cmyk
-            )
+                    )
 
 
             def position(i, layout):
-                nx = layout[0]
-                ny = layout[1]
+                nx = layout[1]
+                ny = layout[0]
                 x = (i-1) % (nx)
-                y = ny - math.floor(i/ny) -1
+                y = ny - math.floor((i-1)/nx) -1
                 return(x,y)
 
             print(len(tem_pdf.pages))
