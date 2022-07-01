@@ -384,10 +384,11 @@ class PDFsig:
     @staticmethod
     def sig_layout(n:int) -> tuple:
         if type(n) != int:
-            if n==1:
-                return (1,1) 
-            elif n<4 or n%4 !=0:
-                raise ValueError(f"n:{n} must be a positive integer that multiple of 4.")
+            raise ValueError("n is not an integer")
+        if n==1:
+            return (1,1) 
+        elif n<4 or n%4 !=0:
+            raise ValueError(f"n:{n} must be a positive integer that multiple of 4.")
 
         if n%3 ==0:
             i = math.log2(n) - math.log2(3) -1
@@ -486,7 +487,11 @@ class PDFsig:
         return rlist
     @classmethod
     def signature_permutation(cls, n, nn, ns):
-        permutation_signature = Permutation(n, cls.sig_rearrange(nn,ns)).index_mul_partial(cls.fold_list_n(ns, per=True), oper=False)
+        if n == nn and nn ==ns:
+            permutation_signature =Permutation(1, [1])
+        
+        else:
+            permutation_signature = Permutation(n, cls.sig_rearrange(nn,ns)).index_mul_partial(cls.fold_list_n(ns, per=True), oper=False)
 
         return permutation_signature
     @classmethod
@@ -522,6 +527,9 @@ class PDFsig:
         #Signature composition
         ni = n[0]
         ns = n[1]
+        sig = 2 if ns>1 else 1
+
+
 
         n_block = int(pagenum/(ni * ns))
 
@@ -598,6 +606,9 @@ class PDFsig:
 
         layout = canvas.Canvas(tem_pdf_byte, pagesize = (x,y))
 
+        #Test
+        layout.setFillColorRGB(0,1,1)
+
         for i in range(0, n_block):
             for j in range(0, ni):
 
@@ -609,7 +620,7 @@ class PDFsig:
 
                     proof_position[1] = proof_position[1] - proof_height
 
-                for k in range(0,2):  
+                for k in range(0,sig):  
                     if trim: # draw line
                         layout.setLineWidth(0.5*mm)
                         layout.lines(trim_lines)
@@ -706,6 +717,8 @@ class PDFsig:
         #Calculate page range
         page_range = cls.get_page_range(pagerange) #Implementation is needed
         
+        print("page range:",page_range)
+        
         #Blank pages
         blankmode = blank[0]
         blanknum = blank[1]
@@ -724,7 +737,9 @@ class PDFsig:
 
 
         #Get permutation of given range and signature.
-        print(leaves)
+
+        print("leaves composition:", leaves)
+
         nl = int(leaves[0])
         nn = int(leaves[1])
         ns = int(leaves[2])
@@ -738,12 +753,9 @@ class PDFsig:
             f_dim = textdata.PaperFormat[format[3]].split("x")
             pFormat_width, pFormat_height  = pts_mm(int(f_dim[0]), int(f_dim[1]), False)
 
-            scale_x = pFormat_width  / pPage_width 
-            scale_y = pFormat_height / pPage_height 
-
         else:
             pFormat_width, pFormat_height = pts_mm((format[1], format[2]), False)
-            scale_x = scale_y = 1.0
+
 
         
         #-----------------------------------------------------------------------
@@ -751,6 +763,7 @@ class PDFsig:
 
         composition = (nn, ns) if fold else (1,1)
         layout = cls.sig_layout(ns) if composition[1] != 2 else (1,1)
+        print(f"composition: {composition}")
         print(f"layout = {layout}")
 
         if fold and layout[0] >1:
@@ -758,7 +771,9 @@ class PDFsig:
             
             for block in pro_blocks:
                 per_block  = sig_permutation.permute_to_list_index(block)
-                per_block = Permutation.subpermutation_to_list_index(riffle_permutataion, per_block)
+                if nl != 1:
+                    per_block = Permutation.subpermutation_to_list_index(riffle_permutataion, per_block) 
+                
                 pages = split_list(per_block, int(ns/2))
 
                 for p in range(0,len(pages)):
@@ -768,29 +783,38 @@ class PDFsig:
                     for k in range(0, len(unfoldlist)):
 
                         for i in unfoldlist[k]:
-                            page = manuscript_pdf.pages[i-1]
-                            page.scale(scale_x, scale_y)
-                            output_pdf.add_page(page)
+                            if i !=0:
+                                page = manuscript_pdf.pages[i-1]
+                                page.cropbox.setUpperRight((pPage_width, pPage_height))
+                                page.scale_to(pFormat_width, pFormat_height)
+                                output_pdf.add_page(page)
+                            else:
+                                output_pdf.add_blank_page()
                             
 
                         for i in foldlist[k]:
-                            page = manuscript_pdf.pages[i-1]
-                            page.add_transformation(rotate)
-                            page.scale(scale_x, scale_y)
-                            page.cropbox.setUpperRight((pFormat_width, pFormat_height))
-                            output_pdf.add_page(page)
-                    
+                            if i !=0:
+                                page = manuscript_pdf.pages[i-1]
+                                
+                                page.add_transformation(rotate)
+                                page.cropbox.setUpperRight((pPage_width, pPage_height))
+                                page.scale_to(pFormat_width, pFormat_height)
+                                output_pdf.add_page(page)
+                            else:
+                                output_pdf.add_blank_page()
+
                             
         else:
             for block in pro_blocks:
                 per_block  = sig_permutation.permute_to_list_index(block)
-                per_block = Permutation.subpermutation_to_list_index(riffle_permutataion, per_block)
+                if nl != 1:
+                    per_block = Permutation.subpermutation_to_list_index(riffle_permutataion, per_block) 
                 for i in per_block:
                     if i==0:
                         output_pdf.add_blank_page(width = pFormat_width, height = pFormat_height)
                     else:
                         page = manuscript_pdf.pages[i-1]
-                        page.scale(scale_x, scale_y)
+                        page.scale_to(pFormat_width, pFormat_height)
                         output_pdf.add_page(page)
 
             
@@ -803,10 +827,10 @@ class PDFsig:
         printbool = sigproof[0] or ndbool
         
         nd = 113 if ndbool else 0
-        d = 30
+        d = 30 if ndbool else 0
 
         if imposition or printbool:
-            
+
             tem_pdf, temfile, cropsize = cls.generate_layout(
                     (pFormat_width, pFormat_height),
                     len(page_range),
@@ -822,18 +846,22 @@ class PDFsig:
 
 
             def position(i, layout):
+                if i ==0:
+                    i =1
                 nx = layout[1]
                 ny = layout[0]
                 x = (i-1) % (nx)
                 y = ny - math.floor((i-1)/nx) -1
                 return(x,y)
 
-            print(len(tem_pdf.pages))
+            print("Output pages",len(tem_pdf.pages))
 
             for i in range(0,len(tem_pdf.pages)):
                 page = tem_pdf.pages[i]
-                for k in range(0,int(ns/2)):
+                nre = int(ns/2) if ns >2 else 1
+                for k in range(0,nre):
                     l = i*int(ns/2) + k
+                    print(l, f'{i}x{int(ns/2)}+{k}',len(output_pdf.pages))
                     page_wm = output_pdf.pages[l]
                     x, y = position(k+1, layout)
                     tx = nd +(pFormat_width + d)*x
@@ -842,6 +870,7 @@ class PDFsig:
                     page_wm.add_transformation(t_page)
                     page_wm.cropbox.setUpperRight(cropsize)
                     page.merge_page(page_wm)
+            
             
             if split:
                 path_and_name = outputfile.split(".pdf")[0]

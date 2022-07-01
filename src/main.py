@@ -241,65 +241,6 @@ class HP_Booklet:
         license = partial(self.popup_window, 600, 800, textdata.license, "License", 10, 2.5, False)
         self.menu_help.add_command(label="License", command= license)
 
-    def open_file(self):
-        filename = filedialog.askopenfilename(
-            initialdir= "~", 
-            title="Select Manuscript", 
-            filetypes= (("PDF", "*.pdf"),)
-        )
-        if filename != '':
-            self.input_entry.delete(0, tk.END)
-            self.input_entry.insert(0, filename)
-
-            title, author, page_num, page_size = routines.PDFsig.get_info(filename)
-            if title != False:
-                self.title.set(title)
-                self.author.set(author)
-                self.page_n.set(int(page_num))
-                self.page_range_size.set(int(page_num))
-                
-                self.pagerange_var.set(f"1-{self.page_n.get()}")
-
-                width, height = routines.pts_mm(page_size)
-
-                #width = round(page_size[0]/routines.pts_to_mm, 2)
-                #height = round(page_size[1]/routines.pts_to_mm, 2)
-                
-                self.page_format.set(f'{width}x{height}')
-                textdata.PaperFormat["Default"] = f'{page_size[0]}x{page_size[1]}'
-
-                self.custom_width.set(width)
-                self.custom_height.set(height)
-
-                file_name_with_format = os.path.split(str(filename))[1]
-                file_name = file_name_with_format.split('.pdf')
-                self.filename.set(file_name[0] + '_HPBooklet'+'.pdf')
-
-                print(f'title:{self.title.get()}\nfile:{filename}')
-                self.Generate_button.config(state=tk.ACTIVE)
-                
-            else:
-                print(f"Not a vaild PDF file: file ({filename})")
-                self.Generate_button.config(state=tk.DISABLED)
-        self.fold_enable(False)
-        return 0
-    def open_output_directory(self):
-        directory = filedialog.askdirectory(
-            initialdir= "~", 
-            title="Select Directory",
-        )
-        self.output_entry.delete(0, tk.END)
-        self.output_entry.insert(0, directory)
-        
-        return 0
-    #def logo_display(self, logo, logo_width, logo_height, row=0, column=0):
-    #    self.logo = logo
-    #    self.canvas = tk.Canvas(self.window, width = self.window_width*2, height = 170)
-    #    self.canvas.create_image(self.window_width-logo_width/2, 10, anchor=NW, image= self.logo)
-    #    
-    #    self.canvas.grid(row=row, column=column, sticky="e")
-    #    return 0
-
     # Tab Basic
     def basic_inputbox(self, row, column, padx, pady, width, height, relief, padding, entry_width =41):
 
@@ -568,6 +509,61 @@ class HP_Booklet:
         self.Frame_ad_printing.grid(row=row, column=column, ipadx =padx,  padx=(2*padx,2*padx), pady=pady, sticky="ns")
 
 
+    def open_file(self):
+        filename = filedialog.askopenfilename(
+            initialdir= "~", 
+            title="Select Manuscript", 
+            filetypes= (("PDF", "*.pdf"),)
+        )
+        if filename != '':
+            self.input_entry.delete(0, tk.END)
+            self.input_entry.insert(0, filename)
+
+            title, author, page_num, pagesize  = routines.PDFsig.get_info(filename)
+            if title != False:
+                self.title.set(title)
+                self.author.set(author)
+                self.page_n.set(int(page_num))
+                self.page_range_size.set(int(page_num))
+                
+                self.pagerange_var.set(f"1-{self.page_n.get()}")
+
+                width, height = routines.pts_mm(pagesize)
+
+                self.page_format.set(f'{width}x{height}')
+
+                self.custom_width.set(width)
+                self.custom_height.set(height)
+
+                file_name_with_format = os.path.split(str(filename))[1]
+                file_name = file_name_with_format.split('.pdf')
+                self.filename.set(file_name[0] + '_HPBooklet'+'.pdf')
+
+                print(f'title:{self.title.get()}\nfile:{filename}')
+                self.Generate_button.config(state=tk.ACTIVE)
+                
+            else:
+                print(f"Not a vaild PDF file: file ({filename})")
+                self.Generate_button.config(state=tk.DISABLED)
+        self.fold_enable(False)
+        return 0
+    def open_output_directory(self):
+        directory = filedialog.askdirectory(
+            initialdir= "~", 
+            title="Select Directory",
+        )
+        self.output_entry.delete(0, tk.END)
+        self.output_entry.insert(0, directory)
+        
+        return 0
+    #def logo_display(self, logo, logo_width, logo_height, row=0, column=0):
+    #    self.logo = logo
+    #    self.canvas = tk.Canvas(self.window, width = self.window_width*2, height = 170)
+    #    self.canvas.create_image(self.window_width-logo_width/2, 10, anchor=NW, image= self.logo)
+    #    
+    #    self.canvas.grid(row=row, column=column, sticky="e")
+    #    return 0
+
     def fold_enable(self, event):
 
         leaves = self.leaves.get()
@@ -684,8 +680,6 @@ class HP_Booklet:
 
         return True
 
-
-
     def sig_color_set(self):
         color = askcolor()
         if color != None:
@@ -753,19 +747,26 @@ class HP_Booklet:
         formatname = ''
         if self.customformatbool.get():
             formatbool = True
-            format_width = self.custom_width.get()
+            format_width= self.custom_width.get()
             format_height = self.custom_height.get()
         else:
             formatname = self.format.get()
             if formatname == "Default":
                 formatbool = False
+                wh = self.page_format.get().split('x')
+                wh[0] = float(wh[0])
+                wh[1] = float(wh[1])
             else:
                 formatbool = True
                 wh = textdata.PaperFromat[formatname].split('x')
-                format_width, format_height = routines.pts_mm((int(wh[0]), int(wh[1])), mode=True)
+            
+            format_width = int(wh[0]) 
+            format_height = int(wh[1])
         
         #Imposition----------------------------------------------------------------------------
         impositionbool:bool = self.impositionbool.get()
+        if impositionbool:
+            foldbool = True
         #blank
         blankmode:str =  self.blankpage.get()
         blanknumber:int = self.addBlankpages.get()
@@ -783,6 +784,20 @@ class HP_Booklet:
 
     
         print(f'Document:{filename}\n signature leaves: {nl} \n direction: {self.riffle.get()}')
+
+        print('Variable:\t value')
+        print(f'input file:\t{input_file} ')
+        print(f'Output path:\t{output_path} ')
+        print(f'page range:\t\t{pagerange} ')
+        print(f'leaves:\t{[nl, nn, ns]} ')
+        print(f'fold:\t{foldbool}')
+        print(f'riffle:\t{rifflebool}')
+        print(f'format:\t [{formatbool},{format_width} ,{format_height} ]')
+        print(f'imposition:\t{impositionbool}')
+        print(f'blank:\t [{blankmode},{blanknumber}]')
+        print(f'split:\t{splitbool}')
+        print(f'sigproof:\t[{sigproofbool},{sig_color}]')
+        status = 0
 
         status = routines.PDFsig.generate_signature(
             inputfile=input_file, 
@@ -802,7 +817,7 @@ class HP_Booklet:
             )
 
         if status == 0:
-            done_text = f'{filename} is done'
+            done_text = r'{} is done'.format(filename)
             self.popup_window(250,100, done_text, "Done", align="center", button_text = "Ok")
         else:
             self.popup_window(250, 100, routines.status_code[status], "Error", align = "center", button_text= "Ok")
