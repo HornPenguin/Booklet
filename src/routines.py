@@ -10,7 +10,7 @@ import sys, os, math, io
 sys.path.append("..")
 sys.path.append(".")
 
-from . import textdata 
+import textdata 
 #import textdata
 
 from itertools import permutations
@@ -765,6 +765,7 @@ class PDFsig:
         layout = cls.sig_layout(ns) if composition[1] != 2 else (1,1)
         print(f"composition: {composition}")
         print(f"layout = {layout}")
+
 
         if fold and layout[0] >1:
             rotate = pypdf.Transformation().rotate(180).translate(tx=pFormat_width, ty=pFormat_height)
