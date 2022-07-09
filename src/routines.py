@@ -11,7 +11,7 @@ sys.path.append("..")
 sys.path.append(".")
 
 import textdata 
-#import textdata
+#from . import textdata
 
 from itertools import permutations
 
@@ -747,9 +747,8 @@ class PDFsig:
         riffle_permutataion = Permutation(2, [1,2]) if riffle else Permutation(2, [2,1])
 
         #Format scale
+        pPage_width, pPage_height = pts_mm((format[1], format[2]), False)
         if format[0]:
-
-            pPage_width, pPage_height = pts_mm((format[1], format[2]), False)
             f_dim = textdata.PaperFormat[format[3]].split("x")
             pFormat_width, pFormat_height  = pts_mm(int(f_dim[0]), int(f_dim[1]), False)
 
@@ -768,6 +767,7 @@ class PDFsig:
 
 
         if fold and layout[0] >1:
+            
             rotate = pypdf.Transformation().rotate(180).translate(tx=pFormat_width, ty=pFormat_height)
             
             for block in pro_blocks:
@@ -831,7 +831,7 @@ class PDFsig:
         d = 30 if ndbool else 0
 
         if imposition or printbool:
-
+            print(pFormat_width, "\n", pFormat_height) #debug
             tem_pdf, temfile, cropsize = cls.generate_layout(
                     (pFormat_width, pFormat_height),
                     len(page_range),
