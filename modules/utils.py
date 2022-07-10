@@ -8,11 +8,15 @@ from reportlab.lib.colors import CMYKColor
 
 # point <-> mm convert
 def pts_mm(size:tuple, mode=True)->tuple: #mode: True(pts -> mm), False(mm -> pts)
-    """
-    :param size: tuple(float, float), tuple of two point or mm unit size.
-    :param mode: bool, Determines the direction of conversion. `True`: point to mm, `False`: mm to point.
+    """Unit conversion between point and mm.
 
-    Unit conversion between point and mm.
+    :param size: Tuple of two point or mm unit size.
+    :type size: tuple(float, float)
+    :param mode: Determines the direction of conversion. :code:`True`: point to mm, :code:`False`: mm to point.
+    :type mode: bool, default= :code:`True`
+    
+    :return: (x, y)
+    :rtype: float tuple
     """
     if mode: #pts to mm
         x = round(size[0]/mm,0)
