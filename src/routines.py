@@ -10,8 +10,8 @@ import sys, os, math, io
 sys.path.append("..")
 sys.path.append(".")
 
-import textdata 
-#from . import textdata
+#import textdata 
+from . import textdata
 
 from itertools import permutations
 
@@ -375,9 +375,9 @@ class PDFsig:
 
             title = pdfinfo['/Title'] if '/Title' in pdfinfo.keys() else 'None'
             authors = pdfinfo['/Author'] if '/Author' in pdfinfo.keys() else 'Unkown'
-            page_size=  pdf.getPage(0).mediaBox[2:]
-            page_size[0] = float(page_size[0]) 
-            page_size[1] = float(page_size[1]) 
+
+            page_size=  [float(pdf.getPage(0).mediaBox.width), float(pdf.getPage(0).mediaBox.height)]
+
             return title, authors, page_num, page_size
         
         return False, False, False, False
