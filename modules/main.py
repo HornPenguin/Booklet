@@ -28,13 +28,18 @@
 #OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+"""
 
+"""
 
 __author__ = "Hyunseong Kim"
 __company__ = "HornPenguin"
 __version__ = "0.0.1"
 __license__ = "BSD license"
 
+import os
+import sys
+sys.path.insert(0, os.path.abspath('.'))
 
 import tkinter as tk
 from tkinter import ttk, filedialog
@@ -46,7 +51,7 @@ import os, re
 from math import log2
 
 #---------------------------------------------------------
-import routines, textdata
+from . import routines, textdata
 
 
 # Tab_advanced
@@ -76,6 +81,19 @@ class HP_Booklet:
             width = 390, 
             height =780
         ):
+        """
+        tkinter gui class
+
+        :param icon_path: Program app icon path.
+        :param homepage: Company url.
+        :param tutorial: tutorial page url.
+        :param textpady: Gui setting, text pad `y` direction. 
+        :param logo: Gui setting, ui logo image path
+        :param re_range_validation: Regular expression to validate the range of pages.
+        :param re_character_validation: Regular expression to confirm vaild characters in page ragne input.
+        :param fix: Bool, gui setting, tkinter gui window size modulation permission setting.
+        :param width: Int, The width of program window. It is not absolute setting. Some 
+        """
 
         self.url_homepage = homepage
         self.url_source = source
