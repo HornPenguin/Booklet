@@ -45,13 +45,19 @@ import tkinter as tk
 from tkinter import ttk, filedialog
 from tkinter.colorchooser import askcolor
 from typing import runtime_checkable
-from PIL import Image, ImageTk
 from functools import partial
-import os, re
-from math import log2
+import re
+from math import log2, floor
+from PIL import Image, ImageTk
+from datetime import datetime
+
+
 
 #---------------------------------------------------------
-from . import routines, textdata
+from . import routines, textdata, signature
+from .utils import *
+import PyPDF2 as pypdf
+from permutation import Permutation
 
 
 # Tab_advanced
@@ -177,7 +183,7 @@ class HP_Booklet:
         self.sigproofbool = tk.BooleanVar(value=False)
         self.trimbool = tk.BooleanVar(value=False)
         self.registrationbool = tk.BooleanVar(value=False)
-        self.cymkbool = tk.BooleanVar(value=False)
+        self.cmykbool = tk.BooleanVar(value=False)
 
         
     def initiate_window(self):
@@ -502,7 +508,7 @@ class HP_Booklet:
         self.registration_icon.photo = registration_icon
 
         self.cmyk_label = ttk.Label(self.Frame_ad_printing, text="CMYK(mark)", justify=tk.LEFT, anchor="w")
-        self.cmyk_checkbox = ttk.Checkbutton(self.Frame_ad_printing, variable=self.cymkbool)
+        self.cmyk_checkbox = ttk.Checkbutton(self.Frame_ad_printing, variable=self.cmykbool)
         self.cmyk_icon = ttk.Label(self.Frame_ad_printing, image=cmyk_icon)
         self.cmyk_icon.photo = cmyk_icon
 
@@ -574,13 +580,6 @@ class HP_Booklet:
         self.output_entry.insert(0, directory)
         
         return 0
-    #def logo_display(self, logo, logo_width, logo_height, row=0, column=0):
-    #    self.logo = logo
-    #    self.canvas = tk.Canvas(self.window, width = self.window_width*2, height = 170)
-    #    self.canvas.create_image(self.window_width-logo_width/2, 10, anchor=NW, image= self.logo)
-    #    
-    #    self.canvas.grid(row=row, column=column, sticky="e")
-    #    return 0
 
     def fold_enable(self, event):
 
@@ -700,10 +699,16 @@ class HP_Booklet:
 
     def sig_color_set(self):
         color = askcolor()
-        if color != None:
-             self.sig_color.set(color[1])
-             self.sigproof_button.configure(bg=color[1])
-             return 0
+        if color is not None:
+            colorhex = color[1]
+            if colorhex is None:
+                return 1
+            c, m, y, k = hex_to_cmyk(colorhex)
+            r, g, b = cmyk_to_rgb(c,m,y,k)
+            cmyk_hex = rgb_to_hex(r, g, b)
+            self.sig_color.set(cmyk_hex)
+            self.sigproof_button.configure(bg=cmyk_hex)
+            return 0
         return 1
 
     def set_format_values(self, event):
@@ -735,7 +740,7 @@ class HP_Booklet:
         self.Frame_button.grid(row=row, column=column, columnspan= columnspan)
     
     #Pass to parameters to PDF routine
-    def gen_button_action(self):
+    def gen_button_action(self, progress):
         
         #inputfile----------------------------------------------------
         input_file = self.input_entry.get()
@@ -798,7 +803,7 @@ class HP_Booklet:
         #Registration Mark---------------------------------------------------------------------
         registrationbool:bool = self.registrationbool.get()
         #CYMK Mark-----------------------------------------------------------------------------
-        cymkbool:bool = self.cymkbool.get()
+        cmykbool:bool = self.cmykbool.get()
 
     
         print(f'Document:{filename}\n signature leaves: {nl} \n direction: {self.riffle.get()}')
@@ -815,24 +820,158 @@ class HP_Booklet:
         print(f'blank:\t [{blankmode},{blanknumber}]')
         print(f'split:\t{splitbool}')
         print(f'sigproof:\t[{sigproofbool},{sig_color}]')
-        status = 0
+        
+        #----------------------------------------------------------------
+        # Generate popup window(progress bar)
 
-        status = routines.PDFsig.generate_signature(
-            inputfile=input_file, 
-            outputfile=output_path,
-            pagerange=pagerange,
-            leaves = [nl, nn, ns], 
-            fold = foldbool, 
-            riffle = rifflebool,
-            format = [formatbool, format_width , format_height, formatname],
-            imposition = impositionbool,
-            blank = [blankmode,blanknumber],
-            split = splitbool,
-            sigproof = [sigproofbool, sig_color],
-            trim = trimbool,
-            registration = registrationbool,
-            cmyk = cymkbool
+        #status = routines.PDFsig.generate_signature(
+        #    inputfile=input_file, 
+        #    outputfile=output_path,
+        #    pagerange=pagerange,
+        #    leaves = [nl, nn, ns], 
+        #    fold = foldbool, 
+        #    riffle = rifflebool,
+        #    format = [formatbool, format_width , format_height, formatname],
+        #    imposition = impositionbool,
+        #    blank = [blankmode,blanknumber],
+        #    split = splitbool,
+        #    sigproof = [sigproofbool, sig_color],
+        #    trim = trimbool,
+        #    registration = registrationbool,
+        #    cmyk = cmykbool
+        #    )
+
+        manuscript, writer, meta = signature.get_writer_and_manuscript(input_file)
+        page_range = signature.get_exact_page_range(pagerange, [blankmode,blanknumber])
+        per_sig, per_riffle = signature.get_arrange_permutations([nl,nn,ns], rifflebool)
+        blocks, composition, layout = signature.get_arrange_determinant(page_range, [nl, nn, ns], foldbool)
+        format_width, format_height = signature.get_format_dimension([formatbool, format_width , format_height, formatname])
+
+        if foldbool and layout[0] > 1:
+            transformation_ = pypdf.Transformation.rotate(180)
+            for block in blocks:
+
+                per_block = per_sig.permute_to_list_index(block)
+                if nl != 1:
+                    per_block = Permutation.subpermutation_to_list_index(per_riffle, per_block)
+
+                pages = split_list(per_block, int(ns/2))
+
+                for p in range(0, len(pages)):
+                    splited_pages = split_list(pages[p], layout[1])
+                    unfoldlist = splited_pages[0::2]
+                    foldlist = splited_pages[1::2]
+
+                    l = len(unfoldlist) #same with len(foldlist)
+
+                    for k in range(0, l):
+                        for i in unfoldlist[k]:
+                            if i !=0:
+                                page = manuscript.pages[i-1]
+                                page.cropbox.setUpperRight((format_width, format_width))
+                                page.scale_to(format_width, format_height)
+                                writer.add_page(page)
+                            else:
+                                writer.add_blank_page()
+                        for i in foldlist[k]:
+                            if i !=0:
+                                page = manuscript.pages[i-1]
+                                left = page.mediabox[0]
+                                bottom = page.mediabox[1]
+
+                                transformation = transformation_.translate(tx=format_width+left, ty=format_height+bottom)
+                                page.add_transformation(transformation)
+                                page.cropbox.setUpperRight((format_width, format_width))
+                                page.scale_to(format_width, format_height)
+                                writer.add_page(page)
+                            else:
+                                writer.add_blank_page(width = format_width, height = format_height)
+        else:
+            for block in blocks:
+                per_block = per_sig.permute_to_list_index(block)
+                if nl != 1:
+                    per_block = Permutation.subpermutation_to_list_index(per_riffle, per_block) 
+                for i in per_block:
+                    if i==0:
+                        writer.add_blank_page(width = format_width, height = format_height)
+                    else:
+                        page = manuscript.pages[i-1]
+                        page.scale_to(format_width, format_height)
+                        writer.add_page(page)
+
+
+        ndbool = trimbool or registrationbool or cmykbool
+        printbool = sigproofbool or ndbool
+        
+        nd = 113 if ndbool else 0
+        d = 30 if ndbool else 0
+
+        if impositionbool or printbool:
+
+            tem_pdf, temfile, cropsize = signature.page_printing_layout(
+                (format_width, format_height),
+                len(page_range),
+                composition,
+                nd = nd,
+                d = d,
+                proof = sigproofbool,
+                proofcode = sig_color,
+                trim = trimbool,
+                registration = registrationbool,
+                cmyk = cmykbool
             )
+
+            def position(i, layout):
+                if i ==0:
+                    i =1
+                nx = layout[1]
+                ny = layout[0]
+                x = (i-1) % (nx)
+                y = ny - floor((i-1)/nx) -1
+                return(x,y)
+            
+            for i in range(0,len(tem_pdf.pages)):
+                page = tem_pdf.pages[i]
+                nre = int(ns/2) if ns >2 else 1
+                for k in range(0,nre):
+                    l = i*int(ns/2) + k
+                    print(l, f'{i}x{int(ns/2)}+{k}',len(writer.pages))
+                    page_wm = writer.pages[l]
+                    x, y = position(k+1, layout)
+                    tx = nd +(format_width + d)*x
+                    ty = nd +(format_height + d)*y
+                    t_page = pypdf.Transformation().translate(tx=tx, ty=ty)
+                    page_wm.add_transformation(t_page)
+                    page_wm.cropbox.setUpperRight(cropsize)
+                    page.merge_page(page_wm)
+
+            if splitbool:
+                path_and_name = writer.split(".pdf")[0]
+                for i in range(0, len(tem_pdf.pages))[0::2]:
+                    sp_pdf = pypdf.PdfFileWriter()
+                    sp_pdf.add_page(tem_pdf.pages[i])
+                    sp_pdf.add_page(tem_pdf.pages[i+1])
+                    with open(path_and_name+f"_{int(i/2)+1}"+".pdf", "wb") as sp_f:
+                        sp_pdf.write(sp_f)
+            else:
+                tem_pdf_writer = pypdf.PdfWriter()
+                tem_pdf_writer.add_metadata(meta)
+                tem_pdf_writer.add_metadata({"/Producer": "HornPenguin Booklet"})
+                tem_pdf_writer.add_metadata({"/ModDate": f"{datetime.now()}"})
+
+                tem_pdf_writer.append_pages_from_reader(tem_pdf)
+
+                with open(output_path , "wb") as f:
+                    tem_pdf_writer.write(f)
+            
+            temfile.close()
+        else:
+            if splitbool:
+                pass
+            else:
+                with open(output_path , "wb") as f:
+                    writer.write(f)
+
 
         if status == 0:
             done_text = r'{} is done'.format(filename)

@@ -1,8 +1,27 @@
+from .utils import resource_path
+
+icon_name = 'hp_booklet.ico'
+icon_path = resource_path(icon_name, 'resource')
+
+#resources image names
+imposition_icon_names = [
+    "imposition",
+    "split"
+]
+printing_icon_names = [
+    "proof",
+    "cmyk",
+    "registration",
+    "trim"
+]
+
 re_get_ranges = r"([ ]{0,}\d+[ ]{0,}-{1,1}[ ]{0,}\d+[ ]{0,}|[ ]{0,}\d+[ ]{0,}[^,-])"
 re_check_permited_character=  r"([^-,\d\s])+?"
 
+
 git_repository = r"https://github.com/HornPenguin/Booklet"
 homepage = r"https://www.hornpenguin.com/%EC%84%9C%EB%B9%84%EC%8A%A4/booklet"
+tutorial = r"https://hpbooklet.readthedocs.org"
 
 
 about_text= [
@@ -44,6 +63,12 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+Other dependencies 
+
+PyPDF2: BSD-3 Clause
+ReportLab: BSD
 ''']
 
 format_head = ["Format", "width(mm)", "height(mm)"]

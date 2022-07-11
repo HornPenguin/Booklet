@@ -1,10 +1,30 @@
 """
 Miscellaneous uitls 
 """
+import os, sys
+from pathlib import Path
 
 import webbrowser
 from reportlab.lib.units import mm
 from reportlab.lib.colors import CMYKColor
+import PyPDF2 as pypdf
+
+re_get_ranges = r"([ ]{0,}\d+[ ]{0,}-{1,1}[ ]{0,}\d+[ ]{0,}|[ ]{0,}\d+[ ]{0,}[^,-])"
+re_check_permited_character=  r"([^-,\d\s])+?"
+
+
+# system related routine
+
+def resource_path(relative_path, directory):
+        #Get absolute path to resource, works for dev and for PyInstaller
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, directory, relative_path)
+
 
 # point <-> mm convert
 def pts_mm(size:tuple, mode=True)->tuple: #mode: True(pts -> mm), False(mm -> pts)
@@ -68,8 +88,20 @@ def cmyk_to_rgb(C:float, M:float, Y:float, K:float)->tuple:
     R = 255*(1- C) * (1-K)
     G = 255*(1- M) * (1-K)
     B = 255*(1- Y) * (1-K)
-    return R, G, B
+    return int(R), int(G), int(B)
 
+def rgb_to_hex(r, g, b):
+    rcode = str(hex(r)).split('x')[1]
+    gcode = str(hex(g)).split('x')[1]
+    bcode = str(hex(b)).split('x')[1]
+
+    if len(rcode) == 1:
+        rcode = '0'+rcode
+    if len(gcode) == 1:
+        gcode = '0'+gcode
+    if len(bcode) == 1:
+        bcode = '0'+bcode
+    return '#'+  rcode + gcode + bcode
 
 # Miscellaneous
 def split_list(li: list, n:int)->list:
@@ -90,3 +122,47 @@ def split_list(li: list, n:int)->list:
         rlist.append([li[ni: ni+n]][0])
 
     return rlist
+
+def get_page_range(page_range_string:str)->list:
+    page_range = page_range_string.replace(" ", "")
+
+    rlist = []
+
+    for st in page_range.split(","):
+        if '-' in st:
+            i, l = st.split("-")
+            i = int(i)
+            l = int(l)
+            r = l-i+1
+
+            rlist = rlist +[i + d for d in range(0,r)]
+        else:
+            rlist.append(int(st))
+    
+    return rlist
+
+def get_file_info(path_string:str)->tuple:
+
+    if type(path_string) != str:
+        raise TypeError(f"Given path must be a string variable. Current:{type(path_string)}")
+    
+    path = Path(path_string)
+
+    if not path.is_file():
+        raise ValueError("File {path} does not exist.")
+
+    pdf = pypdf.PdfFileReader(path)
+
+    page_num = pdf.getNumPages()
+
+    if page_num != 0: #check whether pdf is empty or not.
+        pdfinfo = pdf.metadata
+
+        title = pdfinfo['/Title'] if '/Title' in pdfinfo.keys() else 'None'
+        authors = pdfinfo['/Author'] if '/Author' in pdfinfo.keys() else 'Unkown'
+
+        page_size=  [float(pdf.getPage(0).mediaBox.width), float(pdf.getPage(0).mediaBox.height)]
+
+        return title, authors, page_num, page_size
+    
+    return False, False, False, False

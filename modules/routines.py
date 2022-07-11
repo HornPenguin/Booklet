@@ -400,31 +400,7 @@ class PDFsig:
             else:
                 k = int(i/2)
                 kp = k+1
-            return (int(2**k), int(2**kp))
-    @classmethod
-    def fold_arrange_n(cls,n: int) -> list:
-        if n % 4 !=0:
-            raise ValueError("Fold sheets must be 4*2^k for k= 0, 1, 2, .... \n Current value is {n}")
-    
-        if n <64:
-            return cls._fold_arrange[n]
-        else:
-            n_iter = int(math.log(n/16,2))
-            n_i = 32
-            per_n_1 = [cls._fold_arrange[n_i][0], cls._fold_arrange[n_i][1]]
-    
-            #permutation to matrix
-            layout_n_1 = cls.sig_layout(n_i)
-            front_matrix = np.array(per_n_1[0]).reshape(layout_n_1)
-            back_matrix = np.array(per_n_1[1]).reshape(layout_n_1)
-            for i in range(0, n_iter):
-                n_i = 2*n_i
-                front_matrix = cls.__fold_matrix_update(n_i, front_matrix)
-                back_matrix = cls.__fold_matrix_update(n_i, back_matrix)   
-        per_fn = np.concatenate(front_matrix).tolist() 
-        per_bn = np.concatenate(back_matrix).tolist()
-    
-        return [per_fn, per_bn]       
+            return (int(2**k), int(2**kp))    
     @classmethod
     def fold_list_n(cls, n, per=False):
         if n==2:
@@ -510,7 +486,7 @@ class PDFsig:
             else:
                 rlist.append(int(st))
             
-            return rlist
+        return rlist
 
     @classmethod
     def generate_layout(#All dimensions are written in pts unit
@@ -655,6 +631,7 @@ class PDFsig:
         layout.save()
         tem_pdf_byte.seek(0)
         tem_pdf  = pypdf.PdfReader(tem_pdf_byte)
+        
         return tem_pdf, tem_pdf_byte, (x-nd,y-nd)
     
     @classmethod
@@ -695,7 +672,7 @@ class PDFsig:
         #               sig_color: hex color code
         # 9. trim(bool): add trim or not
         # 10. registration(bool): add registration or not
-        # 11. cymk(bool): add cymk proof or not  
+        # 11. cmyk(bool): add cmyk proof or not  
 
 
         manuscript_pdf = pypdf.PdfFileReader(str(inputfile))
@@ -744,7 +721,7 @@ class PDFsig:
         nn = int(leaves[1])
         ns = int(leaves[2])
         sig_permutation = cls.signature_permutation(nl, nn, ns)
-        riffle_permutataion = Permutation(2, [1,2]) if riffle else Permutation(2, [2,1])
+        riffle_permutation = Permutation(2, [1,2]) if riffle else Permutation(2, [2,1])
 
         #Format scale
         pPage_width, pPage_height = pts_mm((format[1], format[2]), False)
@@ -773,7 +750,7 @@ class PDFsig:
             for block in pro_blocks:
                 per_block  = sig_permutation.permute_to_list_index(block)
                 if nl != 1:
-                    per_block = Permutation.subpermutation_to_list_index(riffle_permutataion, per_block) 
+                    per_block = Permutation.subpermutation_to_list_index(riffle_permutation, per_block) 
                 
                 pages = split_list(per_block, int(ns/2))
 
@@ -809,7 +786,7 @@ class PDFsig:
             for block in pro_blocks:
                 per_block  = sig_permutation.permute_to_list_index(block)
                 if nl != 1:
-                    per_block = Permutation.subpermutation_to_list_index(riffle_permutataion, per_block) 
+                    per_block = Permutation.subpermutation_to_list_index(riffle_permutation, per_block) 
                 for i in per_block:
                     if i==0:
                         output_pdf.add_blank_page(width = pFormat_width, height = pFormat_height)
