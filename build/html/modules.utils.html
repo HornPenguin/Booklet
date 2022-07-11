@@ -9,7 +9,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>modules.utils module &mdash; HornPenguin Booklet 0.0.1 documentation</title>
+  <title>utils module &mdash; HornPenguin Booklet 0.0.1 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="modules.textdata module" href="modules.textdata.html" /> 
+    <link rel="prev" title="modules.permutation module" href="modules.permutation.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -86,14 +86,8 @@
 </ul>
 <p><span class="caption-text">API</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">modules</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="modules.routines.html">modules.routines module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules.main.html">modules.main module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules.image_data.html">modules.image_data module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules.textdata.html">modules.textdata module</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">modules.utils module</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.permutation.html">modules.permutation module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">utils module</a></li>
 </ul>
 
             
@@ -139,9 +133,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-          <li><a href="modules.html">modules</a> &raquo;</li>
-        
-      <li>modules.utils module</li>
+      <li>utils module</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -160,68 +152,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <section id="module-modules.utils">
-<span id="modules-utils-module"></span><h1>modules.utils module<a class="headerlink" href="#module-modules.utils" title="Permalink to this headline">¶</a></h1>
-<p>Miscellaneous uitls</p>
-<dl class="py function">
-<dt id="modules.utils.cmyk_to_rgb">
-<code class="sig-prename descclassname"><span class="pre">modules.utils.</span></code><code class="sig-name descname"><span class="pre">cmyk_to_rgb</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="headerlink" href="#modules.utils.cmyk_to_rgb" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>C</strong> – float, Cyan color code</p></li>
-<li><p><strong>M</strong> – float, Magenta color code</p></li>
-<li><p><strong>Y</strong> – float, Yellow color code</p></li>
-<li><p><strong>K</strong> – float, Key(black) color code</p></li>
-</ul>
-</dd>
-</dl>
-<p>Convert CMYK code to RGB code.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="modules.utils.hex_to_cmyk">
-<code class="sig-prename descclassname"><span class="pre">modules.utils.</span></code><code class="sig-name descname"><span class="pre">hex_to_cmyk</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hex</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="headerlink" href="#modules.utils.hex_to_cmyk" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>hex</strong> – str, HEX code string</p>
-</dd>
-</dl>
-<p>Convert HEX code to CMYK code.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="modules.utils.open_url">
-<code class="sig-prename descclassname"><span class="pre">modules.utils.</span></code><code class="sig-name descname"><span class="pre">open_url</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#modules.utils.open_url" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="modules.utils.pts_mm">
-<code class="sig-prename descclassname"><span class="pre">modules.utils.</span></code><code class="sig-name descname"><span class="pre">pts_mm</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tuple</span><a class="headerlink" href="#modules.utils.pts_mm" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>size</strong> – tuple(float, float), tuple of two point or mm unit size.</p></li>
-<li><p><strong>mode</strong> – bool, Determines the direction of conversion. <cite>True</cite>: point to mm, <cite>False</cite>: mm to point.</p></li>
-</ul>
-</dd>
-</dl>
-<p>Unit conversion between point and mm.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="modules.utils.split_list">
-<code class="sig-prename descclassname"><span class="pre">modules.utils.</span></code><code class="sig-name descname"><span class="pre">split_list</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">li</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="headerlink" href="#modules.utils.split_list" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>li</strong> – list, list to be splited.</p></li>
-<li><p><strong>n</strong> – int, The length of sublist. It must be a divider of the length of <a href="#system-message-1"><span class="problematic" id="problematic-1">:param:`li`</span></a> list.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
+  <section id="utils-module">
+<h1>utils module<a class="headerlink" href="#utils-module" title="Permalink to this headline">¶</a></h1>
 </section>
 
 
@@ -233,7 +165,7 @@
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="modules.textdata.html" class="btn btn-neutral float-left" title="modules.textdata module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="modules.permutation.html" class="btn btn-neutral float-left" title="modules.permutation module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

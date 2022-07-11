@@ -32,11 +32,6 @@
 
 """
 
-__author__ = "Hyunseong Kim"
-__company__ = "HornPenguin"
-__version__ = "0.0.1"
-__license__ = "BSD license"
-
 import os
 import sys
 sys.path.insert(0, os.path.abspath('.'))
