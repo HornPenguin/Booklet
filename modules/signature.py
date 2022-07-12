@@ -7,9 +7,9 @@ import numpy as np
 import PyPDF2 as pypdf
 from reportlab.pdfgen import canvas
 
-from utils import *
-from textdata import PaperFormat
-from permutation import Permutation
+from .utils import *
+from .textdata import PaperFormat
+from .permutation import Permutation
 
 fold_arrange ={
     4: [

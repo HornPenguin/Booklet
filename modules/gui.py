@@ -52,7 +52,7 @@ from datetime import datetime
 from . import routines, textdata, signature
 from .utils import *
 import PyPDF2 as pypdf
-from permutation import Permutation
+from .permutation import Permutation
 
 
 # Tab_advanced
@@ -735,8 +735,29 @@ class HP_Booklet:
         self.Frame_button.grid(row=row, column=column, columnspan= columnspan)
     
     #Pass to parameters to PDF routine
-    def gen_button_action(self, progress):
+    def pdf_progress_popup(self, page_range, nl, impositionbool):
+
+        tpadx =tpady= 10
+        sub_window = tk.Toplevel(self.window)
+        sub_window.title(f'{self.filename.get()}')
+        sub_window.iconbitmap(self.icon_path)
+
+        progress_length  = len(page_range) + (int(len(page_range)/nl) if impositionbool else 0)
+        print("Pro_length:", progress_length)
+        sub_progress = ttk.Progressbar(sub_window, orient='horizontal', mode='determinate', maximum = progress_length)
+        sub_progress.grid(column=0,row=0, padx=10, pady=20)
+        progress_text = tk.StringVar(value='Start conversion')
+        sub_progress_text_label = ttk.Label(sub_window, textvariable=progress_text)
+        sub_progress_text_label.grid(column=0, row=1, padx= 10, pady=20)
         
+        
+        destorybutton = ttk.Button(sub_window, text="OK" , width=15, comman=sub_window.destroy, state=tk.DISABLED)
+        destorybutton.grid(column=0, row=2, padx=int(2*tpadx),pady=int(2*tpady))
+
+        return sub_window, sub_progress, progress_text, progress_length, destorybutton
+
+    def gen_button_action(self):
+
         #inputfile----------------------------------------------------
         input_file = self.input_entry.get()
         #outputfile----------------------------------------------------
@@ -752,7 +773,7 @@ class HP_Booklet:
         leaves = (self.leaves.get()).split('f')
         nl = int(leaves[0])
         nn = int(self.sigcomposition_nn_combo.get())
-        ns = self.ns.get()
+        ns = int(self.ns.get())
         #Fold----------------------------------------------------------------------------------
         foldbool:bool = self.foldvalue.get()
         #Riffle direction----------------------------------------------------------------------
@@ -817,30 +838,18 @@ class HP_Booklet:
         print(f'sigproof:\t[{sigproofbool},{sig_color}]')
         
         #----------------------------------------------------------------
-        # Generate popup window(progress bar)
 
-        #status = routines.PDFsig.generate_signature(
-        #    inputfile=input_file, 
-        #    outputfile=output_path,
-        #    pagerange=pagerange,
-        #    leaves = [nl, nn, ns], 
-        #    fold = foldbool, 
-        #    riffle = rifflebool,
-        #    format = [formatbool, format_width , format_height, formatname],
-        #    imposition = impositionbool,
-        #    blank = [blankmode,blanknumber],
-        #    split = splitbool,
-        #    sigproof = [sigproofbool, sig_color],
-        #    trim = trimbool,
-        #    registration = registrationbool,
-        #    cmyk = cmykbool
-        #    )
-
+        # Modulate file
         manuscript, writer, meta = signature.get_writer_and_manuscript(input_file)
         page_range = signature.get_exact_page_range(pagerange, [blankmode,blanknumber])
         per_sig, per_riffle = signature.get_arrange_permutations([nl,nn,ns], rifflebool)
         blocks, composition, layout = signature.get_arrange_determinant(page_range, [nl, nn, ns], foldbool)
         format_width, format_height = signature.get_format_dimension([formatbool, format_width , format_height, formatname])
+
+        # Generate popup window(progress bar)
+
+        sub_popup, sub_progress, progress_text, progress_length, destroybutton = self.pdf_progress_popup(page_range, nl, impositionbool)
+        self.window.wait_window(sub_popup)
 
         if foldbool and layout[0] > 1:
             transformation_ = pypdf.Transformation.rotate(180)
@@ -868,6 +877,12 @@ class HP_Booklet:
                                 writer.add_page(page)
                             else:
                                 writer.add_blank_page()
+                            
+                            #update progress
+                            sub_progress.step(1)
+                            progress_text.set(f"{sub_progress['value']}/{progress_length}")
+                            sub_popup.update()
+                            
                         for i in foldlist[k]:
                             if i !=0:
                                 page = manuscript.pages[i-1]
@@ -881,6 +896,11 @@ class HP_Booklet:
                                 writer.add_page(page)
                             else:
                                 writer.add_blank_page(width = format_width, height = format_height)
+                            
+                            #update progress
+                            sub_progress.step(1)
+                            progress_text.set(f"{sub_progress['value']}/{progress_length}")
+                            sub_popup.update()
         else:
             for block in blocks:
                 per_block = per_sig.permute_to_list_index(block)
@@ -893,6 +913,11 @@ class HP_Booklet:
                         page = manuscript.pages[i-1]
                         page.scale_to(format_width, format_height)
                         writer.add_page(page)
+                    
+                    #update progress
+                    sub_progress.step(1)
+                    progress_text.set(f"{sub_progress['value']}/{progress_length}")
+                    sub_popup.update()
 
 
         ndbool = trimbool or registrationbool or cmykbool
@@ -940,6 +965,15 @@ class HP_Booklet:
                     page_wm.cropbox.setUpperRight(cropsize)
                     page.merge_page(page_wm)
 
+                    #update progress
+                    sub_progress.step(1)
+                    print("pro:",sub_progress['value'])
+                    progress_text.set(f"{sub_progress['value']}/{progress_length}")
+                    sub_popup.update()
+
+
+            progress_text.set(f"Saving converted file...")
+
             if splitbool:
                 path_and_name = writer.split(".pdf")[0]
                 for i in range(0, len(tem_pdf.pages))[0::2]:
@@ -961,21 +995,26 @@ class HP_Booklet:
             
             temfile.close()
         else:
+            progress_text.set(f"Saving converted file...")
             if splitbool:
-                pass
+                path_and_name = output_path.split(".pdf")[0]
+                sigli = split_list(list(range(0,len(writer.pages))), nn)
+                for i, sig in enumerate(sigli):
+                    sp_pdf = pypdf.PdfFileWriter()
+                    for index in sig:
+                        sp_pdf.add_page(writer.pages[index])
+                    with open(path_and_name+f"_{int(i)+1}"+".pdf", "wb") as sp_f:
+                        sp_pdf.write(sp_f)
             else:
                 with open(output_path , "wb") as f:
                     writer.write(f)
 
+        sub_progress['value'] = progress_length
+        progress_text.set(f"Done")
+        sub_popup.update()
+        destroybutton.config(state=tk.ACTIVE)
 
-        if status == 0:
-            done_text = r'{} is done'.format(filename)
-            self.popup_window(250,100, done_text, "Done", align="center", button_text = "Ok")
-        else:
-            self.popup_window(250, 100, routines.status_code[status], "Error", align = "center", button_text= "Ok")
-        return 0
-
-
+        print("Done")
 
 
         

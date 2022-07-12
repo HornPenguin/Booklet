@@ -858,7 +858,6 @@ class PDFsig:
                     sp_pdf.add_page(tem_pdf.pages[i+1])
                     with open(path_and_name+f"_{int(i/2)+1}"+".pdf", "wb") as sp_f:
                         sp_pdf.write(sp_f)
-                    pass
             else:
                 tem_pdf_Writer = pypdf.PdfWriter()
                 tem_pdf_Writer.add_metadata(meta)
