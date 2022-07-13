@@ -45,11 +45,12 @@ import re
 from math import log2, floor
 from PIL import Image, ImageTk
 from datetime import datetime
+from beepy import beep
 
 
 
 #---------------------------------------------------------
-from . import routines, textdata, signature
+from . import textdata, signature
 from .utils import *
 import PyPDF2 as pypdf
 from .permutation import Permutation
@@ -105,7 +106,7 @@ class HP_Booklet:
         self.window_height = height
 
         self.window = tk.Tk()
-        self.window.call('source', routines.resource_path('azure.tcl','resource'))
+        self.window.call('source', resource_path('azure.tcl','resource'))
         self.window.call("set_theme", "light")
         self.window.title('HornPenguin Booklet')
 
@@ -195,21 +196,39 @@ class HP_Booklet:
         self.window.update()
         self.window.attributes('-topmost', False)
     
-    def popup_window(self, width, height, text, title, tpadx=10, tpady=20, fix=False, align='center', button_text = "Ok"):
+    def popup_window(self, text, title, tpadx=10, tpady=20, fix=False, align='center', button_text = "Ok", scroll=False):
         sub_window = tk.Toplevel(self.window)
         sub_window.title(title)
-        #sub_window.geometry(f'{width}x{height}')
         sub_window.resizable(False,True)
         sub_window.iconbitmap(self.icon_path)
 
         if not hasattr(text, '__iter__'):
             text = [text]
 
-        for te in text:
-            ttk.Label(sub_window, text= te, wraplengt=width -20, anchor=align).pack(padx=tpadx, pady = tpady)
+        if scroll:
+            frame = ttk.Frame(sub_window)
+            scrollbar = ttk.Scrollbar(frame , orient='vertical')
+            scrollbar.pack(side= tk.RIGHT, fill=tk.Y, anchor=tk.E)
+            text_value = tk.Text(frame)
+            for te in text:
+                text_value.insert(tk.END, te)
+
+            text_value.pack(side=tk.TOP, padx=3, pady = tpady, fill=tk.X, anchor=tk.W)
+                
+            
+            text_value.config(yscrollcommand=scrollbar.set, state=tk.DISABLED)
+            scrollbar.config(command=text_value.yview)
+
+            frame.pack(side=tk.TOP)
+            
+        else:
+            for te in text:
+                ttk.Label(sub_window, text=te, anchor=align).pack(padx=tpadx, pady = tpady)
 
         destorybutton = ttk.Button(sub_window, text=button_text , width=15, comman=sub_window.destroy)
-        destorybutton.pack(padx=int(2*tpadx),pady=int(2*tpady))
+        destorybutton.pack(side= tk.BOTTOM, padx=int(2*tpadx), pady=int(10))
+
+
 
         if fix:
             sub_window.transient(self.window)
@@ -249,15 +268,16 @@ class HP_Booklet:
         # Help: About, Format, Tutorial, License, support
         self.menu.add_cascade(label = "Help", menu=self.menu_help)
 
-        about_window = partial(self.popup_window, 400, 220, textdata.about_text, "About", 10, 2.5, False)
+        about_window = partial(self.popup_window, text=textdata.about_text, title="About", tpadx=10, tpady=2.5, fix=False)
         self.menu_help.add_command(label="About", command=about_window)
         
         format_window = partial(self.popup_window_table, 320, 480, textdata.format_head, textdata.format_table, "Paper Format", 30, 2.5, False)
         self.menu_help.add_command(label="Paper Format", command=format_window)
-        self.menu_help.add_command(label="Tutorial", command = partial(routines.open_url, self.url_tutorial))
-        self.menu_help.add_command(label="Source", command = partial(routines.open_url,self.url_source))
+        self.menu_help.add_command(label="Tutorial", command = partial(open_url, self.url_tutorial))
+        self.menu_help.add_command(label="Source", command = partial(open_url,self.url_source))
 
-        license = partial(self.popup_window, 600, 800, textdata.license, "License", 10, 2.5, False)
+        license = partial(self.popup_window, text= textdata.license, title="License", tpadx= 10, tpady=0, fix=False, scroll=True)
+
         self.menu_help.add_command(label="License", command= license)
 
     # Tab Basic
@@ -290,7 +310,7 @@ class HP_Booklet:
 
         self.logo_icon = ttk.Label(self.Frame_input, image= self.logo, cursor="hand2")
         self.logo_icon.photo = self.logo
-        self.logo_icon.bind("<Button-1>", lambda e: routines.open_url(self.url_homepage)) 
+        self.logo_icon.bind("<Button-1>", lambda e: open_url(self.url_homepage)) 
 
         
         self.input_entry.grid(row=1, column=0, columnspan=3, padx =3, ipadx=5)
@@ -538,7 +558,7 @@ class HP_Booklet:
             self.input_entry.delete(0, tk.END)
             self.input_entry.insert(0, filename)
 
-            title, author, page_num, pagesize  = routines.PDFsig.get_info(filename)
+            title, author, page_num, pagesize  = get_file_info(filename)
             if title != False:
                 self.title.set(title)
                 self.author.set(author)
@@ -547,7 +567,7 @@ class HP_Booklet:
                 
                 self.pagerange_var.set(f"1-{self.page_n.get()}")
 
-                width, height = routines.pts_mm(pagesize)
+                width, height = pts_mm(pagesize)
 
                 self.page_format.set(f'{width}x{height}')
 
@@ -797,9 +817,9 @@ class HP_Booklet:
                 wh[1] = float(wh[1])
             else:
                 formatbool = True
-                wh = textdata.PaperFromat[formatname].split('x')
+                wh = textdata.PaperFormat[formatname].split('x')
             
-            format_width = int(wh[0]) 
+            format_width = int(wh[0]) #mm
             format_height = int(wh[1])
         
         #Imposition----------------------------------------------------------------------------
@@ -844,15 +864,15 @@ class HP_Booklet:
         page_range = signature.get_exact_page_range(pagerange, [blankmode,blanknumber])
         per_sig, per_riffle = signature.get_arrange_permutations([nl,nn,ns], rifflebool)
         blocks, composition, layout = signature.get_arrange_determinant(page_range, [nl, nn, ns], foldbool)
-        format_width, format_height = signature.get_format_dimension([formatbool, format_width , format_height, formatname])
+        format_width, format_height = signature.get_format_dimension([formatbool, format_width , format_height, formatname]) #mm to pts
 
         # Generate popup window(progress bar)
 
         sub_popup, sub_progress, progress_text, progress_length, destroybutton = self.pdf_progress_popup(page_range, nl, impositionbool)
-        self.window.wait_window(sub_popup)
+        #self.window.wait_window(sub_popup)
 
         if foldbool and layout[0] > 1:
-            transformation_ = pypdf.Transformation.rotate(180)
+            transformation_ = pypdf.Transformation().rotate(180)
             for block in blocks:
 
                 per_block = per_sig.permute_to_list_index(block)
@@ -872,6 +892,11 @@ class HP_Booklet:
                         for i in unfoldlist[k]:
                             if i !=0:
                                 page = manuscript.pages[i-1]
+
+                                left = page.mediabox[0]
+                                bottom = page.mediabox[1]
+                                page.add_transformation(pypdf.Transformation().translate(tx=-left, ty = -bottom))
+
                                 page.cropbox.setUpperRight((format_width, format_width))
                                 page.scale_to(format_width, format_height)
                                 writer.add_page(page)
@@ -879,17 +904,19 @@ class HP_Booklet:
                                 writer.add_blank_page()
                             
                             #update progress
-                            sub_progress.step(1)
+                            sub_progress['value'] +=1
                             progress_text.set(f"{sub_progress['value']}/{progress_length}")
                             sub_popup.update()
                             
                         for i in foldlist[k]:
                             if i !=0:
                                 page = manuscript.pages[i-1]
+
                                 left = page.mediabox[0]
                                 bottom = page.mediabox[1]
+                                page.add_transformation(pypdf.Transformation().translate(tx=-left, ty = -bottom))
 
-                                transformation = transformation_.translate(tx=format_width+left, ty=format_height+bottom)
+                                transformation = transformation_.translate(tx=format_width, ty=format_height)
                                 page.add_transformation(transformation)
                                 page.cropbox.setUpperRight((format_width, format_width))
                                 page.scale_to(format_width, format_height)
@@ -898,7 +925,7 @@ class HP_Booklet:
                                 writer.add_blank_page(width = format_width, height = format_height)
                             
                             #update progress
-                            sub_progress.step(1)
+                            sub_progress['value'] +=1
                             progress_text.set(f"{sub_progress['value']}/{progress_length}")
                             sub_popup.update()
         else:
@@ -911,11 +938,16 @@ class HP_Booklet:
                         writer.add_blank_page(width = format_width, height = format_height)
                     else:
                         page = manuscript.pages[i-1]
+
+                        left = page.mediabox[0]
+                        bottom = page.mediabox[1]
+                        page.add_transformation(pypdf.Transformation().translate(tx=-left, ty = -bottom))
+
                         page.scale_to(format_width, format_height)
                         writer.add_page(page)
                     
                     #update progress
-                    sub_progress.step(1)
+                    sub_progress['value'] += 1
                     progress_text.set(f"{sub_progress['value']}/{progress_length}")
                     sub_popup.update()
 
@@ -923,8 +955,8 @@ class HP_Booklet:
         ndbool = trimbool or registrationbool or cmykbool
         printbool = sigproofbool or ndbool
         
-        nd = 113 if ndbool else 0
-        d = 30 if ndbool else 0
+        nd = 100 if ndbool else 0
+        d = 20 if ndbool else 0
 
         if impositionbool or printbool:
 
@@ -966,8 +998,7 @@ class HP_Booklet:
                     page.merge_page(page_wm)
 
                     #update progress
-                    sub_progress.step(1)
-                    print("pro:",sub_progress['value'])
+                    sub_progress['value'] +=1
                     progress_text.set(f"{sub_progress['value']}/{progress_length}")
                     sub_popup.update()
 
@@ -1016,13 +1047,19 @@ class HP_Booklet:
 
         print("Done")
 
+        beep(sound="ping")
+
+        sub_popup.transient(self.window)
+        sub_popup.grab_set()
+        self.window.wait_window(sub_popup)
+
 
         
 if __name__ == "__main__":
     text_pady = 3
 
     icon_name = 'hp_booklet.ico'
-    icon_path = routines.resource_path(icon_name, 'resource')
+    icon_path = resource_path(icon_name, 'resource')
 
     #resources image names
     imposition_icon_names = [
@@ -1037,7 +1074,7 @@ if __name__ == "__main__":
     ]
 
     logo_width = logo_height = 70
-    logo = Image.open(routines.resource_path('logo.png','resource')).resize((logo_width, logo_height), Image.Resampling(1))
+    logo = Image.open(resource_path('logo.png','resource')).resize((logo_width, logo_height), Image.Resampling(1))
 
     hpbooklet = HP_Booklet(
         icon_path, 
@@ -1054,12 +1091,12 @@ if __name__ == "__main__":
     hpbooklet.basic_inputbox( row=1, column=0, padx = 5, pady =10, width = 370, height = 160, relief="solid", padding="4 4 10 10")
     hpbooklet.basic_outputbox( row=1, column=1, padx = 5, pady =10, width = 370, height = 200, relief="solid", padding="4 4 10 10")
 
-    imposition_iconpaths =  { name: routines.resource_path(f"{name}.png", 'resource') for name in imposition_icon_names}
+    imposition_iconpaths =  { name: resource_path(f"{name}.png", 'resource') for name in imposition_icon_names}
     imposition_icons = { name: Image.open(imposition_iconpaths[name]) for name in imposition_icon_names}
 
     hpbooklet.advanced_imposition(imposition_icons, row= 1, column=0, padx = 5, pady= 10, width = 450, height = 220, relief = "solid", padding="4 4 10 10")
     
-    printing_iconpaths =  { name: routines.resource_path(f"{name}.png", 'resource') for name in printing_icon_names}
+    printing_iconpaths =  { name: resource_path(f"{name}.png", 'resource') for name in printing_icon_names}
     printing_icons = { name: Image.open(printing_iconpaths[name]) for name in printing_icon_names}
     hpbooklet.advanced_printing(printing_icons, row= 1, column=1, padx = 5, pady= 10, width = 450, height = 140, relief = "solid", padding="4 4 10 10")
     

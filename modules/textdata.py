@@ -1,8 +1,9 @@
 from .utils import resource_path
 
-icon_name = 'hp_booklet.ico'
-icon_path = resource_path(icon_name, 'resource')
-
+about_text_path = resource_path('about', 'resource/text')
+license_text_path = resource_path('license', 'resource/text')
+url_text_path = resource_path('urls', 'resource/text')
+ 
 #resources image names
 imposition_icon_names = [
     "imposition",
@@ -18,58 +19,24 @@ printing_icon_names = [
 re_get_ranges = r"([ ]{0,}\d+[ ]{0,}-{1,1}[ ]{0,}\d+[ ]{0,}|[ ]{0,}\d+[ ]{0,}[^,-])"
 re_check_permited_character=  r"([^-,\d\s])+?"
 
+with open(url_text_path, 'r') as f:
+    git_repository= f.readline()
+    homepage = f.readline()
+    tutorial = f.readline()
 
-git_repository = r"https://github.com/HornPenguin/Booklet"
-homepage = r"https://www.hornpenguin.com/%EC%84%9C%EB%B9%84%EC%8A%A4/booklet"
-tutorial = r"https://hpbooklet.readthedocs.org"
+about_text= []
+with open(about_text_path, 'r') as f:
+    about_list = f.readlines()
+    rlist = list(filter(lambda x: x != '' and x!='\n', about_list))
+    about_text +=rlist
 
+license = []
 
-about_text= [
-    " ",
-    "HornPenguin Booklet is a pdf modifer for printing and press",
-    " ",
-    "Copyright (c) 2022 HornPenguin Co.\n All right reserved.",
-    "Contact: support@hornpenguin.com"
-]
+with open(license_text_path, 'r') as f:
+    license_list = f.readlines()
+    rlist = list(filter(lambda x: x != '' and x !='\n', license_list))
+    license += rlist
 
-
-license = [r'''
-BSD 3-Clause License
-
-Copyright (c) 2022, HornPenguin Co.
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution.
-
-3. Neither the name of the copyright holder nor the names of its
-   contributors may be used to endorse or promote products derived from
-   this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-
-Other dependencies 
-
-PyPDF2: BSD-3 Clause
-ReportLab: BSD
-''']
 
 format_head = ["Format", "width(mm)", "height(mm)"]
 format_table = [
@@ -95,26 +62,6 @@ format_table = [
     ("ARCH B",305,457)
 ]
 
-PaperFormat = { #mm
-    "Default": "0x0",
-    "A3": "297x420",
-    "A4": "210x297",
-    "A5": "148x210",
-    "B3" : "353x500",
-    "B4" : "250x353",
-    "B5": "176x250",
-    "B6": "125x176",
-    "JIS B3" :"364x515 ",
-    "JIS B4": "257x364",
-    "JIS B5": "182x257",
-    "JIS B6": "128x182",
-    "Letter" : "216x279",
-    "Legal" : "215x275",
-    "Tabloid": "279x432",
-    "Gov Letter":"203x267",
-    "Gov Legal":"216x279",
-    "ANSI A":"216x279",
-    "ANSI B":"279x432",
-    "ARCH A":"229x305",
-    "ARCH B":"305x457"
-}
+PaperFormat = {'Default': '0x0'}
+for format in format_table:
+    PaperFormat[format[0]] = f"{format[1]}x{format[2]}"

@@ -1,5 +1,6 @@
 from __future__ import annotations
 import sys
+from typing import Union, Tuple, NoReturn
 sys.path.append("..")
 sys.path.append(".")
 
@@ -10,18 +11,18 @@ from .utils import split_list
 #Permutations and generating functions for signature routines-------------------------
 class Permutation:
     @classmethod
-    def get_permutations(cls, n, per=False): # get list of permutations for given 'n'
+    def get_permutations(cls, n:int, per=False)->list: # get list of permutations for given 'n'
         per = permutations(range(1, n+1), n)
         if per:
             return [cls(n, p) for p in per]
         else:
             return [ p for p in per]
     @classmethod
-    def reverse_permutation(cls, n):
+    def reverse_permutation(cls, n:int)->Permutation:
         return cls(n, range(n, 0, -1))
 
     @classmethod
-    def subpermutation_to_list_index(cls, per:Permutation, li:list):
+    def subpermutation_to_list_index(cls, per:Permutation, li:list)->list:
         if per.n > len(li):
             raise ValueError(f"Permutation length is longer than list. {per.n}, {len(li)}") 
         
@@ -34,7 +35,7 @@ class Permutation:
             rlist = rlist + per.permute_to_list_index(subli)
         
         return rlist
-    def __init__(self, n, plist):
+    def __init__(self, n:int, plist:list) -> NoReturn:
         if len(plist) != n:
             raise ValueError(f"{n} must be same with len(plist) = {len(plist)}")
 
@@ -46,7 +47,7 @@ class Permutation:
             self.plist = [1]
         else: 
             self.plist = plist
-    def __getitem__(self, key):
+    def __getitem__(self, key:int)->list:
         if type(key) != int:
             raise ValueError(f"key must be an integer type element: {key}")
         if key < 1 or key > self.n:
@@ -60,7 +61,7 @@ class Permutation:
         rlist = [other[x] for x in self.plist]
         return Permutation(self.n, rlist)
 
-    def index_mul(self, other, oper=False):
+    def index_mul(self, other:Permutation, oper=False)->Union[list, Permutation]:
 
         rlist = [self[x] for x in other.plist]
         if oper:
@@ -68,7 +69,7 @@ class Permutation:
         else:
             return Permutation(self.n, rlist)
 
-    def index_mul_partial(self, sub_permutation, oper = False): #Work on indexing
+    def index_mul_partial(self, sub_permutation:Permutation, oper:bool = False)->Union[list, Permutation]: #Work on indexing
         if not isinstance( sub_permutation, Permutation):
             raise ValueError(f"Given parameter must be \'Permutation\' object. \n Current object:{type(sub_permutation)}")
         if self.n %sub_permutation.n != 0:
@@ -87,7 +88,7 @@ class Permutation:
         else:
             return Permutation(self.n, rlist)
 
-    def permute_to_list_index(self, li:list):
+    def permute_to_list_index(self, li:list)->list:
         if not hasattr(li, '__iter__'):
             li = [li]
         if len(li) != self.n:
@@ -100,11 +101,11 @@ class Permutation:
         ilist= [self.plist.index(x)+1 for x in range(1, self.n+1)]
         return Permutation(self.n, ilist)
     
-    def notation_cauchy(self):
+    def notation_cauchy(self)->str:
         return f"{list(range(1, self.n+1))}\n{self.plist}"
 
     
-    def __canocial_order(self, cyclist):
+    def __canocial_order(self, cyclist:list)->list:
         c_clist_1 = []
         c_clist_2 = []
         for li in cyclist:
@@ -119,7 +120,7 @@ class Permutation:
         
         return c_clist_2
 
-    def notation_cyclic(self, canonical=False, string= False, sep=''):
+    def notation_cyclic(self, canonical:bool=False, string:bool= False, sep:str='')->Union[str, list]:
         cycliclist = []
         index = list(range(1, self.n+1))
         i =1

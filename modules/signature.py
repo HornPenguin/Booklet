@@ -1,6 +1,6 @@
 import io
 from math import log2, log
-from typing import Union, Tuple
+from typing import Union, Tuple, NoReturn
 from datetime import datetime
 
 import numpy as np
@@ -11,10 +11,10 @@ from .utils import *
 from .textdata import PaperFormat
 from .permutation import Permutation
 
-fold_arrange ={
+fold_arrange ={ # From left-top to right-bottom
     4: [
-            [4,1],
-            [2,3]
+            [4,1], # Front page
+            [2,3]  # Back page
         ],
     8: [
         [8,1,5,4],
@@ -125,7 +125,7 @@ def sig_rearrange(nn:int, ns:int, split:bool=False)-> list:
             rlist = rlist + nlist_splited[i] + nlist_splited[n_splited-i-1]
     return rlist
 
-def signature_permutation(n, nn, ns) -> Permutation:
+def signature_permutation(n:int, nn:int, ns:int) -> Permutation:
     if n == nn and nn ==ns:
         permutation_signature =Permutation(1, [1])
     
@@ -135,7 +135,7 @@ def signature_permutation(n, nn, ns) -> Permutation:
 
 # Printing markers--------------------------------------------------------
 
-def __drawRegistationMark(canvas, x, y, l) -> Union[None, int]:
+def __drawRegistationMark(canvas:canvas.Canvas, x:float, y:float, l:float) -> Union[ NoReturn , int]:
 
     def get_abpath4(x0,y0,x1, y1):
             return (x+x0, y+y0, x+x1, y+y1)
@@ -354,7 +354,7 @@ def page_printing_layout(
 
 # Main Routine (Sequential): For the progress routine in the program ui.
 
-def get_writer_and_manuscript(inputfile):
+def get_writer_and_manuscript(inputfile:str) -> Tuple[pypdf.PdfFileReader, pypdf.PdfFileWriter, dict]:
 
     manuscript = pypdf.PdfFileReader(inputfile)
     output = pypdf.PdfFileWriter()
@@ -373,7 +373,7 @@ def get_writer_and_manuscript(inputfile):
 
     return manuscript, output, meta
 
-def get_exact_page_range(pagerange, blank):
+def get_exact_page_range(pagerange:list, blank:tuple) -> list:
 
     page_range = get_page_range(pagerange)
 
@@ -395,7 +395,7 @@ def get_exact_page_range(pagerange, blank):
 
     return page_range
 
-def get_arrange_permutations(leaves, riffle):
+def get_arrange_permutations(leaves:tuple, riffle:bool)-> Tuple[Permutation, Permutation]:
 
     nl = int(leaves[0])
     nn = int(leaves[1])
@@ -420,7 +420,7 @@ def get_arrange_determinant(page_range:list, leaves:tuple, fold:bool)->Tuple[lis
 def get_format_dimension(format:tuple) -> Tuple[float, float]:
     if format[0]:
         f_dim = PaperFormat[format[3]].split("x")
-        f_width, f_height = pts_mm(int(f_dim[0]), int(f_dim[1]), False)
+        f_width, f_height = pts_mm((int(f_dim[0]), int(f_dim[1])), False)
     else:
         f_width, f_height = pts_mm((format[1], format[2]), False)
     

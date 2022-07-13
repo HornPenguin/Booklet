@@ -38,7 +38,8 @@ from PIL import Image
 
 from modules.utils import *
 from modules.textdata import *
-from modules.gui import HP_Booklet
+from modules.images import icon_path
+from modules.booklet import HP_Booklet
 
 if __name__ == "__main__":
     text_pady = 3

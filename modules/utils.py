@@ -3,11 +3,13 @@ Miscellaneous uitls
 """
 import os, sys
 from pathlib import Path
+from typing import Union, Tuple, NoReturn
 
 import webbrowser
 from reportlab.lib.units import mm
 from reportlab.lib.colors import CMYKColor
 import PyPDF2 as pypdf
+
 
 re_get_ranges = r"([ ]{0,}\d+[ ]{0,}-{1,1}[ ]{0,}\d+[ ]{0,}|[ ]{0,}\d+[ ]{0,}[^,-])"
 re_check_permited_character=  r"([^-,\d\s])+?"
@@ -15,7 +17,7 @@ re_check_permited_character=  r"([^-,\d\s])+?"
 
 # system related routine
 
-def resource_path(relative_path, directory):
+def resource_path(relative_path:str, directory:str)->str:
         #Get absolute path to resource, works for dev and for PyInstaller
     try:
         # PyInstaller creates a temp folder and stores path in _MEIPASS
@@ -48,7 +50,7 @@ def pts_mm(size:tuple, mode=True)->tuple: #mode: True(pts -> mm), False(mm -> pt
         return (x,y)
 
 # Open webbrowser with a given url
-def open_url(url:str)->None:
+def open_url(url:str)->NoReturn:
     return webbrowser.open(url)
 
 # Color utils
@@ -59,7 +61,7 @@ color_yellow = CMYKColor(0, 0, 1, 0)
 
 registration_black = CMYKColor(1,1,1,1)
 
-def hex_to_cmyk(hex:str)->tuple:
+def hex_to_cmyk(hex:str)->Tuple[float,float,float,float]:
     """
     :param hex: str, HEX code string
 
@@ -80,7 +82,7 @@ def hex_to_cmyk(hex:str)->tuple:
     Y = (1-B-K)/(1 - K)
     return C, M, Y, K
     
-def cmyk_to_rgb(C:float, M:float, Y:float, K:float)->tuple:
+def cmyk_to_rgb(C:float, M:float, Y:float, K:float)->Tuple[int, int, int]:
     """
     :param C: float, Cyan color code
     :param M: float, Magenta color code
@@ -94,7 +96,7 @@ def cmyk_to_rgb(C:float, M:float, Y:float, K:float)->tuple:
     B = 255*(1- Y) * (1-K)
     return int(R), int(G), int(B)
 
-def rgb_to_hex(r, g, b):
+def rgb_to_hex(r:int, g:int, b:int)->str:
     rcode = str(hex(r)).split('x')[1]
     gcode = str(hex(g)).split('x')[1]
     bcode = str(hex(b)).split('x')[1]
@@ -145,7 +147,7 @@ def get_page_range(page_range_string:str)->list:
     
     return rlist
 
-def get_file_info(path_string:str)->tuple:
+def get_file_info(path_string:str)->Tuple[Union[bool, str],Union[bool, str],Union[bool, int],Union[bool, list[float,float]]]:
 
     if type(path_string) != str:
         raise TypeError(f"Given path must be a string variable. Current:{type(path_string)}")
