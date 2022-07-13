@@ -35,6 +35,7 @@ __version__ = "0.0.1"
 __license__ = "BSD license"
 
 from PIL import Image
+import simpleaudio as sa
 
 from modules.utils import *
 from modules.textdata import *
@@ -43,6 +44,8 @@ from modules.booklet import HP_Booklet
 
 if __name__ == "__main__":
     text_pady = 3
+    beep_file_name = 'beep_ping.wav'
+    beep_file = resource_path(beep_file_name, 'resource\\sound')
 
     logo_width = logo_height = 70
     logo = Image.open(resource_path('logo.png','resource')).resize((logo_width, logo_height), Image.Resampling(1))
@@ -53,6 +56,7 @@ if __name__ == "__main__":
         source = git_repository,
         tutorial = tutorial,
         textpady = text_pady,
+        beep_file=beep_file,
         logo = logo
     )
 

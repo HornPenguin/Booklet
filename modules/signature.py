@@ -232,7 +232,7 @@ def page_printing_layout(
     nx = arrange[1]
 
     x = 2*nd + nx * pagesize[0] + (nx-1)*d
-    y = 2*nd + ny * pagesize[0] + (ny-1)*d
+    y = 2*nd + ny * pagesize[1] + (ny-1)*d
 
     #Signature proof
     if proof:
@@ -417,7 +417,7 @@ def get_arrange_determinant(page_range:list, leaves:tuple, fold:bool)->Tuple[lis
     
     return blocks, composition, layout
 
-def get_format_dimension(format:tuple) -> Tuple[float, float]:
+def get_format_dimension(format:Tuple[bool, float, float, str]) -> Tuple[float, float]:
     if format[0]:
         f_dim = PaperFormat[format[3]].split("x")
         f_width, f_height = pts_mm((int(f_dim[0]), int(f_dim[1])), False)

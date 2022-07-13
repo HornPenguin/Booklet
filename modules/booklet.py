@@ -45,7 +45,7 @@ import re
 from math import log2, floor
 from PIL import Image, ImageTk
 from datetime import datetime
-from beepy import beep
+import simpleaudio
 
 
 
@@ -77,6 +77,7 @@ class HP_Booklet:
             tutorial, 
             textpady, 
             logo,
+            beep_file,
             re_range_validation = textdata.re_get_ranges,
             re_character_validation = textdata.re_check_permited_character,
             fix = False,
@@ -104,6 +105,8 @@ class HP_Booklet:
         self.fix = fix
         self.window_width = width
         self.window_height = height
+
+        self.beep_file =beep_file
 
         self.window = tk.Tk()
         self.window.call('source', resource_path('azure.tcl','resource'))
@@ -279,7 +282,12 @@ class HP_Booklet:
         license = partial(self.popup_window, text= textdata.license, title="License", tpadx= 10, tpady=0, fix=False, scroll=True)
 
         self.menu_help.add_command(label="License", command= license)
-
+    
+    def beep(self)->NoReturn:
+        wave_obj = simpleaudio.WaveObject.from_wave_file(self.beep_file)
+        play_obj = wave_obj.play()
+        play_obj.wait_done()
+    
     # Tab Basic
     def basic_inputbox(self, row, column, padx, pady, width, height, relief, padding, entry_width =41):
 
@@ -762,7 +770,7 @@ class HP_Booklet:
         sub_window.title(f'{self.filename.get()}')
         sub_window.iconbitmap(self.icon_path)
 
-        progress_length  = len(page_range) + (int(len(page_range)/nl) if impositionbool else 0)
+        progress_length  =  2*len(page_range) if impositionbool else len(page_range)
         print("Pro_length:", progress_length)
         sub_progress = ttk.Progressbar(sub_window, orient='horizontal', mode='determinate', maximum = progress_length)
         sub_progress.grid(column=0,row=0, padx=10, pady=20)
@@ -864,8 +872,9 @@ class HP_Booklet:
         page_range = signature.get_exact_page_range(pagerange, [blankmode,blanknumber])
         per_sig, per_riffle = signature.get_arrange_permutations([nl,nn,ns], rifflebool)
         blocks, composition, layout = signature.get_arrange_determinant(page_range, [nl, nn, ns], foldbool)
-        format_width, format_height = signature.get_format_dimension([formatbool, format_width , format_height, formatname]) #mm to pts
+        format_width, format_height = pts_mm((format_width , format_height), False) #mm to pts
 
+        print(blocks)
         # Generate popup window(progress bar)
 
         sub_popup, sub_progress, progress_text, progress_length, destroybutton = self.pdf_progress_popup(page_range, nl, impositionbool)
@@ -905,7 +914,7 @@ class HP_Booklet:
                             
                             #update progress
                             sub_progress['value'] +=1
-                            progress_text.set(f"{sub_progress['value']}/{progress_length}")
+                            progress_text.set(f"{sub_progress['value']/progress_length *100}")
                             sub_popup.update()
                             
                         for i in foldlist[k]:
@@ -926,7 +935,7 @@ class HP_Booklet:
                             
                             #update progress
                             sub_progress['value'] +=1
-                            progress_text.set(f"{sub_progress['value']}/{progress_length}")
+                            progress_text.set(f"{sub_progress['value']/progress_length *100}")
                             sub_popup.update()
         else:
             for block in blocks:
@@ -948,7 +957,7 @@ class HP_Booklet:
                     
                     #update progress
                     sub_progress['value'] += 1
-                    progress_text.set(f"{sub_progress['value']}/{progress_length}")
+                    progress_text.set(f"{sub_progress['value']/progress_length *100}")
                     sub_popup.update()
 
 
@@ -984,10 +993,12 @@ class HP_Booklet:
             
             for i in range(0,len(tem_pdf.pages)):
                 page = tem_pdf.pages[i]
-                nre = int(ns/2) if ns >2 else 1
+                nre = int(ns/2) if ns >2 and impositionbool else 1
+                
                 for k in range(0,nre):
-                    l = i*int(ns/2) + k
+                    l = i*nre + k
                     print(l, f'{i}x{int(ns/2)}+{k}',len(writer.pages))
+                    
                     page_wm = writer.pages[l]
                     x, y = position(k+1, layout)
                     tx = nd +(format_width + d)*x
@@ -999,7 +1010,7 @@ class HP_Booklet:
 
                     #update progress
                     sub_progress['value'] +=1
-                    progress_text.set(f"{sub_progress['value']}/{progress_length}")
+                    progress_text.set(f"{sub_progress['value']/progress_length *100}")
                     sub_popup.update()
 
 
@@ -1046,8 +1057,8 @@ class HP_Booklet:
         destroybutton.config(state=tk.ACTIVE)
 
         print("Done")
-
-        beep(sound="ping")
+        
+        self.beep()
 
         sub_popup.transient(self.window)
         sub_popup.grab_set()
