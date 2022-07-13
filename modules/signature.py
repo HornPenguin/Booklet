@@ -1,6 +1,6 @@
 import io
 from math import log2, log
-from typing import Union
+from typing import Union, Tuple
 from datetime import datetime
 
 import numpy as np
@@ -39,7 +39,7 @@ fold_arrange ={
 }
 
 # Signature modulation-----------------------------------------------------------
-def __fold_matrix_update(n:int, matrix:np.ndarray):
+def __fold_matrix_update(n:int, matrix:np.ndarray) -> np.ndarray:
     n_1 = np.flip(matrix.T, axis=0)
     len_n = len(n_1[0])
     l = int(len_n/2)
@@ -125,7 +125,7 @@ def sig_rearrange(nn:int, ns:int, split:bool=False)-> list:
             rlist = rlist + nlist_splited[i] + nlist_splited[n_splited-i-1]
     return rlist
 
-def signature_permutation(n, nn, ns):
+def signature_permutation(n, nn, ns) -> Permutation:
     if n == nn and nn ==ns:
         permutation_signature =Permutation(1, [1])
     
@@ -135,7 +135,7 @@ def signature_permutation(n, nn, ns):
 
 # Printing markers--------------------------------------------------------
 
-def __drawRegistationMark(canvas, x, y, l) -> None:
+def __drawRegistationMark(canvas, x, y, l) -> Union[None, int]:
 
     def get_abpath4(x0,y0,x1, y1):
             return (x+x0, y+y0, x+x1, y+y1)
@@ -218,7 +218,7 @@ def page_printing_layout(
     trim:bool, 
     registration:bool, 
     cmyk:bool
-):
+) -> Tuple[pypdf.PdfReader, io.BytesIO, Tuple[float, float]]:
 
     #signature compoaition
 
@@ -405,7 +405,7 @@ def get_arrange_permutations(leaves, riffle):
 
     return sig_permutation, riffle_permutation
 
-def get_arrange_determinant(page_range, leaves, fold):
+def get_arrange_determinant(page_range:list, leaves:tuple, fold:bool)->Tuple[list, tuple, tuple]:
     
     nl = leaves[0]
     nn = leaves[1]
@@ -417,7 +417,7 @@ def get_arrange_determinant(page_range, leaves, fold):
     
     return blocks, composition, layout
 
-def get_format_dimension(format):
+def get_format_dimension(format:tuple) -> Tuple[float, float]:
     if format[0]:
         f_dim = PaperFormat[format[3]].split("x")
         f_width, f_height = pts_mm(int(f_dim[0]), int(f_dim[1]), False)
