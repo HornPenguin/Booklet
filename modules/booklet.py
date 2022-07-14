@@ -964,8 +964,8 @@ class HP_Booklet:
         ndbool = trimbool or registrationbool or cmykbool
         printbool = sigproofbool or ndbool
         
-        nd = 100 if ndbool else 0
-        d = 20 if ndbool else 0
+        nd = 43 if ndbool else 0
+        d = 5 if ndbool else 0
 
         if impositionbool or printbool:
 

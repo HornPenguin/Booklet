@@ -35,12 +35,16 @@ __version__ = "0.0.1"
 __license__ = "BSD license"
 
 from PIL import Image
-import simpleaudio as sa
 
 from modules.utils import *
 from modules.textdata import *
 from modules.images import icon_path
 from modules.booklet import HP_Booklet
+
+
+#import pyi_splash #Fake module for PyInstaller process
+#pyi_splash.update_text("Opening HornPenguin Booklet ... ")
+#pyi_splash.close()
 
 if __name__ == "__main__":
     text_pady = 3
