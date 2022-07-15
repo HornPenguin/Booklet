@@ -86,7 +86,7 @@
 <p><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="modules.permutation.html">modules.permutation module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.utils.html">modules.utils module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.utils.html">utils module</a></li>
 </ul>
 
             
@@ -151,104 +151,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <section id="module-modules.main">
-<span id="modules-main-module"></span><h1>modules.main module<a class="headerlink" href="#module-modules.main" title="Permalink to this headline">¶</a></h1>
-<dl class="py class">
-<dt id="modules.main.HP_Booklet">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">modules.main.</span></code><code class="sig-name descname"><span class="pre">HP_Booklet</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">icon_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">homepage</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tutorial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">textpady</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">re_range_validation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'([</span> <span class="pre">]{0,}\\d+[</span> <span class="pre">]{0,}-{1,1}[</span> <span class="pre">]{0,}\\d+[</span> <span class="pre">]{0,}|[</span> <span class="pre">]{0,}\\d+[</span> <span class="pre">]{0,}[^,-])'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">re_character_validation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'([^-,\\d\\s])+?'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">390</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">780</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modules.main.HP_Booklet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt id="modules.main.HP_Booklet.advanced_imposition">
-<code class="sig-name descname"><span class="pre">advanced_imposition</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">icons</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pady</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relief</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">41</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modules.main.HP_Booklet.advanced_imposition" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="modules.main.HP_Booklet.advanced_printing">
-<code class="sig-name descname"><span class="pre">advanced_printing</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">icons</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pady</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relief</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">41</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modules.main.HP_Booklet.advanced_printing" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="modules.main.HP_Booklet.basic_inputbox">
-<code class="sig-name descname"><span class="pre">basic_inputbox</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pady</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relief</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">41</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modules.main.HP_Booklet.basic_inputbox" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="modules.main.HP_Booklet.basic_outputbox">
-<code class="sig-name descname"><span class="pre">basic_outputbox</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pady</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relief</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entry_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">41</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modules.main.HP_Booklet.basic_outputbox" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="modules.main.HP_Booklet.customformat_entry_enable_f">
-<code class="sig-name descname"><span class="pre">customformat_entry_enable_f</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#modules.main.HP_Booklet.customformat_entry_enable_f" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="modules.main.HP_Booklet.fold_enable">
-<code class="sig-name descname"><span class="pre">fold_enable</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modules.main.HP_Booklet.fold_enable" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="modules.main.HP_Booklet.gen_button_action">
-<code class="sig-name descname"><span class="pre">gen_button_action</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#modules.main.HP_Booklet.gen_button_action" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="modules.main.HP_Booklet.genbutton">
-<code class="sig-name descname"><span class="pre">genbutton</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columnspan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modules.main.HP_Booklet.genbutton" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="modules.main.HP_Booklet.initiate_menu">
-<code class="sig-name descname"><span class="pre">initiate_menu</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#modules.main.HP_Booklet.initiate_menu" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="modules.main.HP_Booklet.initiate_window">
-<code class="sig-name descname"><span class="pre">initiate_window</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#modules.main.HP_Booklet.initiate_window" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="modules.main.HP_Booklet.ns_set">
-<code class="sig-name descname"><span class="pre">ns_set</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modules.main.HP_Booklet.ns_set" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="modules.main.HP_Booklet.open_file">
-<code class="sig-name descname"><span class="pre">open_file</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#modules.main.HP_Booklet.open_file" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="modules.main.HP_Booklet.open_output_directory">
-<code class="sig-name descname"><span class="pre">open_output_directory</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#modules.main.HP_Booklet.open_output_directory" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="modules.main.HP_Booklet.popup_window">
-<code class="sig-name descname"><span class="pre">popup_window</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpadx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpady</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">align</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'center'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button_text</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Ok'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modules.main.HP_Booklet.popup_window" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="modules.main.HP_Booklet.popup_window_table">
-<code class="sig-name descname"><span class="pre">popup_window_table</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpadx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tpady</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">align</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'center'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modules.main.HP_Booklet.popup_window_table" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="modules.main.HP_Booklet.range_validation">
-<code class="sig-name descname"><span class="pre">range_validation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modules.main.HP_Booklet.range_validation" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="modules.main.HP_Booklet.set_format_values">
-<code class="sig-name descname"><span class="pre">set_format_values</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modules.main.HP_Booklet.set_format_values" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="modules.main.HP_Booklet.sig_color_set">
-<code class="sig-name descname"><span class="pre">sig_color_set</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#modules.main.HP_Booklet.sig_color_set" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+  <section id="modules-main-module">
+<h1>modules.main module<a class="headerlink" href="#modules-main-module" title="Permalink to this headline">¶</a></h1>
 </section>
 
 

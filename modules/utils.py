@@ -17,8 +17,8 @@ re_check_permited_character=  r"([^-,\d\s])+?"
 
 # system related routine
 
-def resource_path(relative_path:str, directory:str)->str:
-        #Get absolute path to resource, works for dev and for PyInstaller
+def resources_path(relative_path:str, directory:str)->str:
+        #Get absolute path to resources, works for dev and for PyInstaller
     try:
         # PyInstaller creates a temp folder and stores path in _MEIPASS
         base_path = sys._MEIPASS

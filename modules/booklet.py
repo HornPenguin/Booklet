@@ -82,7 +82,8 @@ class HP_Booklet:
             re_character_validation = textdata.re_check_permited_character,
             fix = False,
             width = 390, 
-            height =780
+            height =780,
+            platform='Windows'
         ):
         """
         tkinter gui class
@@ -109,7 +110,7 @@ class HP_Booklet:
         self.beep_file =beep_file
 
         self.window = tk.Tk()
-        self.window.call('source', resource_path('azure.tcl','resource'))
+        self.window.call('source', resources_path('azure.tcl','resources'))
         self.window.call("set_theme", "light")
         self.window.title('HornPenguin Booklet')
 
@@ -132,8 +133,13 @@ class HP_Booklet:
 
         self.initiate_window()
 
-        self.icon_path = icon_path
-        self.window.iconbitmap(self.icon_path)
+        self.iconbitmapbool = True
+        if platform == 'Linux':
+            self.iconbitmapbool = False
+            
+        if self.iconbitmapbool:
+            self.icon_path = icon_path
+            self.window.iconbitmap(self.icon_path)
        
        # Menu setting
        # Help: About, Format, Tutorial, License, Contact, Source, homepage, support
@@ -203,7 +209,8 @@ class HP_Booklet:
         sub_window = tk.Toplevel(self.window)
         sub_window.title(title)
         sub_window.resizable(False,True)
-        sub_window.iconbitmap(self.icon_path)
+        if self.iconbitmapbool:
+            sub_window.iconbitmap(self.icon_path)
 
         if not hasattr(text, '__iter__'):
             text = [text]
@@ -249,7 +256,8 @@ class HP_Booklet:
         else:
             sub_window.resizable(False,False)
         
-        sub_window.iconbitmap(self.icon_path)
+        if self.iconbitmapbool:
+            sub_window.iconbitmap(self.icon_path)
 
         table = ttk.Treeview(sub_window, selectmode='browse',height = 36)
         table.pack(fill='both')
@@ -768,7 +776,8 @@ class HP_Booklet:
         tpadx =tpady= 10
         sub_window = tk.Toplevel(self.window)
         sub_window.title(f'{self.filename.get()}')
-        sub_window.iconbitmap(self.icon_path)
+        if self.iconbitmapbool:
+            sub_window.iconbitmap(self.icon_path)
 
         progress_length  =  2*len(page_range) if impositionbool else len(page_range)
         print("Pro_length:", progress_length)
@@ -1070,9 +1079,9 @@ if __name__ == "__main__":
     text_pady = 3
 
     icon_name = 'hp_booklet.ico'
-    icon_path = resource_path(icon_name, 'resource')
+    icon_path = resources_path(icon_name, 'resources')
 
-    #resources image names
+    #resourcess image names
     imposition_icon_names = [
         "imposition",
         "split"
@@ -1085,7 +1094,7 @@ if __name__ == "__main__":
     ]
 
     logo_width = logo_height = 70
-    logo = Image.open(resource_path('logo.png','resource')).resize((logo_width, logo_height), Image.Resampling(1))
+    logo = Image.open(resources_path('logo.png','resources')).resize((logo_width, logo_height), Image.Resampling(1))
 
     hpbooklet = HP_Booklet(
         icon_path, 
@@ -1102,12 +1111,12 @@ if __name__ == "__main__":
     hpbooklet.basic_inputbox( row=1, column=0, padx = 5, pady =10, width = 370, height = 160, relief="solid", padding="4 4 10 10")
     hpbooklet.basic_outputbox( row=1, column=1, padx = 5, pady =10, width = 370, height = 200, relief="solid", padding="4 4 10 10")
 
-    imposition_iconpaths =  { name: resource_path(f"{name}.png", 'resource') for name in imposition_icon_names}
+    imposition_iconpaths =  { name: resources_path(f"{name}.png", 'resources') for name in imposition_icon_names}
     imposition_icons = { name: Image.open(imposition_iconpaths[name]) for name in imposition_icon_names}
 
     hpbooklet.advanced_imposition(imposition_icons, row= 1, column=0, padx = 5, pady= 10, width = 450, height = 220, relief = "solid", padding="4 4 10 10")
     
-    printing_iconpaths =  { name: resource_path(f"{name}.png", 'resource') for name in printing_icon_names}
+    printing_iconpaths =  { name: resources_path(f"{name}.png", 'resources') for name in printing_icon_names}
     printing_icons = { name: Image.open(printing_iconpaths[name]) for name in printing_icon_names}
     hpbooklet.advanced_printing(printing_icons, row= 1, column=1, padx = 5, pady= 10, width = 450, height = 140, relief = "solid", padding="4 4 10 10")
     

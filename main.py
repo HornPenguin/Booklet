@@ -34,6 +34,8 @@ __company__ = "HornPenguin"
 __version__ = "0.0.1"
 __license__ = "BSD license"
 
+import platform
+
 from PIL import Image
 
 from modules.utils import *
@@ -41,18 +43,24 @@ from modules.textdata import *
 from modules.images import icon_path
 from modules.booklet import HP_Booklet
 
-
+# Below codes are adding splash page for onefile execution case.
 #import pyi_splash #Fake module for PyInstaller process
+#
 #pyi_splash.update_text("Opening HornPenguin Booklet ... ")
+#pyi_splash.update_text("...")
 #pyi_splash.close()
 
+
+
 if __name__ == "__main__":
+    
     text_pady = 3
     beep_file_name = 'beep_ping.wav'
-    beep_file = resource_path(beep_file_name, 'resource\\sound')
+    beep_file = resources_path(beep_file_name, 'resources\\sound')
 
     logo_width = logo_height = 70
-    logo = Image.open(resource_path('logo.png','resource')).resize((logo_width, logo_height), Image.Resampling(1))
+    logo = Image.open(resources_path('logo.png','resources')).resize((logo_width, logo_height), Image.Resampling(1))
+
 
     hpbooklet = HP_Booklet(
         icon_path,
@@ -61,18 +69,19 @@ if __name__ == "__main__":
         tutorial = tutorial,
         textpady = text_pady,
         beep_file=beep_file,
-        logo = logo
+        logo = logo,
+        platform = platform.system()
     )
 
     hpbooklet.basic_inputbox( row=1, column=0, padx = 5, pady =10, width = 370, height = 160, relief="solid", padding="4 4 10 10")
     hpbooklet.basic_outputbox( row=1, column=1, padx = 5, pady =10, width = 370, height = 200, relief="solid", padding="4 4 10 10")
 
-    imposition_iconpaths =  { name: resource_path(f"{name}.png", 'resource') for name in imposition_icon_names}
+    imposition_iconpaths =  { name: resources_path(f"{name}.png", 'resources') for name in imposition_icon_names}
     imposition_icons = { name: Image.open(imposition_iconpaths[name]) for name in imposition_icon_names}
 
     hpbooklet.advanced_imposition(imposition_icons, row= 1, column=0, padx = 5, pady= 10, width = 450, height = 220, relief = "solid", padding="4 4 10 10")
     
-    printing_iconpaths =  { name: resource_path(f"{name}.png", 'resource') for name in printing_icon_names}
+    printing_iconpaths =  { name: resources_path(f"{name}.png", 'resources') for name in printing_icon_names}
     printing_icons = { name: Image.open(printing_iconpaths[name]) for name in printing_icon_names}
     hpbooklet.advanced_printing(printing_icons, row= 1, column=1, padx = 5, pady= 10, width = 450, height = 140, relief = "solid", padding="4 4 10 10")
     

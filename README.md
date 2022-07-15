@@ -1,34 +1,20 @@
 # HornPenguin Booklet
 
+**Version** 0.0.1
 
-![HornPenguinBooklet](images/Logo.svg)
+<p align="center">
+  <img width="480" height="288" src="images/splash.png">
+</p>
 
-[HornPenguin Booklet](https://sourceforge.net/projects/hornpenguinbooklet/) is a simple software generating booklet and signature for bookbinding from your pdf files.
+**HornPenguin Booklet** is a simple software generating booklet and signature for bookbinding from your pdf files.
 You can print your own book signatures and simple pamplet with your home printer.
 
 * Support diffence signature size from 4 to 32.
 * Change page size during generating signature.
 * Left riffling direction is supported for old asian bookbinding.
+* Printing markers; trim, CMYK, signature proof, ... .
 
-Further routines for next versions
-
-**Simple**
-
-1. Distribution option of added blank pages: both(front, back), only front, only back.
-2. Show required blank pages for each leaves of signature.
-3. Seperates cover(front, back) pages from ouput option.
-
-**Little troublesome**
-
-1. Progress bar and fine notification
-2. Fold signature support for special number of leaves: 8, 16, 32.
-3. Imposition option (4, 8, 16, 32)
-4. Combine Cover page from other PDFs option.
-
-**Annoying**
-
-1. Dealing multiple PDFs at once.
-2. PDF preview for original and signature(UI.... :<).
+See further details and usage examples in project [documents](https://hpbooklet.readthedocs.io/en/latest/). 
 
 ## Layout of Signatures
 
@@ -42,13 +28,36 @@ For example, 4 leaves per signature: 4, 1, 2, 3, 8, 5, 6, 7, 12, 9, 10, 11.
 
 Above image shows order of pages per each case of signatures: 4, 12 and how to fold and attaching each sheets. The right, 12 leaves sig, also can be combined with other signatures to form a book or it can be complete in itself as a pamplet.
 
-## UI and Usage
+## UI
 
-Version 0.0.1
+## Quick Usage
 
-Executable file is in `dist` directory with `HPBooklet.exe` name. It is complete itself. This is only useful for Windows user, however, I did not use any os dependent things. For OSX and Linux users, you can execute program with `main.py` script in `src` directory. Just check the prerequists in **Dependency** section.
+### Execution
 
-Note: I used [pyinstaller](https://pyinstaller.org/en/stable/) to create executable file in Windows with `--onefile` option. It will be take some time at iniitial stage.
+The executable files are in `dist` directory. 
+
+There are two options *onefile* execution file and the compressed *onedir* file. The project supports for Windows, Linux, and OSX.
+You must notice that the *onefile* files requires some time to execute at initial stage. To inform the executation, there is a splash window in the each *onefile* files, thanks to splash routine in [pyinstaller](https://pyinstaller.org/en/stable/).
+
+* **Windows**
+
+  ```
+  Booklet.exe
+  Booklet_Windows.zip
+  ```
+
+* **Linux**
+  ```
+  Booklet
+  Booklet.tar.gz
+  ```
+* OSX
+
+  No, but you can excute `main.py` with your python environment.
+
+or you can directly execute `main.py` with your python environment. Just check the prerequists in **Dependency** section.
+It is recommended if there are some errors in the execution files or you are using OSX. (I don't have Mac yet.)
+
 
 ### Manuscript Frame
 
@@ -65,21 +74,42 @@ Note: I used [pyinstaller](https://pyinstaller.org/en/stable/) to create executa
 6. Riffling direction: Default is 'right' value. 'left' value is for an traditional asian bookbinding which riffles from right to left. 
 
 <p align="center">
-  <img width="300" height="580" src="images/ui.PNG">
+  <img width="480" height="265" src="images/ui_windows.PNG">
+  <img width="480" height="265" src="images/ui__advanced_windows.png">
 </p>
 
 
-## Dependency
+## Dependencies
 
-* Tkinter
-* PyPDF2
-* Pillow
+* [reportlab](https://www.reportlab.com/)
+* [PyPDF2](https://pypdf2.readthedocs.io/)
+* [Pillow](https://pillow.readthedocs.io/en/stable/)
+* [simpleaudio](https://simpleaudio.readthedocs.io/en/latest/)
 
 Install them with next command
 
 ```
-pip install PyPDF2 Pillow 
+pip install PyPDF2 reportlab Pillow simpleaudio
 ```
+
+For `simpleaudio`, it requires compilers and build tools such as `gcc` to install the module. If you are using Ubuntu you can install `build-essential` from repository.
+
+## Further routines
+
+Further routines for next version
+
+**Simple**
+
+* Add more color markers
+
+**Little troublesome**
+
+* Not yet
+
+**Annoying**
+
+1. Dealing multiple PDFs at once.
+2. PDF preview for original and signature(UI.... :<).
 
 ## License
 

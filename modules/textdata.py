@@ -1,10 +1,10 @@
-from .utils import resource_path
+from .utils import resources_path
 
-about_text_path = resource_path('about', 'resource/text')
-license_text_path = resource_path('license', 'resource/text')
-url_text_path = resource_path('urls', 'resource/text')
+about_text_path = resources_path('about', 'resources/text')
+license_text_path = resources_path('license', 'resources/text')
+url_text_path = resources_path('urls', 'resources/text')
  
-#resources image names
+#resourcess image names
 imposition_icon_names = [
     "imposition",
     "split"
