@@ -3,7 +3,7 @@ from math import log2, log
 from typing import Union, Tuple, NoReturn
 from datetime import datetime
 
-import numpy as np
+#import numpy as np
 import PyPDF2 as pypdf
 from reportlab.pdfgen import canvas
 
@@ -39,19 +39,26 @@ fold_arrange ={ # From left-top to right-bottom
 }
 
 # Signature modulation-----------------------------------------------------------
-def __fold_matrix_update(n:int, matrix:np.ndarray) -> np.ndarray:
-    n_1 = np.flip(matrix.T, axis=0)
+def __fold_matrix_update(n:int, matrix:list) -> list:
+    #n_1 = np.flip(matrix.T, axis=0)
+    n_1 = flip(transpose(matrix))
     len_n = len(n_1[0])
     l = int(len_n/2)
     rows =[]
     for row in n_1:
-        r_split = np.split(row,l)
+        #r_split = np.split(row,l)
+        r_split = split_list(row, l, mode='n')
         row_appended = []
         for tu in r_split:
-            tem = np.array([n-tu[0] +1,n-tu[1] +1])
-            row_appended.append(np.insert(tem, 1, tu))    
-        rows.append(np.concatenate(row_appended, axis=None))     
-    return np.stack(rows)
+            #tem = np.array([n-tu[0] +1,n-tu[1] +1])
+            #row_appended.append(np.insert(tem, 1, tu))    
+            tem = [n-tu[0] +1,n-tu[1] +1]
+            row_appended.append(tem.insert(1, tu[1]))
+            row_appended.append(tem.insert(1, tu[0]))
+        #rows.append(np.concatenate(row_appended, axis=None))
+        rows.append(concatenate(row_appended))    
+    #return np.stack(rows)
+    return rows
 
 def sig_layout(n:int)->tuple:
     if type(n) != int:
@@ -91,16 +98,20 @@ def fold_arrange_n(n, per=False)->Union[list, Permutation]:
         n_iter = int(log(n/16,2))
         n_i = 32
         per_n_1 = [fold_arrange[n_i][0], fold_arrange[n_i][1]]
-        #permutation to matrix
+        # permutation to matrix
         layout_n_1 = sig_layout(n_i)
-        front_matrix = np.array(per_n_1[0]).reshape(layout_n_1)
-        back_matrix = np.array(per_n_1[1]).reshape(layout_n_1)
+        #front_matrix = np.array(per_n_1[0]).reshape(layout_n_1)
+        #back_matrix = np.array(per_n_1[1]).reshape(layout_n_1)
+        front_matrix = reshape(per_n_1[0], layout_n_1)
+        back_matrix = reshape(per_n_1[1], layout_n_1)
         for i in range(0, n_iter):
             n_i = 2*n_i
             front_matrix = __fold_matrix_update(n_i, front_matrix)
             back_matrix = __fold_matrix_update(n_i, back_matrix)   
-    per_fn = np.concatenate(front_matrix).tolist() 
-    per_bn = np.concatenate(back_matrix).tolist()
+    #per_fn = np.concatenate(front_matrix).tolist() 
+    #per_bn = np.concatenate(back_matrix).tolist()
+    per_fn = concatenate(front_matrix)
+    per_bn = concatenate(back_matrix)
     if per:
         return Permutation(n, per_fn+per_bn )
     else:
@@ -128,9 +139,9 @@ def sig_rearrange(nn:int, ns:int, split:bool=False)-> list:
 def signature_permutation(n:int, nn:int, ns:int) -> Permutation:
     if n == nn and nn ==ns:
         permutation_signature =Permutation(1, [1])
-    
     else:
         permutation_signature = Permutation(n, sig_rearrange(nn,ns)).index_mul_partial(fold_arrange_n(ns, per=True), oper=False)
+    
     return permutation_signature
 
 # Printing markers--------------------------------------------------------

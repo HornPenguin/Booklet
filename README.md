@@ -49,13 +49,13 @@ You must notice that the *onefile* files requires some time to execute at initia
 * **Linux**
   ```
   Booklet
-  Booklet.tar.gz
+  Booklet.tgz
   ```
 * OSX
 
   No, but you can excute `main.py` with your python environment.
 
-or you can directly execute `main.py` with your python environment. Just check the prerequists in **Dependency** section.
+or you can directly execute `main.py` with your python environment. Just check the prerequists in **Dependencies** section.
 It is recommended if there are some errors in the execution files or you are using OSX. (I don't have Mac yet.)
 
 
@@ -92,7 +92,12 @@ Install them with next command
 pip install PyPDF2 reportlab Pillow simpleaudio
 ```
 
-For `simpleaudio`, it requires compilers and build tools such as `gcc` to install the module. If you are using Ubuntu you can install `build-essential` from repository.
+For `simpleaudio`, it requires compilers, build tools and prerequest library `libasound2-dev` to install the module. 
+If you are using Ubuntu you can install `build-essential` from repository.
+
+```
+sudo apt install build-essential libasound2-dev
+```
 
 ## Further routines
 

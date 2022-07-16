@@ -109,26 +109,73 @@ def rgb_to_hex(r:int, g:int, b:int)->str:
         bcode = '0'+bcode
     return '#'+  rcode + gcode + bcode
 
-# Miscellaneous
-def split_list(li: list, n:int)->list:
+# List routines 
+def split_list(li: list, n:int, mode='l')->list:
     """
     :param li: list, list to be splited.
     :param n: int, The length of sublist. It must be a divider of the length of :param:`li` list.
-
+    :param mode: str, The mode of split, `l`: length of sublist, `n`: number of sublist
     """
+    if mode != 'l' and mode != 'n':
+        raise ValueError('The \'mode\' parameter must be \'l\' or \'n\', current = {mode}')
 
-    if n <=1:
-        return li
-    if len(li) %n !=0:
-        raise ValueError(f"The length of sublist, {n}, must be a divider of original list, {len(li)}. ")
+    num = n
+    l_li = len(li)
+    if mode =='n':
+        if l_li%num !=0:
+            raise ValueError('The length of the given list and the sublist length must have a divider relationship.')
+        num = int(l_li/num)
+        mode ='l'
+
+    if mode == 'l':
+        if num <=1:
+            return li
+        if len(li) %num !=0:
+            raise ValueError(f"The length of sublist, {num}, must be a divider of original list, {len(li)}. ")
+
+        rlist =[]
+        for i in range(0, int(l_li/num)):
+            ni = num*i
+            rlist.append([li[ni: ni+num]][0])
+
+    return rlist 
+def transpose(matrix:list)->list:
+    size = len(matrix)
+
+    t = list()
+    for i in range(0, size):
+        t.append([])
     
-    rlist =[]
-    for i in range(0, int(len(li)/n)):
-        ni = n*i
-        rlist.append([li[ni: ni+n]][0])
+    for i in range(0, size):
+        for j in range(0,size):
+            t[i].append(matrix[j][i])
+    
+    return t
+def flip(matrix): #axis=0
+    size = len(matrix)
 
+    f = list()
+    for i in range(0, size):
+        f.append(matrix[size-i-1])
+    
+    return f
+
+def concatenate(lists):
+    length = len(lists)
+
+    rlist = list()
+    for i in range(0, length):
+        for element in lists[i]:
+            rlist.append(element)
+    
     return rlist
 
+def reshape(list_1d, shape):
+    size_1d = len(list_1d)
+    if size_1d != shape[0] * shape[1]:
+        raise ValueError("The list length and shape are not matched each other.")
+    return split_list(list_1d, shape[0], mode='n')
+# Miscellaneous
 def get_page_range(page_range_string:str)->list:
     page_range = page_range_string.replace(" ", "")
 
