@@ -1,7 +1,4 @@
 
 .vscode/launch.json
 *.pdf
-dist/Booklet.exe
-dist/Booklet
-dist/Booklet_Linux.tar.gz
-dist/Booklet_Windows.zip
+

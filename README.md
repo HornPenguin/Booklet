@@ -74,8 +74,8 @@ It is recommended if there are some errors in the execution files or you are usi
 6. Riffling direction: Default is 'right' value. 'left' value is for an traditional asian bookbinding which riffles from right to left. 
 
 <p align="center">
-  <img width="480" height="265" src="images/ui_windows.png">
-  <img width="480" height="265" src="images/ui__advanced_windows.png">
+  <img src="images/ui_windows.png">
+  <img src="images/ui__advanced_windows.png">
 </p>
 
 
