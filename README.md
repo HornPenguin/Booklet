@@ -3,7 +3,7 @@
 **Version** 0.0.1
 
 <p align="center">
-  <img width="480" height="288" src="images/splash.png">
+  <img src="images/splash.png">
 </p>
 
 **HornPenguin Booklet** is a simple software generating booklet and signature for bookbinding from your pdf files.
