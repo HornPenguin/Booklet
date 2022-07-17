@@ -889,176 +889,23 @@ class HP_Booklet:
         sub_popup, sub_progress, progress_text, progress_length, destroybutton = self.pdf_progress_popup(page_range, nl, impositionbool)
         #self.window.wait_window(sub_popup)
 
-        if foldbool and layout[0] > 1:
-            transformation_ = pypdf.Transformation().rotate(180)
-            for block in blocks:
-
-                per_block = per_sig.permute_to_list_index(block)
-                if nl != 1:
-                    per_block = Permutation.subpermutation_to_list_index(per_riffle, per_block)
-
-                pages = split_list(per_block, int(ns/2))
-
-                for p in range(0, len(pages)):
-                    splited_pages = split_list(pages[p], layout[1])
-                    unfoldlist = splited_pages[0::2]
-                    foldlist = splited_pages[1::2]
-
-                    l = len(unfoldlist) #same with len(foldlist)
-
-                    for k in range(0, l):
-                        for i in unfoldlist[k]:
-                            if i !=0:
-                                page = manuscript.pages[i-1]
-
-                                left = page.mediabox[0]
-                                bottom = page.mediabox[1]
-                                page.add_transformation(pypdf.Transformation().translate(tx=-left, ty = -bottom))
-
-                                page.cropbox.setUpperRight((format_width, format_width))
-                                page.scale_to(format_width, format_height)
-                                writer.add_page(page)
-                            else:
-                                writer.add_blank_page()
-                            
-                            #update progress
-                            sub_progress['value'] +=1
-                            progress_text.set(f"{sub_progress['value']/progress_length *100}")
-                            sub_popup.update()
-                            
-                        for i in foldlist[k]:
-                            if i !=0:
-                                page = manuscript.pages[i-1]
-
-                                left = page.mediabox[0]
-                                bottom = page.mediabox[1]
-                                page.add_transformation(pypdf.Transformation().translate(tx=-left, ty = -bottom))
-
-                                transformation = transformation_.translate(tx=format_width, ty=format_height)
-                                page.add_transformation(transformation)
-                                page.cropbox.setUpperRight((format_width, format_width))
-                                page.scale_to(format_width, format_height)
-                                writer.add_page(page)
-                            else:
-                                writer.add_blank_page(width = format_width, height = format_height)
-                            
-                            #update progress
-                            sub_progress['value'] +=1
-                            progress_text.set(f"{sub_progress['value']/progress_length *100}")
-                            sub_popup.update()
-        else:
-            for block in blocks:
-                per_block = per_sig.permute_to_list_index(block)
-                if nl != 1:
-                    per_block = Permutation.subpermutation_to_list_index(per_riffle, per_block) 
-                for i in per_block:
-                    if i==0:
-                        writer.add_blank_page(width = format_width, height = format_height)
-                    else:
-                        page = manuscript.pages[i-1]
-
-                        left = page.mediabox[0]
-                        bottom = page.mediabox[1]
-                        page.add_transformation(pypdf.Transformation().translate(tx=-left, ty = -bottom))
-
-                        page.scale_to(format_width, format_height)
-                        writer.add_page(page)
-                    
-                    #update progress
-                    sub_progress['value'] += 1
-                    progress_text.set(f"{sub_progress['value']/progress_length *100}")
-                    sub_popup.update()
-
-
-        ndbool = trimbool or registrationbool or cmykbool
-        printbool = sigproofbool or ndbool
-        
-        nd = 43 if ndbool else 0
-        d = 5 if ndbool else 0
-
-        if impositionbool or printbool:
-
-            tem_pdf, temfile, cropsize = signature.page_printing_layout(
-                (format_width, format_height),
-                len(page_range),
-                composition,
-                nd = nd,
-                d = d,
-                proof = sigproofbool,
-                proofcode = sig_color,
-                trim = trimbool,
-                registration = registrationbool,
-                cmyk = cmykbool
-            )
-
-            def position(i, layout):
-                if i ==0:
-                    i =1
-                nx = layout[1]
-                ny = layout[0]
-                x = (i-1) % (nx)
-                y = ny - floor((i-1)/nx) -1
-                return(x,y)
-            
-            for i in range(0,len(tem_pdf.pages)):
-                page = tem_pdf.pages[i]
-                nre = int(ns/2) if ns >2 and impositionbool else 1
-                
-                for k in range(0,nre):
-                    l = i*nre + k
-                    print(l, f'{i}x{int(ns/2)}+{k}',len(writer.pages))
-                    
-                    page_wm = writer.pages[l]
-                    x, y = position(k+1, layout)
-                    tx = nd +(format_width + d)*x
-                    ty = nd +(format_height + d)*y
-                    t_page = pypdf.Transformation().translate(tx=tx, ty=ty)
-                    page_wm.add_transformation(t_page)
-                    page_wm.cropbox.setUpperRight(cropsize)
-                    page.merge_page(page_wm)
-
-                    #update progress
-                    sub_progress['value'] +=1
-                    progress_text.set(f"{sub_progress['value']/progress_length *100}")
-                    sub_popup.update()
-
-
-            progress_text.set(f"Saving converted file...")
-
-            if splitbool:
-                path_and_name = writer.split(".pdf")[0]
-                for i in range(0, len(tem_pdf.pages))[0::2]:
-                    sp_pdf = pypdf.PdfFileWriter()
-                    sp_pdf.add_page(tem_pdf.pages[i])
-                    sp_pdf.add_page(tem_pdf.pages[i+1])
-                    with open(path_and_name+f"_{int(i/2)+1}"+".pdf", "wb") as sp_f:
-                        sp_pdf.write(sp_f)
-            else:
-                tem_pdf_writer = pypdf.PdfWriter()
-                tem_pdf_writer.add_metadata(meta)
-                tem_pdf_writer.add_metadata({"/Producer": "HornPenguin Booklet"})
-                tem_pdf_writer.add_metadata({"/ModDate": f"{datetime.now()}"})
-
-                tem_pdf_writer.append_pages_from_reader(tem_pdf)
-
-                with open(output_path , "wb") as f:
-                    tem_pdf_writer.write(f)
-            
-            temfile.close()
-        else:
-            progress_text.set(f"Saving converted file...")
-            if splitbool:
-                path_and_name = output_path.split(".pdf")[0]
-                sigli = split_list(list(range(0,len(writer.pages))), nn)
-                for i, sig in enumerate(sigli):
-                    sp_pdf = pypdf.PdfFileWriter()
-                    for index in sig:
-                        sp_pdf.add_page(writer.pages[index])
-                    with open(path_and_name+f"_{int(i)+1}"+".pdf", "wb") as sp_f:
-                        sp_pdf.write(sp_f)
-            else:
-                with open(output_path , "wb") as f:
-                    writer.write(f)
+        signature.generate_signature(
+            inputfile = input_file,
+            output= output_path,
+            pagerange= pagerange,
+            blank = [blankmode, blanknumber],
+            sig_n =[nl, nn, ns],
+            riffle = rifflebool,
+            fold =foldbool,
+            format = [format_width, format_height],
+            imposition= impositionbool,
+            split = splitbool,
+            trim = trimbool,
+            registration = registrationbool,
+            cmyk = cmykbool,
+            sigproof = [sigproofbool, sig_color],
+            progress= [progress_length, sub_progress, progress_text, sub_popup]
+        )
 
         sub_progress['value'] = progress_length
         progress_text.set(f"Done")
@@ -1072,6 +919,8 @@ class HP_Booklet:
         sub_popup.transient(self.window)
         sub_popup.grab_set()
         self.window.wait_window(sub_popup)
+
+        return 0
 
 
         

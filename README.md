@@ -109,7 +109,7 @@ Further routines for next version
 
 **Little troublesome**
 
-* Not yet
+* Converting PDF with image before transformation.(some pdfs are broken in their fonts or positions of elements during transformation)
 
 **Annoying**
 
