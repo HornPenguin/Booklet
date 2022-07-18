@@ -592,7 +592,7 @@ class HP_Booklet:
 
                 file_name_with_format = os.path.split(str(filename))[1]
                 file_name = file_name_with_format.split('.pdf')
-                self.filename.set(file_name[0] + '_HPBooklet'+'.pdf')
+                self.filename.set(file_name[0] + '_HP_BOOKLET'+'.pdf')
 
                 print(f'title:{self.title.get()}\nfile:{filename}')
                 self.Generate_button.config(state=tk.ACTIVE)
@@ -836,8 +836,8 @@ class HP_Booklet:
                 formatbool = True
                 wh = textdata.PaperFormat[formatname].split('x')
             
-            format_width = int(wh[0]) #mm
-            format_height = int(wh[1])
+            format_width = wh[0] #mm
+            format_height = wh[1]
         
         #Imposition----------------------------------------------------------------------------
         impositionbool:bool = self.impositionbool.get()
@@ -877,15 +877,16 @@ class HP_Booklet:
         #----------------------------------------------------------------
 
         # Modulate file
-        manuscript, writer, meta = signature.get_writer_and_manuscript(input_file)
-        page_range = signature.get_exact_page_range(pagerange, [blankmode,blanknumber])
-        per_sig, per_riffle = signature.get_arrange_permutations([nl,nn,ns], rifflebool)
-        blocks, composition, layout = signature.get_arrange_determinant(page_range, [nl, nn, ns], foldbool)
-        format_width, format_height = pts_mm((format_width , format_height), False) #mm to pts
-
-        print(blocks)
+        #manuscript, writer, meta = signature.get_writer_and_manuscript(input_file)
+        
+        #per_sig, per_riffle = signature.get_arrange_permutations([nl,nn,ns], rifflebool)
+        #blocks, composition, layout = signature.get_arrange_determinant(page_range, [nl, nn, ns], foldbool)
+        #format_width, format_height = pts_mm((format_width , format_height), False) #mm to pts
+#
+        #print(blocks)
         # Generate popup window(progress bar)
 
+        page_range = signature.get_exact_page_range(pagerange, [blankmode,blanknumber])
         sub_popup, sub_progress, progress_text, progress_length, destroybutton = self.pdf_progress_popup(page_range, nl, impositionbool)
         #self.window.wait_window(sub_popup)
 
@@ -894,7 +895,7 @@ class HP_Booklet:
             output= output_path,
             pagerange= pagerange,
             blank = [blankmode, blanknumber],
-            sig_n =[nl, nn, ns],
+            sig_com =[nl, nn, ns],
             riffle = rifflebool,
             fold =foldbool,
             format = [format_width, format_height],

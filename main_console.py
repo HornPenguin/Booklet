@@ -42,12 +42,13 @@ import sys, os, re
 
 import PyPDF2 as pypdf
 
-des = """PDF modulation for printing and press
-----------------------------------------------------"""
+from modules.utils import get_page_range, pts_mm
+from modules.textdata import PaperFormat
+
+des = """PDF modulation for printing and press----------------------------------------------------"""
 epi = "github: https://github.com/HornPenguin/Booklet \nsupport: support@hornpenguin.com"
 
-page_range_size = 0
-
+# Parser-----------------------------------------------------------------------
 class Format_Help(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         length = 15
@@ -73,9 +74,6 @@ def dir_path(string):
 range_validation_re = re.compile(textdata.re_get_ranges)
 character_vailidation_re = re.compile(textdata.re_check_permited_character)
 
-class NoInput(Exception):
-    pass
-
 def range_validation(string): #only max
     text = string.replace(" ","")
     #self.pagerange_var.set(text)
@@ -86,6 +84,9 @@ def range_validation(string): #only max
         return string
         
 def color_check(string):
+    print('color_check')
+    if string is None:
+        return "#729fcf"
     text = string
     if '#' in text:
         text =  text[1:]
@@ -104,9 +105,7 @@ def color_check(string):
             raise ValueError
     return string
 
-def sig_compose():
-    pass
-
+#Argument parser
 parser = argparse.ArgumentParser(
     prog=f'{name}',
     description=des,
@@ -120,19 +119,19 @@ parser.add_argument('--format-help', action=Format_Help, nargs=0, help="print ta
 
 #file path
 inputgroup = parser.add_mutually_exclusive_group()
-inputgroup.add_argument('inputfile', type=file_path, nargs='?')
-inputgroup.add_argument('-i', '--input', nargs=1, type=file_path, help='The input pdf file path')
+inputgroup.add_argument('inputfile', nargs='?', type=file_path,  help='The input pdf file path.')
+inputgroup.add_argument('-i', '--input', nargs=1, type=file_path,help='The input pdf file path.')
 outputgroup = parser.add_mutually_exclusive_group()
-outputgroup.add_argument('outputpath', type=dir_path, nargs='?')
-outputgroup.add_argument('-o', '--output', nargs=1, type=dir_path, help='The ouput file path')
+outputgroup.add_argument('outputpath', nargs='?', type=dir_path, help="The output file path can contain file name or not." )
+outputgroup.add_argument('-o', '--output', nargs=1, type=dir_path, help='The ouput file path.')
 
-parser.add_argument('-n', '--name', type=str, help='output file name')
+parser.add_argument('-n', '--name', type=str, help='output file name, if output path contains file name, path name is prior than this argument.')
 
 #signature options
-parser.add_argument('--page-range', type=range_validation, nargs='*', help='The page range to moldulate in the input file. Example: 1-3, 10, 14-20')
-parser.add_argument('--blank-mode', choices=[ 'back', 'front', 'both'], default='back', help='where additional blank pages are added, default = \'back\'')
-parser.add_argument('--sig-composition', nargs=2 , type=sig_compose, default=(1,4), help='')
-parser.add_argument('--riffle-direction', nargs=1, type = str, choices=['right', 'left'], default='right', help='riffling direction of signature, old asian book has \'left\' riffling direction. Default value=\'right\'')
+parser.add_argument('--page-range', type=range_validation, action='append', nargs='*', help='The page range to moldulate in the input file. Example: 1-3, 10, 14-20.')
+parser.add_argument('--blank-mode', choices=[ 'back', 'front', 'both'], default='back', help='where additional blank pages are added, default = \'back\'.')
+parser.add_argument('--sig-composition', nargs=2 , type=int, default=(1,4), help='')
+parser.add_argument('--riffle-direction', nargs=1, type = str, choices=['right', 'left'], default='right', help='riffling direction of signature, old asian book has \'left\' riffling direction. Default value=\'right\'.')
 parser.add_argument('--fold', action="store_true")
 formatgroup = parser.add_mutually_exclusive_group()
 formatgroup.add_argument('--format', nargs=1, type=str, choices=list(textdata.PaperFormat.keys()), default="Default", help="Output paper size format of signature, \'Default\': conserves original file paper size. See options with \'--format-help\'.")
@@ -141,31 +140,127 @@ parser.add_argument('--imposition', action="store_true", help='default conversio
 parser.add_argument('--split', action="store_true", help="split pdf pages with each signatures.")
 parser.add_argument('--trim', action="store_true", help="add trim marker in imposition pdf.")
 parser.add_argument('-reg','--registration', action="store_true", help= "add registration markers in imposition pdf.")
-parser.add_argument('--cmyk', action="store_true" ,help= "add cmyk markers in imposition pdf.")
-parser.add_argument('--sigproof', type=color_check, default="#729fcf", nargs=1,help='add signature proof that help to check order and missing signature. colorcode is a hex code. default = #729fcf')
+parser.add_argument('--cmyk', action="store_true" , help= "add cmyk markers in imposition pdf.")
+parser.add_argument('--sigproof', type=color_check, const="#729fcf", nargs='?' ,help='add signature proof that help to check order and missing signature. colorcode is a hex code. default = #729fcf.')
+parser.add_argument('-y', action='store_true')
 
+#Function------------------------------------------------------------------------
 
+def check_dir(path):
+    if os.path.isfile(path):
+        return False
+    elif os.path.isdir(path):
+        return True
+    else:
+        raise ValueError("Is it path? {path}")
+def check_composition(nn, ns):
+    nl = nn * ns
+    if nl == 2 and not nn == 1:
+        return False
+    elif nl ==12 and nn not in [1, 3]:
+        return False
+    elif nl == 24 and nn not in [1, 2, 3, 6]:
+        return False
+    else:
+        pass
+def cal_blank_page(pages, nl):
+    if pages < nl:
+        return nl - pages
+    else:
+        k = pages % nl
+        return (nl - k) if nl >1 and k!=0 else 0
 if __name__ == "__main__":
     args = parser.parse_args()
 
-    # print info--------------------------
+    #Path validation
+    inputfile = ''
+    outputpath = ''
+    pagerange = ''
+    if args.inputfile is not None:
+        inputfile = args.inputfile
+    elif args.input is not None:
+        inputfile = args.input[0]
+    else:
+        raise ValueError("No input file")
+    if args.outputpath is not None:
+        outputpath = args.outputpath
+    elif args.output is not None:
+        outputpath = args.output[0]
+    
+    # name checker
+    if check_dir(outputpath):
+        if args.name is not None:
+            name = args.name
+        else:
+            name_format = os.path.split(inputfile)[1]
+            name = name_format.split('.pdf')[0] + '_HP_BOOKLET' + '.pdf'
+        outputpath = os.path.join(outputpath, name)
 
+    pre_pdf = pypdf.PdfFileReader(inputfile)
+    page_max = len(pre_pdf.pages)
+    default_size = [float(pre_pdf.getPage(0).mediaBox.width), float(pre_pdf.getPage(0).mediaBox.height)]
+
+    #page range 
+    if args.page_range is not None:
+        for li in args.page_range:
+            st = ''.join(li)
+            pagerange += st
+    else:
+        pagerange = f'1-{page_max}'
+
+    #format setting
+    if args.format is None or args.format =='Default':
+        width, height = pts_mm(default_size)
+        format =  [width, height]
+    else:
+        format_size = PaperFormat[args.format].split('x')
+        format = [float(format_size[0]), float(format_size[1])]
+
+    # sig composition
+    nn = args.sig_composition[0]
+    ns = args.sig_composition[1]
+    if not check_composition(nn, ns):
+        raise ValueError("sig composition {nn} {ns} are not vaild.")
+    nl = nn * ns
+    sig_composition = [nl, nn, ns]
+
+    # blank
+    blank =[args.blank_mode, cal_blank_page(len(get_page_range(pagerange)), nl)]
+
+    # sigproof
+    if args.sigproof is not None:
+        sigproof = [True, args.sigproof[0]]
+    else:
+        sigproof = [False, '']
+
+
+    #for arg in args._get_kwargs():
+    #    print(f"{arg[0]}:{arg[1]}")
+
+    if not args.y:
+        print("Continue?(Y/N):")
+        answer = input()
+        if answer != 'y' and answer != 'Y':
+            sys.exit()
+        
     # generate----------------------------
-
-    #sig.generate_signature(
-    #inputfile = , 
-    #output = ,
-    #pagerange = , 
-    #blank= ,
-    #sig_n= ,
-    #riffle= ,
-    #fold= ,
-    #format= ,
-    #imposition= ,
-    #split= ,
-    #trim= ,
-    #registration= ,
-    #cmyk= ,
-    #sigproof= 
-    #)
+    page_range = sig.get_exact_page_range(pagerange, blank)
+    sig.generate_signature(
+            inputfile = inputfile, 
+            output = outputpath,
+            pagerange = page_range, 
+            blank= blank,
+            sig_com= sig_composition ,
+            riffle= args.riffle,
+            fold= args.fold,
+            format= format,
+            imposition= args.imposition,
+            split= args.split,
+            trim= args.trim,
+            registration= args.registration,
+            cmyk= args.cmyk,
+            sigproof= sigproof
+        )
+    
+    print('Done')
     

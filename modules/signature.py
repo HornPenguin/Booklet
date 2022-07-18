@@ -364,7 +364,6 @@ def page_printing_layout(
 
 
 # Main Routine (Sequential): For the progress routine in the program ui.
-
 def get_writer_and_manuscript(inputfile:str) -> Tuple[pypdf.PdfFileReader, pypdf.PdfFileWriter, dict]:
 
     manuscript = pypdf.PdfFileReader(inputfile)
@@ -438,13 +437,12 @@ def get_format_dimension(format:Tuple[bool, float, float, str]) -> Tuple[float, 
     return f_width, f_height
 
 
-
 def generate_signature(
     inputfile:str, 
     output:str,
     pagerange:str, 
     blank:list[str, int], 
-    sig_n:list[int, int , int], 
+    sig_com:list[int, int , int], 
     riffle:bool,
     fold:bool,
     format:list[float, float],
@@ -454,7 +452,7 @@ def generate_signature(
     registration:bool,
     cmyk:bool,
     sigproof:list[bool, str],
-    progress=None, #pop_up, progress, text
+    progress=None, #length, tkinter_progress_barm, tkinter_progress_text, tkinter_windows
     ):
     if progress != None:
         progress_length = progress[0]
@@ -464,7 +462,7 @@ def generate_signature(
 
         def update():
             progress_bar['value'] +=1
-            progress_text.set(f"{progress_bar['value']/progress_length *100}%")
+            progress_text.set(f"{progress_bar['value']/progress_length *100:.2f}%")
             progress_window.update()
     else:
         def update():
@@ -472,18 +470,18 @@ def generate_signature(
 
     manuscript, writer, meta = get_writer_and_manuscript(inputfile)
     page_range = get_exact_page_range(pagerange, blank)
-    per_sig, per_riffle = get_arrange_permutations(sig_n, riffle)
-    blocks, composition, layout =get_arrange_determinant(page_range, sig_n, fold)
+    per_sig, per_riffle = get_arrange_permutations(sig_com, riffle)
+    blocks, composition, layout =get_arrange_determinant(page_range, sig_com, fold)
     format_width, format_height = pts_mm(format, False) #mm to pts
 
     if fold and layout[0] > 1:
         transformation_ = pypdf.Transformation().rotate(180)
         for block in blocks:
             per_block = per_sig.permute_to_list_index(block)
-            if sig_n[0] != 1:
+            if sig_com[0] != 1:
                 per_block = Permutation.subpermutation_to_list_index(per_riffle)
             
-            pages = split_list(per_block, int(sig_n[2]/2))
+            pages = split_list(per_block, int(sig_com[2]/2))
 
             for p in range(0, len(pages)):
                 splitted_pages = split_list(pages[p], layout[1])
@@ -524,7 +522,7 @@ def generate_signature(
     else:
         for block in blocks:
             per_block = per_sig.permute_to_list_index(block)
-            if sig_n[0] != 1:
+            if sig_com[0] != 1:
                 per_block = Permutation.subpermutation_to_list_index(per_riffle, per_block) 
             for i in per_block:
                 if i==0:
@@ -569,11 +567,11 @@ def generate_signature(
 
         for i in range(0,len(tem_pdf.pages)):
             page = tem_pdf.pages[i]
-            nre = int(sig_n[2]/2) if sig_n[2] >2 and imposition else 1
+            nre = int(sig_com[2]/2) if sig_com[2] >2 and imposition else 1
             
             for k in range(0,nre):
                 l = i*nre + k
-                print(l, f'{i}x{int(sig_n[2]/2)}+{k}',len(writer.pages))
+                print(l, f'{i}x{int(sig_com[2]/2)}+{k}',len(writer.pages))
                 
                 page_wm = writer.pages[l]
                 x, y = position(k+1, layout)
@@ -606,7 +604,7 @@ def generate_signature(
     else:
         if split:
             path_and_name = output.split(".pdf")[0]
-            sig_list = split_list(list(range(0,len(writer.pages))), sig_n[1])
+            sig_list = split_list(list(range(0,len(writer.pages))), sig_com[1])
             
             for i, sig in enumerate(sig_list):
                 sp_pdf = pypdf.PdfFileWriter()
