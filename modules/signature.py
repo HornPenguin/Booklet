@@ -454,17 +454,21 @@ def generate_signature(
     registration:bool,
     cmyk:bool,
     sigproof:list[bool, str],
-    progress:Tuple, #pop_up, progress, text
+    progress=None, #pop_up, progress, text
     ):
-    progress_length = progress[0]
-    progress_bar = progress[1]
-    progress_text = progress[2]
-    progress_window = progress[3]
+    if progress != None:
+        progress_length = progress[0]
+        progress_bar = progress[1]
+        progress_text = progress[2]
+        progress_window = progress[3]
 
-    def update():
-        progress_bar['value'] +=1
-        progress_text.set(f"{progress_bar['value']/progress_length *100}%")
-        progress_window.update()
+        def update():
+            progress_bar['value'] +=1
+            progress_text.set(f"{progress_bar['value']/progress_length *100}%")
+            progress_window.update()
+    else:
+        def update():
+            pass
 
     manuscript, writer, meta = get_writer_and_manuscript(inputfile)
     page_range = get_exact_page_range(pagerange, blank)
