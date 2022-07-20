@@ -9,7 +9,7 @@ dir_sep = "\\" if PLATFORM == "Windows" else "/"
 
 name = "main.py"
 
-WORK_PATH = "install_build"
+WORK_PATH = "tem"
 ICON_NAME = os.path.join("resources", icon_name)
 SPLASH_IMAGE = os.path.join("resources", "splash.png")
 PROGRAM_NAME = "Booklet"
@@ -88,9 +88,10 @@ print("Build-options")
 print(" ".join(build_option))
 if __name__ == "__main__":
     PyInstaller.__main__.run(build_option)
+
     # Sphinx-----------------------------------
     if len(sphinx_argv) > 0:
         print("Generate documents(Sphinx)")
         os.system("make " + " ".join(sphinx_argv))
 
-    print("Finished")
+print("Finished")

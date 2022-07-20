@@ -153,16 +153,17 @@ def split_list(li: list, n: int, mode="l") -> list:
 
 
 def transpose(matrix: list) -> list:
-    size = len(matrix)
+    row_length = len(matrix)
+    column_length = len(matrix[0])
 
     t = list()
-    for i in range(0, size):
+    for i in range(0, column_length):
         t.append([])
 
-    for i in range(0, size):
-        for j in range(0, size):
+    for i in range(0, column_length):
+        for j in range(0, row_length):
             t[i].append(matrix[j][i])
-
+            
     return t
 
 

@@ -1,4 +1,4 @@
-from .utils import resources_path
+from utils import resources_path
 
 about_text_path = resources_path("about", "resources/text")
 license_text_path = resources_path("license", "resources/text")

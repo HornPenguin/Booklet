@@ -7,9 +7,9 @@ from datetime import datetime
 import PyPDF2 as pypdf
 from reportlab.pdfgen import canvas
 
-from .utils import *
-from .textdata import PaperFormat
-from .permutation import Permutation
+from utils import *
+from textdata import PaperFormat
+from permutation import Permutation
 
 fold_arrange = {  # From left-top to right-bottom
     4: [[4, 1], [2, 3]],  # Front page  # Back page
@@ -18,11 +18,14 @@ fold_arrange = {  # From left-top to right-bottom
     16: [[16, 1, 4, 13, 9, 8, 5, 12], [10, 7, 6, 11, 15, 2, 3, 14]],
     24: [
         [24, 1, 12, 13, 21, 4, 9, 16, 20, 5, 8, 17],
-        [14, 11, 2, 23, 15, 10, 3, 22, 18, 7, 6, 19],
+        [14, 11, 2, 23, 15, 10, 3, 22, 18, 7, 6, 19]
     ],
-    32: [[ 44, 21, 28, 37, 40, 25, 24, 41, 53, 12, 5, 60, 57, 8, 9, 56, 52, 13, 4, 61, 64, 1, 16, 49, 45, 20, 29, 36, 33, 32, 17, 48,],
-         [ 46, 19, 30, 35, 34, 31, 18, 47, 51, 14, 3, 62, 63, 2, 15, 50, 54, 11, 6, 59, 58, 7, 10, 55, 43, 22, 27, 38, 39, 26, 23, 42,],
+    32: [[20, 13, 12, 21, 29, 4, 5, 28, 32, 1, 8, 25, 17, 16, 9, 24],
+         [22, 11, 14, 19, 27, 6, 3, 30, 26, 7, 2, 31, 23, 10, 15, 18]
     ],
+    64: [[ 44, 21, 28, 37, 40, 25, 24, 41, 53, 12, 5, 60, 57, 8, 9, 56, 52, 13, 4, 61, 64, 1, 16, 49, 45, 20, 29, 36, 33, 32, 17, 48],
+         [ 46, 19, 30, 35, 34, 31, 18, 47, 51, 14, 3, 62, 63, 2, 15, 50, 54, 11, 6, 59, 58, 7, 10, 55, 43, 22, 27, 38, 39, 26, 23, 42]
+    ]
 }
 
 # Signature modulation-----------------------------------------------------------
@@ -40,8 +43,9 @@ def __fold_matrix_update(n: int, matrix: list) -> list:
             # tem = np.array([n-tu[0] +1,n-tu[1] +1])
             # row_appended.append(np.insert(tem, 1, tu))
             tem = [n - tu[0] + 1, n - tu[1] + 1]
-            row_appended.append(tem.insert(1, tu[1]))
-            row_appended.append(tem.insert(1, tu[0]))
+            tem.insert(1, tu[1])
+            tem.insert(1, tu[0])
+            row_appended.append(tem)
         # rows.append(np.concatenate(row_appended, axis=None))
         rows.append(concatenate(row_appended))
     # return np.stack(rows)
@@ -79,7 +83,7 @@ def fold_arrange_n(n, per=False) -> Union[list, Permutation]:
             "Fold sheets must be 4*2^k for k= 0, 1, 2, .... \n Current value is {n}"
         )
 
-    if n < 64:
+    if n <= 64:
         fn = fold_arrange[n]
         if per:
             return Permutation(n, fn[0] + fn[1])
@@ -229,7 +233,7 @@ def page_printing_layout(
     cmyk: bool,
 ) -> Tuple[pypdf.PdfReader, io.BytesIO, Tuple[float, float]]:
 
-    # signature compoaition
+    # signature composition
 
     ni, ns = n[0], n[1]
     sig = 2 if ns > 1 else 1
@@ -242,6 +246,8 @@ def page_printing_layout(
 
     x = 2 * nd + nx * pagesize[0] + (nx - 1) * d
     y = 2 * nd + ny * pagesize[1] + (ny - 1) * d
+
+    y1 = nd + ny * pagesize[1] + (ny - 1) * d
 
     # Signature proof
     if proof:
@@ -281,6 +287,8 @@ def page_printing_layout(
         l = (4 / 5) * nd
         dis = nd / 2
 
+        
+
         if not trim:
             # horizontal line
             x1 = nd / 4
@@ -292,6 +300,7 @@ def page_printing_layout(
             x4 = x2 - x1
             y3 = nd / 4
             y4 = y1 + y3
+
         regist_coords = [
             (dis - l / 2, y1 - dis - l),
             (dis - l / 2, y2 + dis),
@@ -509,7 +518,7 @@ def generate_signature(
             
             percent = 100 * (current/ progress_length)
             bar = '█'* int(percent) + '-'*(100-int(percent))
-            endstr = "\r" if 
+            endstr = "\r" if (percent - 100) < 0.01 else "\n" 
             print(f"\r|{bar}| {percent:.2f}%", end="\r")
         
         return current + 1
@@ -536,17 +545,19 @@ def generate_signature(
     blocks, composition, layout = get_arrange_determinant(page_range, sig_com, fold)
     format_width, format_height = pts_mm(format, False)  # mm to pts
 
+
     if fold and layout[0] > 1:
         transformation_ = pypdf.Transformation().rotate(180)
         for block in blocks:
             per_block = per_sig.permute_to_list_index(block)
             if sig_com[0] != 1:
-                per_block = Permutation.subpermutation_to_list_index(per_riffle)
+                per_block = Permutation.subpermutation_to_list_index(per_riffle, per_block)
 
             pages = split_list(per_block, int(sig_com[2] / 2))
-
+            
             for p in range(0, len(pages)):
                 splitted_pages = split_list(pages[p], layout[1])
+
                 unfold_list = splitted_pages[0::2]
                 fold_list = splitted_pages[1::2]
 
@@ -568,26 +579,27 @@ def generate_signature(
                             writer.add_blank_page(format_width, format_height)
 
                         current = update(update_type,  current)
-                    for i in fold_list[k]:
-                        if i != 0:
-                            page = manuscript.pages[i - 1]
-                            left = page.mediabox[0]
-                            bottom = page.mediabox[1]
-                            page.add_transformation(
-                                pypdf.Transformation().translate(tx=-left, ty=-bottom)
-                            )
-                            transformation = transformation_.translate(
-                                tx=format_width, ty=format_height
-                            )
-                            page.add_transformation(transformation)
-                            page.cropbox.setUpperRight(format)
-                            page.scale_to(format_width, format_height)
-                            writer.add_page(page)
-                        else:
-                            writer.add_blank_page(format_width, format_height)
+                    if k < len(fold_list):
+                        for i in fold_list[k]:
+                            if i != 0:
+                                page = manuscript.pages[i - 1]
+                                left = page.mediabox[0]
+                                bottom = page.mediabox[1]
+                                page.add_transformation(
+                                    pypdf.Transformation().translate(tx=-left, ty=-bottom)
+                                )
+                                transformation = transformation_.translate(
+                                    tx=format_width, ty=format_height
+                                )
+                                page.add_transformation(transformation)
+                                page.cropbox.setUpperRight(format)
+                                page.scale_to(format_width, format_height)
+                                writer.add_page(page)
+                            else:
+                                writer.add_blank_page(format_width, format_height)
 
-                        current = update(update_type,  current)
-    else:
+                            current = update(update_type,  current)
+    else:   
         for block in blocks:
             per_block = per_sig.permute_to_list_index(block)
             if sig_com[0] != 1:
@@ -608,7 +620,6 @@ def generate_signature(
                     writer.add_page(page)
 
                 current = update(update_type,  current)
-
     ndbool = trim or registration or cmyk
     printbool = sigproof[0] or ndbool
 
@@ -616,14 +627,15 @@ def generate_signature(
     d = 5 if ndbool else 0
 
     if imposition or printbool:
+
         tem_pdf, temfile, cropsize = page_printing_layout(
             (format_width, format_height),
             len(page_range),
-            composition,
+            n = composition,
             nd=nd,
             d=d,
             proof=sigproof[0],
-            proofcoe=sigproof[1],
+            proofcode=sigproof[1],
             trim=trim,
             registration=registration,
             cmyk=cmyk,
@@ -638,13 +650,14 @@ def generate_signature(
             y = ny - floor((i - 1) / nx) - 1
             return (x, y)
 
+        nre = int(sig_com[2] / 2) if sig_com[2] > 2 and imposition else 1
+        #print(f"Debuge: nre={nre}, tem_page:{len(tem_pdf.pages)}")
         for i in range(0, len(tem_pdf.pages)):
             page = tem_pdf.pages[i]
-            nre = int(sig_com[2] / 2) if sig_com[2] > 2 and imposition else 1
 
             for k in range(0, nre):
                 l = i * nre + k
-                print(l, f"{i}x{int(sig_com[2]/2)}+{k}", len(writer.pages))
+                #print(l, f"{i}x{int(sig_com[2]/2)}+{k}", len(writer.pages))
 
                 page_wm = writer.pages[l]
                 x, y = position(k + 1, layout)
@@ -657,9 +670,13 @@ def generate_signature(
 
                 current = update(update_type,  current)
         if split:
-            path_and_name = writer.split(".pdf")[0]
+            path_and_name = output.split(".pdf")[0]
             for i in range(0, len(tem_pdf.pages))[0::2]:
                 sp_pdf = pypdf.PdfFileWriter()
+                sp_pdf.add_metadata(meta)
+                sp_pdf.add_metadata({"/Producer": "HornPenguin Booklet"})
+                sp_pdf.add_metadata({"/ModDate": f"{datetime.now()}"})
+
                 sp_pdf.add_page(tem_pdf.pages[i])
                 sp_pdf.add_page(tem_pdf.pages[i + 1])
                 with open(path_and_name + f"_{int(i/2)+1}" + ".pdf", "wb") as sp_f:

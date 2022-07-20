@@ -42,8 +42,8 @@ sys.path.insert(0, os.path.abspath("."))
 import PyPDF2 as pypdf
 
 
-from modules import signature as sig
-from modules import textdata as textdata
+import signature as sig
+import textdata as textdata
 
 from modules.utils import get_page_range, pts_mm
 from modules.textdata import PaperFormat
@@ -54,7 +54,7 @@ epi = (
     "github: https://github.com/HornPenguin/Booklet \nsupport: support@hornpenguin.com"
 )
 
-# Parser-----------------------------------------------------------------------
+# Parser check functions-----------------------------------------------------------------------
 class Format_Help(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         length = 15
@@ -125,7 +125,7 @@ def color_check(string):
     return string
 
 
-# Argument parser
+# Argument parser---------------------------------------------------------------------------
 parser = argparse.ArgumentParser(prog=f"{name}", description=des, epilog=epi)
 
 # program version
@@ -208,7 +208,7 @@ formatgroup.add_argument(
 parser.add_argument(
     "--imposition",
     action="store_true",
-    help="default conversion only rearrange and rotate, this option locates them in each pages.",
+    help="default conversion only rearrange and rotate, this option locates them in each pages. enable \'fold\' option True",
 )
 parser.add_argument(
     "--split", action="store_true", help="split pdf pages with each signatures."
@@ -353,7 +353,7 @@ if __name__ == "__main__":
     print(f"output:{outputpath}")
     print(f"page range:{pagerange}")
     print(f"blank:add {blank[1]} to {blank[0]}")
-    print(f"signature composition:{sig_composition[0]*sig_composition[1]} signature, inserting {sig_composition[0]} {sig_composition[1]} sub signatures")
+    print(f"signature composition:{sig_composition[0]} signature, inserting {sig_composition[1]} {sig_composition[2]} sub signatures")
     print(f"riffle direction:{args.riffle_direction}")
     print(f"paper format: {args.format} {format[0]}x{format[1]} (mm)")
     print(f"fold:{args.fold}")
@@ -382,7 +382,7 @@ if __name__ == "__main__":
         blank=blank,
         sig_com=sig_composition,
         riffle=rifflebool,
-        fold=args.fold,
+        fold=True if args.imposition else args.fold,
         format=format,
         imposition=args.imposition,
         split=args.split,
