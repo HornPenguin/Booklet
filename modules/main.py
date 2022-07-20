@@ -34,7 +34,7 @@ __company__ = "HornPenguin"
 __version__ = "0.0.1"
 __license__ = "BSD license"
 
-import platform, sys
+import platform, sys, os
 sys.path.insert(0, os.path.abspath("."))
 
 from PIL import Image
@@ -45,12 +45,12 @@ from modules.images import icon_path
 from modules.booklet import Booklet
 
 # Below codes are adding splash page for onefile execution case.
-import pyi_splash  # Fake module for PyInstaller process
-
-if pyi_splash.is_alive():
-    pyi_splash.update_text("Opening HornPenguin Booklet ... ")
-    pyi_splash.update_text("...")
-    pyi_splash.close()
+#import pyi_splash  # Fake module for PyInstaller process
+#
+#if pyi_splash.is_alive():
+#    pyi_splash.update_text("Opening HornPenguin Booklet ... ")
+#    pyi_splash.update_text("...")
+#    pyi_splash.close()
 
 
 if __name__ == "__main__":

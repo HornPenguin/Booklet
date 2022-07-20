@@ -17,7 +17,7 @@ and add printing markers for color printing.
 
    user/installation
    user/usage
-   user/expressions
+   user/terms_infos
 
 
 .. toctree::
