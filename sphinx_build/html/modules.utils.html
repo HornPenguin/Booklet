@@ -83,6 +83,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="user/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="user/usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user/expressions.html">Expressions</a></li>
 </ul>
 <p><span class="caption-text">API</span></p>
 <ul class="current">
@@ -172,6 +173,16 @@
 </dd></dl>
 
 <dl class="py function">
+<dt id="modules.utils.concatenate">
+<code class="sig-prename descclassname"><span class="pre">modules.utils.</span></code><code class="sig-name descname"><span class="pre">concatenate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lists</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modules.utils.concatenate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="modules.utils.flip">
+<code class="sig-prename descclassname"><span class="pre">modules.utils.</span></code><code class="sig-name descname"><span class="pre">flip</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modules.utils.flip" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt id="modules.utils.get_file_info">
 <code class="sig-prename descclassname"><span class="pre">modules.utils.</span></code><code class="sig-name descname"><span class="pre">get_file_info</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_string</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#modules.utils.get_file_info" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -218,6 +229,11 @@
 </dd></dl>
 
 <dl class="py function">
+<dt id="modules.utils.reshape">
+<code class="sig-prename descclassname"><span class="pre">modules.utils.</span></code><code class="sig-name descname"><span class="pre">reshape</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_1d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#modules.utils.reshape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt id="modules.utils.resources_path">
 <code class="sig-prename descclassname"><span class="pre">modules.utils.</span></code><code class="sig-name descname"><span class="pre">resources_path</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relative_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="headerlink" href="#modules.utils.resources_path" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -229,16 +245,22 @@
 
 <dl class="py function">
 <dt id="modules.utils.split_list">
-<code class="sig-prename descclassname"><span class="pre">modules.utils.</span></code><code class="sig-name descname"><span class="pre">split_list</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">li</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="headerlink" href="#modules.utils.split_list" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">modules.utils.</span></code><code class="sig-name descname"><span class="pre">split_list</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">li</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'l'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="headerlink" href="#modules.utils.split_list" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>li</strong> – list, list to be splited.</p></li>
 <li><p><strong>n</strong> – int, The length of sublist. It must be a divider of the length of <a href="#system-message-1"><span class="problematic" id="problematic-1">:param:`li`</span></a> list.</p></li>
+<li><p><strong>mode</strong> – str, The mode of split, <cite>l</cite>: length of sublist, <cite>n</cite>: number of sublist</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py function">
+<dt id="modules.utils.transpose">
+<code class="sig-prename descclassname"><span class="pre">modules.utils.</span></code><code class="sig-name descname"><span class="pre">transpose</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="headerlink" href="#modules.utils.transpose" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </section>
 
