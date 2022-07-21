@@ -10,6 +10,8 @@ build:
   os: ubuntu-22.04
   tools:
     python: "3.10"
+  commands:
+    - pip install sphinxawesome_theme
     # You can also specify other tool versions:
     # nodejs: "16"
     # rust: "1.55"
@@ -25,9 +27,3 @@ sphinx:
 
 # Optionally declare the Python requirements required to build your docs
 python:
-   install:
-   - method: pip
-     path: .
-     extra_requirements:
-      - sphinxawesome_theme
-   - requirements: docs/requirements.txt
