@@ -19,6 +19,11 @@ re_check_permited_character = r"([^-,\d\s])+?"
 
 
 def resources_path(relative_path: str, directory: str) -> str:
+    """Get correct resource directory path to use temper directory. 
+
+    :param relative_path: The relative directory or file path.
+    :param directory: The prime directory name, prior to relative path.
+    """
     # Get absolute path to resources, works for dev and for PyInstaller
     try:
         # PyInstaller creates a temp folder and stores path in _MEIPASS
@@ -53,6 +58,11 @@ def pts_mm(size: tuple, mode=True) -> tuple:  # mode: True(pts -> mm), False(mm 
 
 # Open webbrowser with a given url
 def open_url(url: str) -> NoReturn:
+    """open given url site in default webbrowser
+    
+    :param url: url of site
+    :type url: str
+    """
     return webbrowser.open(url)
 
 
@@ -66,10 +76,11 @@ registration_black = CMYKColor(1, 1, 1, 1)
 
 
 def hex_to_cmyk(hex: str) -> Tuple[float, float, float, float]:
-    """
-    :param hex: str, HEX code string
+    """Convert hex string to cmyk tuple
 
-    Convert HEX code to CMYK code.
+    :param hex: HEX code string
+    :type hex: str
+
     """
     if "#" in hex:
         hex = hex.replace("#", "")
@@ -88,13 +99,17 @@ def hex_to_cmyk(hex: str) -> Tuple[float, float, float, float]:
 
 
 def cmyk_to_rgb(C: float, M: float, Y: float, K: float) -> Tuple[int, int, int]:
-    """
-    :param C: float, Cyan color code
-    :param M: float, Magenta color code
-    :param Y: float, Yellow color code
-    :param K: float, Key(black) color code
+    """Convert CMYK code to RGB code.
 
-    Convert CMYK code to RGB code.
+    :param C: Cyan color code
+    :type C: float
+    :param M: Magenta color code
+    :type M: float
+    :param Y: Yellow color code
+    :type Y: float
+    :param K: Key(black) color code
+    :type K: float
+
     """
     R = 255 * (1 - C) * (1 - K)
     G = 255 * (1 - M) * (1 - K)
@@ -103,6 +118,15 @@ def cmyk_to_rgb(C: float, M: float, Y: float, K: float) -> Tuple[int, int, int]:
 
 
 def rgb_to_hex(r: int, g: int, b: int) -> str:
+    """Convert RGB code to hex string
+
+    :param r: Red color code. range=[0, 255].
+    :type r: int
+    :param g: Green color code. range=[0, 255].
+    :type g: int
+    :param b: Blue color code. range=[0, 255].
+    :type b: int
+    """
     rcode = str(hex(r)).split("x")[1]
     gcode = str(hex(g)).split("x")[1]
     bcode = str(hex(b)).split("x")[1]
@@ -118,9 +142,10 @@ def rgb_to_hex(r: int, g: int, b: int) -> str:
 
 # List routines
 def split_list(li: list, n: int, mode="l") -> list:
-    """
+    """Split given list to sublists.
+
     :param li: list, list to be splited.
-    :param n: int, The length of sublist. It must be a divider of the length of :param:`li` list.
+    :param n: int, The length or the number of sublist. It must be a divider of the length of :param:`li` list.
     :param mode: str, The mode of split, `l`: length of sublist, `n`: number of sublist
     """
     if mode != "l" and mode != "n":
@@ -153,6 +178,11 @@ def split_list(li: list, n: int, mode="l") -> list:
 
 
 def transpose(matrix: list) -> list:
+    """Transpose operation of given 2-dim list
+
+    :param matrix: 2-dimension numerical list
+    :type matrix: list
+    """
     row_length = len(matrix)
     column_length = len(matrix[0])
 

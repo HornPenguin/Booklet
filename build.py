@@ -2,7 +2,7 @@ import PyInstaller.__main__
 import sys, os
 import platform
 
-from modules.images import icon_name
+from booklet.images import icon_name
 
 PLATFORM = platform.system()
 dir_sep = "\\" if PLATFORM == "Windows" else "/"
@@ -31,7 +31,7 @@ for arg in argv:
 if CONSOLE:
     name = "main_console.py"
     PROGRAM_NAME += "_console"
-FILE_NAME = os.path.join("modules", name)
+FILE_NAME = os.path.join("booklet", name)
 
 print("pyinstaller: -", pyinstall_argv)
 print("sphinx:  ", sphinx_argv)

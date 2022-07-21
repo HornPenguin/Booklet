@@ -7,9 +7,9 @@ from datetime import datetime
 import PyPDF2 as pypdf
 from reportlab.pdfgen import canvas
 
-from utils import *
-from textdata import PaperFormat
-from permutation import Permutation
+from booklet.utils import *
+from booklet.textdata import PaperFormat
+from booklet.permutation import Permutation
 
 fold_arrange = {  # From left-top to right-bottom
     4: [[4, 1], [2, 3]],  # Front page  # Back page

@@ -50,10 +50,11 @@ import simpleaudio
 
 
 # ---------------------------------------------------------
-from . import textdata, signature
-from .utils import *
 import PyPDF2 as pypdf
-from .permutation import Permutation
+
+from booklet import textdata, signature
+from booklet.utils import *
+from booklet.permutation import Permutation
 
 
 # Tab_advanced

@@ -1,0 +1,7 @@
+booklet.main\_console module
+============================
+
+.. automodule:: booklet.main_console
+   :members:
+   :undoc-members:
+   :show-inheritance:

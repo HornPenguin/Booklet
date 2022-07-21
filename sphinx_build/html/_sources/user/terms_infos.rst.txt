@@ -21,14 +21,16 @@ Single page can become a signature and single singnature can compose single book
 Signature composition
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 As wrote the above, signature is governed by its number of sheets. 
-Single paper signature is a :math:`2` sheets signature, dual side printing.
+Single paper signature is a :math:`2` sheets signature with dual side printing.
 The number of sheets of signature must be a multiple of :math:`4`, practically considering *fold*.
 Therefore, permitted numbers are :math:`4, 8, 16, 32, 64` and :math:`12, 24`.
-:math:`12, 24` are differ in its fold progress with :math:`4, 8, 16, 32, 64`.
-Bigger sheets can be used :math:`>64`, :math:`128`, but it is not practical.
+:math:`12, 24` signatures are differ in its fold progress with :math:`4, 8, 16, 32, 64`.
+Bigger sheets can be used :math:`>64` to make single signature, but it is not practical.
 
-There are two type of signatures, 
-**inserting signature** and **fold signature**. They are same after cutting the edges, but its order of pages are differ by types.
+There are two types of methods to combine signatures, 
+**inserting** and **gathering**. They are same after cutting the edges, but its order of pages are differ by types.
+The *gathering* does not affect to order of each siganature but *inserting* does to match the correct ordering of pages. 
+
 The :math:`n` sheets signature is composed of :math:`i` time inserted :math:`f` sheets signature.
 
 .. math:: 

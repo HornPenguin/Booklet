@@ -1,0 +1,221 @@
+
+  
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+      <title>booklet.main_console module | HornPenguin Booklet 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" />
+      <link rel="stylesheet" href="_static/theme.e6081a2fb60dd7bf7015.css" />
+        <link rel="search" title="Search" href="search.html" />
+        <link rel="index" title="Index" href="genindex.html" />
+        <link rel="next" title="booklet.permutation module" href="booklet.permutation.html" />
+        <link rel="prev" title="booklet.main module" href="booklet.main.html" />
+  </head>
+
+  <body class="antialiased text-gray scroll-smooth">
+    <div
+      id="page"
+      data-controller="sidebar search"
+      data-action="keydown@window->search#focus"
+      class="h-screen xl:grid xl:grid-layout"
+    >
+      <a class="block text-xl bg-white py-4 z-20 absolute top-0 h-14 inset-x-0 text-center transform -translate-y-full focus:translate-y-0 focus:outline-none transition-transform duration-75" href="#booklet-main-console-module" title="Skip navigation links">Skip to content</a>
+
+      <header class="grid-area-header z-10 h-14">
+        <div class="bg-gray-dark shadow-md flex items-center h-full xl:px-2 relative"><div class="flex items-center">
+      <button
+    data-action="sidebar#open"
+    data-sidebar-target="hamburger"
+    class="xl:hidden h-14 w-14 leading-14 text-gray-100 hover:bg-gray-700 hover:text-brand focus:outline-none focus:bg-gray-700 focus:text-brand">
+  <span class="sr-only">Open navigation menu</span>
+  <svg aria-hidden="true" class="fill-current h-8 w-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+</button><a class="hover:bg-gray-700 focus:bg-gray-700 focus:outline-none tooltipped tooltipped-sw"
+   href="index.html"
+   aria-label="Back to homepage"><span class="hidden lg:inline-block shrink-0 font-medium text-gray-100 mx-5 leading-14 tracking-wider">HornPenguin Booklet 0.0.1 documentation</span>
+</a></div><div class="flex justify-end items-center flex-1"><form
+  id="searchbox"
+  action="search.html"
+  data-action="click->search#focusSearchInput"
+  method="get"
+  class="flex print:hidden justify-between items-center leading-14 md:ml-4 bg-gray-dark text-gray-300 focus-within:bg-gray-50 focus-within:text-gray-800 focus-within:absolute focus-within:inset-x-0 focus-within:top-0 md:focus-within:w-full md:focus-within:static">
+
+  <button
+    class="text-inherit h-14 w-14"
+    aria-label="Get search results"
+    tabindex="-1"
+  >
+    <svg aria-hidden="true" class="fill-current stroke-current h-8 w-8" stroke-width="0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+  </button>
+
+  <input
+    name="q"
+    id="search-input"
+    data-search-target="searchInput"
+    type="search"
+    aria-label="Search the docs"
+    placeholder="Search the docs"
+    class="pr-2 bg-transparent text-inherit focus:outline-none w-0 md:w-auto focus:w-full transition-all duration-100"
+  />
+</form></div>
+</div>
+      </header>
+
+      
+  <aside data-sidebar-target="sidebar" class="grid-area-sidebar h-full fixed xl:relative inset-y-0 left-0 z-20 xl:z-0 print:hidden overflow-y-auto transition-all transform transform-gpu -translate-x-full opacity-0 duration-300 xl:translate-x-0 xl:opacity-100">
+    <nav
+  role="navigation"
+  class="h-full overflow-y-auto bg-white text-gray-600 pt-8 flex flex-col"
+>
+  <div class="nav-toc flex-1 pl-6"><p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user/installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user/installation.html#command-mode">Command mode</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user/installation.html#pip">pip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user/installation.html#windows-linux">Windows, Linux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user/installation.html#osx">OSX</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="user/installation.html#gui-mode">Gui mode</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user/usage.html">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user/usage.html#basic">Basic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/usage.html#advanced">Advanced</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/usage.html#printing-markers">Printing markers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user/terms.html">Terms of Book and Printing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user/terms.html#shape-and-structure-of-book">Shape and Structure of Book</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user/terms.html#signature">Signature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user/terms.html#riffle-direction">Riffle direction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user/terms.html#imposition">Imposition</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="user/terms.html#printing-markers">Printing markers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user/terms.html#signature-proof">Signature proof</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user/terms.html#trim-marker">Trim marker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="user/terms.html#registration-marker">Registration marker</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">booklet</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="booklet.html">booklet package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="booklet.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="booklet.html#module-booklet">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+  <button
+      data-action="sidebar#close"
+      title="Close navigation menu"
+      class="text-4xl text-gray-800 p-4 bottom-0 hover:text-brand xl:hidden focus:text-brand self-center">
+    <span class="sr-only">Close navigation menu</span>
+    <svg aria-hidden="true" class="fill-current stroke-current h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+  </button>
+</nav>
+  </aside>
+
+  <main
+    data-controller="scroll"
+    class="px-4 xl:ml-fluid grid-area-main overflow-y-auto flex flex-col h-full mx-0 md:mx-auto xl:mr-0"
+  ><nav role="navigation"
+     aria-label="breadcrumbs"
+     class="print:hidden mt-12 text-sm text-gray-light">
+  <a class="text-gray-light text-sm hover:text-gray-dark font-medium focus:text-gray-dark" href="index.html">HornPenguin Booklet 0.0.1 documentation</a>
+  <span class="mr-1">/</span><a class="text-gray-light text-sm hover:text-gray-dark" href="modules.html">booklet</a>
+    <span class="mr-1">/</span><a class="text-gray-light text-sm hover:text-gray-dark" href="booklet.html">booklet package</a>
+    <span class="mr-1">/</span><span aria-current="page">booklet.main_console module</span>
+</nav>
+    <article role="main" class="flex-1">
+      
+  <section id="module-booklet.main_console">
+<span id="booklet-main-console-module"></span><h1>booklet.main_console module<a class="headerlink" href="#module-booklet.main_console" title="Permalink to this heading"><span>#</span></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="booklet.main_console.Format_Help">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">booklet.main_console.</span></span><span class="sig-name descname"><span class="pre">Format_Help</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">option_strings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">const</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">choices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">help</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metavar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#booklet.main_console.Format_Help" title="Permalink to this definition"><span>#</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Action</span></code></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="booklet.main_console.cal_blank_page">
+<span class="sig-prename descclassname"><span class="pre">booklet.main_console.</span></span><span class="sig-name descname"><span class="pre">cal_blank_page</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pages</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nl</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#booklet.main_console.cal_blank_page" title="Permalink to this definition"><span>#</span></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="booklet.main_console.check_composition">
+<span class="sig-prename descclassname"><span class="pre">booklet.main_console.</span></span><span class="sig-name descname"><span class="pre">check_composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ns</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#booklet.main_console.check_composition" title="Permalink to this definition"><span>#</span></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="booklet.main_console.check_dir">
+<span class="sig-prename descclassname"><span class="pre">booklet.main_console.</span></span><span class="sig-name descname"><span class="pre">check_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#booklet.main_console.check_dir" title="Permalink to this definition"><span>#</span></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="booklet.main_console.color_check">
+<span class="sig-prename descclassname"><span class="pre">booklet.main_console.</span></span><span class="sig-name descname"><span class="pre">color_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#booklet.main_console.color_check" title="Permalink to this definition"><span>#</span></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="booklet.main_console.dir_path">
+<span class="sig-prename descclassname"><span class="pre">booklet.main_console.</span></span><span class="sig-name descname"><span class="pre">dir_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#booklet.main_console.dir_path" title="Permalink to this definition"><span>#</span></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="booklet.main_console.file_path">
+<span class="sig-prename descclassname"><span class="pre">booklet.main_console.</span></span><span class="sig-name descname"><span class="pre">file_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#booklet.main_console.file_path" title="Permalink to this definition"><span>#</span></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="booklet.main_console.range_validation">
+<span class="sig-prename descclassname"><span class="pre">booklet.main_console.</span></span><span class="sig-name descname"><span class="pre">range_validation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#booklet.main_console.range_validation" title="Permalink to this definition"><span>#</span></a></dt>
+<dd></dd></dl>
+
+</section>
+
+
+    </article>
+
+    <footer>
+      
+        <div class="mt-20 mb-4 text-sm text-gray-700">&copy; 2022, Hyun Seong Kim&nbsp;Made with <a href="https://www.sphinx-doc.org">Sphinx 5.0.2</a></div>
+      
+    </footer></main>
+
+
+      <button
+  data-search-target="snackbar"
+  data-action="search#hideSnackbar"
+  class="fixed bottom-0 right-0 z-20 opacity-0 p-4 m-4 tracking-wide bg-gray-900 text-gray-100 transition transform transform-gpu duration-500 translate-y-full"
+>
+  Clear highlights
+</button><div
+  data-sidebar-target="screen"
+  data-action="click->sidebar#close"
+  class="fixed hidden inset-0 bg-black bg-opacity-50">
+</div>
+    </div>
+    
+      
+  <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+  <script src="_static/jquery.js"></script>
+  <script src="_static/underscore.js"></script>
+  <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+  <script src="_static/doctools.js"></script>
+<script src="_static/theme.a9d041328d1560cbc665.js"></script>
+    
+  </body>
+</html>

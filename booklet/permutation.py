@@ -7,7 +7,8 @@ sys.path.append(".")
 
 
 from itertools import permutations
-from utils import split_list
+
+from booklet.utils import split_list
 
 # Permutations and generating functions for signature routines-------------------------
 class Permutation:

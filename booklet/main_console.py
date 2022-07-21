@@ -42,11 +42,11 @@ sys.path.insert(0, os.path.abspath("."))
 import PyPDF2 as pypdf
 
 
-import signature as sig
-import textdata as textdata
+import booklet.signature as sig
+import booklet.textdata as textdata
 
-from modules.utils import get_page_range, pts_mm
-from modules.textdata import PaperFormat
+from booklet.utils import get_page_range, pts_mm
+from booklet.textdata import PaperFormat
 
 
 des = """PDF modulation for printing and press----------------------------------------------------"""
@@ -180,7 +180,7 @@ parser.add_argument(
     default="back",
     help="where additional blank pages are added, default = 'back'.",
 )
-parser.add_argument("--sig-composition", nargs=2, type=int, default=(1, 4), help="")
+parser.add_argument("--sig-composition", nargs=2, type=int, default=(1, 4), help="signature composition (i, f). i is a inserted number of signature and f is a number of sheets in sub-signature.")
 parser.add_argument(
     "--riffle-direction",
     nargs=1,
@@ -272,126 +272,134 @@ if __name__ == "__main__":
 
     args = parser.parse_args(sys.argv[1:])
 
-
+    start_1 = False
+    start_2 = False
     # Path validation
     inputfile = ""
     outputpath = ""
     pagerange = ""
     if args.inputfile is not None:
         inputfile = args.inputfile
+        start_1 =True
     elif args.input is not None:
         inputfile = args.input[0]
-    else:
+        start_1 =True
+    elif args.format_help is None:
         raise ValueError("No input file")
+    
     if args.outputpath is not None:
         outputpath = args.outputpath
+        start_2 =True
     elif args.output is not None:
         outputpath = args.output[0]
+        start_2 =True
     else:
         outputpath = os.getcwd()
-
-    # name checker
-    if check_dir(outputpath):
-        if args.name is not None:
-            name = args.name
-        else:
-            name_format = os.path.split(inputfile)[1]
-            name = name_format.split(".pdf")[0] + "_HP_BOOKLET" + ".pdf"
-        outputpath = os.path.join(outputpath, name)
-
-    pre_pdf = pypdf.PdfFileReader(inputfile)
-    page_max = len(pre_pdf.pages)
-    default_size = [
-        float(pre_pdf.getPage(0).mediaBox.width),
-        float(pre_pdf.getPage(0).mediaBox.height),
-    ]
-
-    # page range
-    if args.page_range is not None:
-        for li in args.page_range:
-            st = "".join(li)
-            pagerange += st
-    else:
-        pagerange = f"1-{page_max}"
+        start_2 =True
     
-    #riffle
-    rifflebool = True
-    if args.riffle_direction == "left":
-        rifflebool = False
+    if start_1 and start_2:
+        # name checker
+        if check_dir(outputpath):
+            if args.name is not None:
+                name = args.name
+            else:
+                name_format = os.path.split(inputfile)[1]
+                name = name_format.split(".pdf")[0] + "_HP_BOOKLET" + ".pdf"
+            outputpath = os.path.join(outputpath, name)
+
+        pre_pdf = pypdf.PdfFileReader(inputfile)
+        page_max = len(pre_pdf.pages)
+        default_size = [
+            float(pre_pdf.getPage(0).mediaBox.width),
+            float(pre_pdf.getPage(0).mediaBox.height),
+        ]
+
+        # page range
+        if args.page_range is not None:
+            for li in args.page_range:
+                st = "".join(li)
+                pagerange += st
+        else:
+            pagerange = f"1-{page_max}"
+
+        #riffle
+        rifflebool = True
+        if args.riffle_direction == "left":
+            rifflebool = False
 
 
-    # format setting
-    if args.format is None or args.format == "Default":
-        width, height = pts_mm(default_size)
-        format = [width, height]
-    else:
-        format_size = PaperFormat[args.format].split("x")
-        format = [float(format_size[0]), float(format_size[1])]
+        # format setting
+        if args.format is None or args.format == "Default":
+            width, height = pts_mm(default_size)
+            format = [width, height]
+        else:
+            format_size = PaperFormat[args.format].split("x")
+            format = [float(format_size[0]), float(format_size[1])]
 
-    # sig composition
+        # sig composition
 
-    nn = args.sig_composition[0]
-    ns = args.sig_composition[1]
-    if not check_composition(nn, ns):
-        raise ValueError(f"sig composition {nn} {ns} are not vaild.")
-    nl = nn * ns
-    sig_composition = [nl, nn, ns]
+        nn = args.sig_composition[0]
+        ns = args.sig_composition[1]
+        if not check_composition(nn, ns):
+            raise ValueError(f"sig composition {nn} {ns} are not vaild.")
+        nl = nn * ns
+        sig_composition = [nl, nn, ns]
 
-    # blank
-    blank = [args.blank_mode, cal_blank_page(len(get_page_range(pagerange)), nl)]
+        # blank
+        blank = [args.blank_mode, cal_blank_page(len(get_page_range(pagerange)), nl)]
 
-    # sigproof
-    if args.sigproof is not None:
-        sigproof = [True, args.sigproof[0]]
-    else:
-        sigproof = [False, ""]
+        # sigproof
+        if args.sigproof is not None:
+            sigproof = [True, args.sigproof[0]]
+        else:
+            sigproof = [False, ""]
 
-    printbool = args.trim or args.registration or args.cmyk or sigproof[0]
+        printbool = args.trim or args.registration or args.cmyk or sigproof[0]
 
-    # Print work info
-    print(f"Input:{inputfile}")
-    print(f"output:{outputpath}")
-    print(f"page range:{pagerange}")
-    print(f"blank:add {blank[1]} to {blank[0]}")
-    print(f"signature composition:{sig_composition[0]} signature, inserting {sig_composition[1]} {sig_composition[2]} sub signatures")
-    print(f"riffle direction:{args.riffle_direction}")
-    print(f"paper format: {args.format} {format[0]}x{format[1]} (mm)")
-    print(f"fold:{args.fold}")
-    print(f"imposition:{args.imposition}")
-    print(f"split per signature:{args.split}")
+        # Print work info
+        print(f"Input:{inputfile}")
+        print(f"output:{outputpath}")
+        print(f"page range:{pagerange}")
+        print(f"blank:add {blank[1]} to {blank[0]}")
+        print(f"signature composition:{sig_composition[0]} signature, inserting {sig_composition[1]} {sig_composition[2]} sub signatures")
+        print(f"riffle direction:{args.riffle_direction}")
+        print(f"paper format: {args.format} {format[0]}x{format[1]} (mm)")
+        print(f"fold:{args.fold}")
+        print(f"imposition:{args.imposition}")
+        print(f"split per signature:{args.split}")
 
-    print("Printing-----------------")
-    sigproof_str = f"{sigproof[0]}"
-    if sigproof[0]:
-        sigproof_str += f" color={args.sigproof[0]}"
-    print(f"trim:{args.trim}, registration:{args.registration}, cmyk:{args.cmyk}, sigproof: {sigproof_str}")
+        print("Printing-----------------")
+        sigproof_str = f"{sigproof[0]}"
+        if sigproof[0]:
+            sigproof_str += f" color={args.sigproof[0]}"
+        print(f"trim:{args.trim}, registration:{args.registration}, cmyk:{args.cmyk}, sigproof: {sigproof_str}")
 
-    if not args.y:
-        print("Continue?(Y/N):")
-        answer = input()
-        if answer != "y" and answer != "Y":
-            sys.exit()
+        if not args.y:
+            print("Continue?(Y/N):")
+            answer = input()
+            if answer != "y" and answer != "Y":
+                sys.exit()
 
-    pages = sig.get_exact_page_range(pagerange=pagerange, blank=blank)
-    page_len =len(pages) * (2 if printbool or args.imposition else 1)
-    # generate----------------------------
-    sig.generate_signature(
-        inputfile=inputfile,
-        output=outputpath,
-        pagerange=pagerange,
-        blank=blank,
-        sig_com=sig_composition,
-        riffle=rifflebool,
-        fold=True if args.imposition else args.fold,
-        format=format,
-        imposition=args.imposition,
-        split=args.split,
-        trim=args.trim,
-        registration=args.registration,
-        cmyk=args.cmyk,
-        sigproof=sigproof,
-        progress=[page_len]
-    )
+        pages = sig.get_exact_page_range(pagerange=pagerange, blank=blank)
+        page_len =len(pages) * (2 if printbool or args.imposition else 1)
+        # generate----------------------------
+        sig.generate_signature(
+            inputfile=inputfile,
+            output=outputpath,
+            pagerange=pagerange,
+            blank=blank,
+            sig_com=sig_composition,
+            riffle=rifflebool,
+            fold=True if args.imposition else args.fold,
+            format=format,
+            imposition=args.imposition,
+            split=args.split,
+            trim=args.trim,
+            registration=args.registration,
+            cmyk=args.cmyk,
+            sigproof=sigproof,
+            progress=[page_len]
+        )
 
-    print("\n")
-    print(f"Done {os.path.split(outputpath)[1]}.")
+        print("\n")
+        print(f"Done {os.path.split(outputpath)[1]}.")
