@@ -28,9 +28,7 @@ and add printing markers for color printing.
    :maxdepth: 2
    :caption: API
 
-   modules.permutation
-   modules.utils
-
+   modules
 
 Indices and tables
 ==================
