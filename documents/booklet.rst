@@ -1,6 +1,8 @@
 booklet package
 ===============
 
+Belows are core routines of HornPenguin Booklet.
+
 Submodules
 ----------
 

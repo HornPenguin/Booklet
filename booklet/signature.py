@@ -30,6 +30,28 @@ fold_arrange = {  # From left-top to right-bottom
 
 # Signature modulation-----------------------------------------------------------
 def __fold_matrix_update(n: int, matrix: list) -> list:
+    """Update :math:`n` signature page layout to :math:`n+1` layout.
+    
+    :param n: update number   
+    :param matrix: :math:`n-1` signature page layout matrix. Must be a :math:'n-1' level matrix for given :param:`n`. 
+
+    :type n: int
+    :type matrix: list[list]
+
+    This function imitates fold process to increase the number of sheets in signature.
+
+    1. Rotating it elements counter-clockwise.
+    2. Adding corresponding :math:`n` page numbers. 
+    3. Return the next level signature layout matrix.
+
+    Rotating process is same with transpose and filp vertically.
+
+    .. math::
+
+        Rotate(\bold{M}, 90) = Flip(M^T, v)
+
+    The dimension of :math:`n`-level signature layout refers :function:`sig_layout`.
+    """
     # n_1 = np.flip(matrix.T, axis=0)
     n_1 = flip(transpose(matrix))
     len_n = len(n_1[0])
@@ -53,6 +75,17 @@ def __fold_matrix_update(n: int, matrix: list) -> list:
 
 
 def sig_layout(n: int) -> tuple:
+    """Return a signature page imposition layout for the given argument :param:`n`.
+
+    :param n: Number of sheets in single signature. It must be a positive interger that multiple of 4 or just 1.
+    :type n: int
+
+    Additonal description about :param:`n`:
+        There are two case of signature sheets. Multiple of only 2 and multiple of 3 (12, 24).
+        The former case is more widely used and this function supports perfect layout for all numbers, more than 128.
+        However, it only supports 12 ans 24 sheet signature for the latter case. 48 and larger numbers will not work and
+        raise value error.
+    """
     if type(n) != int:
         raise ValueError("n is not an integer")
     if n == 1:
@@ -60,6 +93,8 @@ def sig_layout(n: int) -> tuple:
     elif n < 4 or n % 4 != 0:
         raise ValueError(f"n:{n} must be a positive integer that multiple of 4.")
     if n % 3 == 0:
+        if n >24:
+            raise ValueError("Only 12 and 24 sheets signatures are")
         i = log2(n) - log2(3) - 1
         return (3, int(2**i))
     else:

@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to HornPenguin Booklet's documentation!
+HornPenguin Booklet
 ===============================================
 
 HornPenguin Booklet is a free and open source booklet generating 
@@ -18,17 +18,12 @@ and add printing markers for color printing.
    user/installation
    user/usage
    user/terms
-
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Routines
-
+   
 .. toctree::
    :maxdepth: 2
-   :caption: API
+   :caption: Core
 
-   modules
+   booklet
 
 Indices and tables
 ==================
