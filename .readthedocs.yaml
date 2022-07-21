@@ -18,8 +18,11 @@ build:
     - python -mvirtualenv /home/docs/checkouts/readthedocs.org/user_builds/booklet/envs/latest
     - /home/docs/checkouts/readthedocs.org/user_builds/booklet/envs/latest/bin/python -m pip install --upgrade --no-cache-dir pip setuptools
     - /home/docs/checkouts/readthedocs.org/user_builds/booklet/envs/latest/bin/python -m pip install --upgrade --no-cache-dir mock==1.0.1 pillow==5.4.1 commonmark==0.8.1 recommonmark==0.5.0 sphinx sphinxawesome_theme readthedocs-sphinx-ext 
-    - make html 
-    - mv ./sphinx_build ./_readthedocs
+    - /home/docs/checkouts/readthedocs.org/user_builds/booklet/envs/stable/bin/python -m sphinx -T -E -b html -d _build/doctrees -D language=en . _readthedocs/html
+    - /home/docs/checkouts/readthedocs.org/user_builds/booklet/envs/stable/bin/python -m sphinx -T -E -b html -d _build/doctrees -D language=en . _readthedocs/localmedia
+    - /home/docs/checkouts/readthedocs.org/user_builds/booklet/envs/stable/bin/python -m sphinx -T -E -b html -d _build/doctrees -D language=en . _readthedocs/latex
+    - latexmk -r latexmkrc -pdf -f -dvi- -ps- -jobname=booklet -interaction=nonstopmode
+    - mv -f /home/docs/checkouts/readthedocs.org/user_builds/booklet/checkouts/stable/_build/latex/booklet.pdf /home/docs/checkouts/readthedocs.org/user_builds/booklet/artifacts/stable/sphinx_pdf/booklet.pdf
 
 # Build documentation in the docs/ directory with Sphinx
 sphinx:
