@@ -14,7 +14,7 @@
         <link rel="search" title="Search" href="../search.html" />
         <link rel="index" title="Index" href="../genindex.html" />
         <link rel="next" title="Usage" href="usage.html" />
-        <link rel="prev" title="Welcome to HornPenguin Booklet’s documentation!" href="../index.html" />
+        <link rel="prev" title="HornPenguin Booklet" href="../index.html" />
   </head>
 
   <body class="antialiased text-gray scroll-smooth">
@@ -74,13 +74,16 @@
   <div class="nav-toc flex-1 pl-6"><p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#command-mode">Command mode</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#command-interface">Command interface</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#pip">pip</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#windows-linux">Windows, Linux</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#osx">OSX</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#gui-mode">Gui mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gui-mode">Gui mode</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#from-source">From source</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a><ul>
@@ -105,14 +108,16 @@
 </ul>
 </li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<p class="caption" role="heading"><span class="caption-text">Core</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../modules.html">booklet</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../booklet.html">booklet package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../booklet.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../booklet.html#module-contents">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../booklet.html">booklet package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../booklet.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../booklet.signature.html">booklet.signature module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../booklet.permutation.html">booklet.permutation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../booklet.utils.html">booklet.utils module</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../booklet.html#module-booklet">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -143,8 +148,8 @@
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"><span>#</span></a></h1>
 <p>HPBooklet provides 3 types of executable files for Windows, Linux(Ubuntu), and OSX.
 Basically, we offer two type of program, <em>command line</em> interface and <em>gui</em> interface.</p>
-<section id="command-mode">
-<h2>Command mode<a class="headerlink" href="#command-mode" title="Permalink to this heading"><span>#</span></a></h2>
+<section id="command-interface">
+<h2>Command interface<a class="headerlink" href="#command-interface" title="Permalink to this heading"><span>#</span></a></h2>
 <section id="pip">
 <h3>pip<a class="headerlink" href="#pip" title="Permalink to this heading"><span>#</span></a></h3>
 </section>
@@ -154,17 +159,78 @@ Basically, we offer two type of program, <em>command line</em> interface and <em
 and execution in command line interface, Windows(cmd, powershell), Linux(bash, zsh, …).
 <code class="docutils literal notranslate"><span class="pre">.zip</span></code> files are one directory program. They have less initiation time than one file type.</p>
 <p><strong>Windows</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><code><span class="n">booklet_console</span><span class="o">.</span><span class="n">exe</span>
+<span class="n">booklet_console_windows</span><span class="o">.</span><span class="n">zip</span>
+</code></pre></div></div>
 <p><strong>Linux</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><code><span class="n">booklet_console</span>
+<span class="n">booklet_console_linux</span><span class="o">.</span><span class="n">zip</span>
+</code></pre></div></div>
 </section>
 <section id="osx">
 <h3>OSX<a class="headerlink" href="#osx" title="Permalink to this heading"><span>#</span></a></h3>
-<p>Dveloper does not have any Mac computer. (ㅜㅜ)
+<p>Dveloper does not have any Mac computer. (ㅜㅜ, :&lt;)
 Please use :code:<code class="docutils literal notranslate"><span class="pre">pip</span></code> install.</p>
 </section>
 </section>
 <section id="gui-mode">
 <h2>Gui mode<a class="headerlink" href="#gui-mode" title="Permalink to this heading"><span>#</span></a></h2>
 <p>Gui application using tkinter.</p>
+<p><strong>Windows</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><code><span class="n">booklet</span><span class="o">.</span><span class="n">exe</span>
+<span class="n">booklet_Windows</span><span class="o">.</span><span class="n">zip</span>
+</code></pre></div></div>
+<p><strong>Linux</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><code><span class="n">booklet</span>
+<span class="n">booklet_Linux</span><span class="o">.</span><span class="n">zip</span>
+</code></pre></div></div>
+<section id="from-source">
+<h3>From source<a class="headerlink" href="#from-source" title="Permalink to this heading"><span>#</span></a></h3>
+<p>This section describes execution and build process with
+source directory.</p>
+<p><strong>Directory</strong></p>
+<ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">booklet</span></code>: python source codes.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">dist</span></code>: Standalone executable files for OSs.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">documents</span></code>: Sphinx rst documents</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">images</span></code>: Miscellaneous images, in working images or original <code class="code docutils literal notranslate"><span class="pre">.odg</span></code> files.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">resources</span></code>: Essential resources for program, voice, images, logo, … .</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">test</span></code>: Temper test directory.</p></li>
+</ul>
+<p><strong>File</strong></p>
+<ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">.readthedocs.yaml</span></code>: Readthedocs setting file.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">build.py</span></code>: Build script for Pyinstaller and Sphinx.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">Makefile,</span> <span class="pre">make.bat</span></code>: Sphinx build script.</p></li>
+</ul>
+<section id="dependencies">
+<h4>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading"><span>#</span></a></h4>
+<ul class="simple">
+<li><p><a class="reference external" href="https://pypdf2.readthedocs.io/">PyPDF2</a></p></li>
+<li><p><a class="reference external" href="https://www.reportlab.com/">reportlab</a></p></li>
+<li><p><a class="reference external" href="https://pillow.readthedocs.io/en/stable/">Pillow</a></p></li>
+<li><p><a class="reference external" href="https://simpleaudio.readthedocs.io/en/latest/">simpleaudio</a></p></li>
+</ul>
+<p>Install above dependencies with next command.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><code><span class="n">pip</span> <span class="n">install</span> <span class="n">PyPDF2</span> <span class="n">reportlab</span> <span class="n">Pillow</span> <span class="n">simpleaudio</span>
+</code></pre></div></div>
+<p>For <code class="code docutils literal notranslate"><span class="pre">simpleaudio</span></code> in Ubuntu, it requires compilers, build tools and prerequest library <code class="code docutils literal notranslate"><span class="pre">libasound2-dev</span></code> to install.
+If you are using Ubuntu you can install <code class="code docutils literal notranslate"><span class="pre">build-essential</span></code> from repository.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><code><span class="n">sudo</span> <span class="n">apt</span> <span class="n">install</span> <span class="n">build</span><span class="o">-</span><span class="n">essential</span> <span class="n">libasound2</span><span class="o">-</span><span class="n">dev</span>
+</code></pre></div></div>
+</section>
+<section id="execution-with-python">
+<h4>Execution with python<a class="headerlink" href="#execution-with-python" title="Permalink to this heading"><span>#</span></a></h4>
+<p>From the root of project directory,</p>
+<p><strong>Command line</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><code><span class="n">python</span> <span class="o">./</span><span class="n">booklet</span><span class="o">/</span><span class="n">main_console</span><span class="o">.</span><span class="n">py</span>
+</code></pre></div></div>
+<p>See <a class="reference internal" href="usage.html#usage-label"><span class="std std-ref">usage</span></a></p>
+<p><strong>GUI</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><code><span class="n">python</span> <span class="o">./</span><span class="n">booklet</span><span class="o">/</span><span class="n">main</span><span class="o">.</span><span class="n">py</span>
+</code></pre></div></div>
+</section>
+</section>
 </section>
 </section>
 

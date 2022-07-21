@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-      <title>Welcome to HornPenguin Booklet’s documentation! | HornPenguin Booklet 0.0.1 documentation</title>
+      <title>HornPenguin Booklet | HornPenguin Booklet 0.0.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" />
       <link rel="stylesheet" href="_static/theme.e6081a2fb60dd7bf7015.css" />
         <link rel="search" title="Search" href="search.html" />
@@ -23,7 +23,7 @@
       data-action="keydown@window->search#focus"
       class="h-screen xl:grid xl:grid-layout"
     >
-      <a class="block text-xl bg-white py-4 z-20 absolute top-0 h-14 inset-x-0 text-center transform -translate-y-full focus:translate-y-0 focus:outline-none transition-transform duration-75" href="#welcome-to-hornpenguin-booklets-documentation" title="Skip navigation links">Skip to content</a>
+      <a class="block text-xl bg-white py-4 z-20 absolute top-0 h-14 inset-x-0 text-center transform -translate-y-full focus:translate-y-0 focus:outline-none transition-transform duration-75" href="#hornpenguin-booklet" title="Skip navigation links">Skip to content</a>
 
       <header class="grid-area-header z-10 h-14">
         <div class="bg-gray-dark shadow-md flex items-center h-full xl:px-2 relative"><div class="flex items-center">
@@ -73,13 +73,16 @@
   <div class="nav-toc flex-1 pl-6"><p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="user/installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="user/installation.html#command-mode">Command mode</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user/installation.html#command-interface">Command interface</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="user/installation.html#pip">pip</a></li>
 <li class="toctree-l3"><a class="reference internal" href="user/installation.html#windows-linux">Windows, Linux</a></li>
 <li class="toctree-l3"><a class="reference internal" href="user/installation.html#osx">OSX</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="user/installation.html#gui-mode">Gui mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user/installation.html#gui-mode">Gui mode</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="user/installation.html#from-source">From source</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="user/usage.html">Usage</a><ul>
@@ -104,14 +107,16 @@
 </ul>
 </li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<p class="caption" role="heading"><span class="caption-text">Core</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">booklet</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="booklet.html">booklet package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="booklet.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="booklet.html#module-booklet">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="booklet.html">booklet package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="booklet.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="booklet.signature.html">booklet.signature module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="booklet.permutation.html">booklet.permutation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="booklet.utils.html">booklet.utils module</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="booklet.html#module-booklet">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -132,11 +137,34 @@
     class="px-4 xl:ml-fluid grid-area-main overflow-y-auto flex flex-col h-full mx-0 md:mx-auto xl:mr-0"
   ><article role="main" class="flex-1">
       
-  <section id="welcome-to-hornpenguin-booklet-s-documentation">
-<h1>Welcome to HornPenguin Booklet’s documentation!<a class="headerlink" href="#welcome-to-hornpenguin-booklet-s-documentation" title="Permalink to this heading"><span>#</span></a></h1>
+  <section id="hornpenguin-booklet">
+<h1>HornPenguin Booklet<a class="headerlink" href="#hornpenguin-booklet" title="Permalink to this heading"><span>#</span></a></h1>
 <p>HornPenguin Booklet is a free and open source booklet generating
 program. It can reorder the pages, rotate and transform for fold signature,
 and add printing markers for color printing.</p>
+<p>You can print your own book signatures and simple pamplet with your home printer.</p>
+<ul class="simple">
+<li><p>Support diffence signature size from 4 to 32.</p></li>
+<li><p>Change page size during generating signature.</p></li>
+<li><p>Left riffling direction is supported for old Asian and Arabic bookbindings.</p></li>
+<li><p>Printing markers; trim, CMYK, signature proof are supported.</p></li>
+</ul>
+<section id="structure-of-program">
+<h2>Structure of Program<a class="headerlink" href="#structure-of-program" title="Permalink to this heading"><span>#</span></a></h2>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Interface</p></td>
+<td><p>PDF modulation</p></td>
+<td><p>PDF generation</p></td>
+</tr>
+<tr class="row-even"><td><p>GUI(tkinter)</p></td>
+<td rowspan="2"><p>PyPDF2</p></td>
+<td rowspan="2"><p>reportlab</p></td>
+</tr>
+<tr class="row-odd"><td><p>CUI(argparse)</p></td>
+</tr>
+</tbody>
+</table>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
 <ul>
@@ -146,16 +174,16 @@ and add printing markers for color printing.</p>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<p class="caption" role="heading"><span class="caption-text">Core</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">booklet</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="booklet.html">booklet package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="booklet.html">booklet package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="booklet.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="booklet.html#module-booklet">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </div>
+</section>
 </section>
 <section id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading"><span>#</span></a></h1>

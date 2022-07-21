@@ -13,8 +13,8 @@
       <link rel="stylesheet" href="_static/theme.e6081a2fb60dd7bf7015.css" />
         <link rel="search" title="Search" href="search.html" />
         <link rel="index" title="Index" href="genindex.html" />
-        <link rel="next" title="booklet.textdata module" href="booklet.textdata.html" />
-        <link rel="prev" title="booklet.permutation module" href="booklet.permutation.html" />
+        <link rel="next" title="booklet.permutation module" href="booklet.permutation.html" />
+        <link rel="prev" title="booklet package" href="booklet.html" />
   </head>
 
   <body class="antialiased text-gray scroll-smooth">
@@ -105,14 +105,16 @@
 </ul>
 </li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<p class="caption" role="heading"><span class="caption-text">Core</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">booklet</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="booklet.html">booklet package</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="booklet.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="booklet.html#module-booklet">Module contents</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="booklet.html">booklet package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="booklet.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">booklet.signature module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="booklet.permutation.html">booklet.permutation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="booklet.utils.html">booklet.utils module</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="booklet.html#module-booklet">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -135,15 +137,15 @@
      aria-label="breadcrumbs"
      class="print:hidden mt-12 text-sm text-gray-light">
   <a class="text-gray-light text-sm hover:text-gray-dark font-medium focus:text-gray-dark" href="index.html">HornPenguin Booklet 0.0.1 documentation</a>
-  <span class="mr-1">/</span><a class="text-gray-light text-sm hover:text-gray-dark" href="modules.html">booklet</a>
-    <span class="mr-1">/</span><a class="text-gray-light text-sm hover:text-gray-dark" href="booklet.html">booklet package</a>
+  <span class="mr-1">/</span><a class="text-gray-light text-sm hover:text-gray-dark" href="booklet.html">booklet package</a>
     <span class="mr-1">/</span><span aria-current="page">booklet.signature module</span>
 </nav>
     <article role="main" class="flex-1">
       
-  <section id="module-booklet.signature">
-<span id="booklet-signature-module"></span><h1>booklet.signature module<a class="headerlink" href="#module-booklet.signature" title="Permalink to this heading"><span>#</span></a></h1>
-<dl class="py function">
+  <section id="booklet-signature-module">
+<h1>booklet.signature module<a class="headerlink" href="#booklet-signature-module" title="Permalink to this heading"><span>#</span></a></h1>
+<p>Core module of signature generation.</p>
+<span class="target" id="module-booklet.signature"></span><dl class="py function">
 <dt class="sig sig-object py" id="booklet.signature.fold_arrange_n">
 <span class="sig-prename descclassname"><span class="pre">booklet.signature.</span></span><span class="sig-name descname"><span class="pre">fold_arrange_n</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="booklet.permutation.html#booklet.permutation.Permutation" title="booklet.permutation.Permutation"><span class="pre">Permutation</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#booklet.signature.fold_arrange_n" title="Permalink to this definition"><span>#</span></a></dt>
 <dd></dd></dl>
@@ -186,7 +188,20 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="booklet.signature.sig_layout">
 <span class="sig-prename descclassname"><span class="pre">booklet.signature.</span></span><span class="sig-name descname"><span class="pre">sig_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="headerlink" href="#booklet.signature.sig_layout" title="Permalink to this definition"><span>#</span></a></dt>
-<dd></dd></dl>
+<dd><p>Return a signature page imposition layout for the given argument <a href="#id1"><span class="problematic" id="id2">:param:`n`</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> (<em>int</em>) – Number of sheets in single signature. It must be a positive interger that multiple of 4 or just 1.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Additonal description about <a href="#id3"><span class="problematic" id="id4">:param:`n`</span></a>:</dt><dd><p>There are two case of signature sheets. Multiple of only 2 and multiple of 3 (12, 24).
+The former case is more widely used and this function supports perfect layout for all numbers, more than 128.
+However, it only supports 12 ans 24 sheet signature for the latter case. 48 and larger numbers will not work and
+raise value error.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="booklet.signature.sig_rearrange">
