@@ -581,6 +581,7 @@ def generate_signature(
     format_width, format_height = pts_mm(format, False)  # mm to pts
 
 
+
     if fold and layout[0] > 1:
         transformation_ = pypdf.Transformation().rotate(180)
         for block in blocks:
@@ -607,7 +608,7 @@ def generate_signature(
                             page.add_transformation(
                                 pypdf.Transformation().translate(tx=-left, ty=-bottom)
                             )
-                            page.cropbox.setUpperRight(format)
+                            page.cropbox.setUpperRight([format_width, format_height])
                             page.scale_to(format_width, format_height)
                             writer.add_page(page)
                         else:
@@ -627,7 +628,7 @@ def generate_signature(
                                     tx=format_width, ty=format_height
                                 )
                                 page.add_transformation(transformation)
-                                page.cropbox.setUpperRight(format)
+                                page.cropbox.setUpperRight([format_width, format_height])
                                 page.scale_to(format_width, format_height)
                                 writer.add_page(page)
                             else:
