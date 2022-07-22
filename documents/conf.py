@@ -56,7 +56,7 @@ html_permalinks_icon = '<span>#</span>'
 html_theme = 'sphinxawesome_theme'
 
 html_theme_options = {
-    "extra_header_links" : {"Docs": "https:://docs.hornpenguin.com", "출판사":"https:://www.hornpenguin.com"}
+    "extra_header_links" : {"Docs": "docs", "홈":"publisher"}
 
 }
 # Add any paths that contain custom static files (such as style sheets) here,
