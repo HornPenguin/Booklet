@@ -83,6 +83,10 @@ def file_path(string):
 def dir_path(string):
     if os.path.isdir(string) or os.path.isfile(string):
         return string
+    elif '\\' not in string and '/' not in string:
+        return string
+    elif os.path.isdir(os.path.split(string)[0]):
+        return string
     else:
         raise NotADirectoryError(string)
 
@@ -180,7 +184,11 @@ parser.add_argument(
     default="back",
     help="where additional blank pages are added, default = 'back'.",
 )
-parser.add_argument("--sig-composition", nargs=2, type=int, default=(1, 4), help="signature composition (i, f). i is a inserted number of signature and f is a number of sheets in sub-signature.")
+parser.add_argument(
+    "--sig-composition", 
+    nargs=2, type=int, 
+    default=(1, 4), 
+    help="signature composition (i, f). i is a inserted number of signature and f is a number of sheets in sub-signature. Default: 1 4")
 parser.add_argument(
     "--riffle-direction",
     nargs=1,
@@ -243,7 +251,11 @@ def check_dir(path):
     elif os.path.isdir(path):
         return True
     else:
-        raise ValueError(f"Is it path? {path}")
+        path_split = os.path.split(path)
+        if os.path.isdir(path_split[0]):
+            return False
+        else:
+            raise ValueError(f"Is it path? {path}")
 
 
 def check_composition(nn, ns):
@@ -303,8 +315,8 @@ if __name__ == "__main__":
             if args.name is not None:
                 name = args.name
             else:
-                name_format = os.path.split(inputfile)[1]
-                name = name_format.split(".pdf")[0] + "_HP_BOOKLET" + ".pdf"
+                name_formatted = os.path.split(inputfile)[1]
+                name = name_formatted.split(".pdf")[0] + "_HP_BOOKLET" + ".pdf"
             outputpath = os.path.join(outputpath, name)
 
         pre_pdf = pypdf.PdfFileReader(inputfile)

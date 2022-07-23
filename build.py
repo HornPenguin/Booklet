@@ -12,7 +12,7 @@ name = "main.py"
 WORK_PATH = "tem"
 ICON_NAME = os.path.join("resources", icon_name)
 SPLASH_IMAGE = os.path.join("resources", "splash.png")
-PROGRAM_NAME = "Booklet"
+PROGRAM_NAME = "booklet"
 CONSOLE = False
 argv = sys.argv[1:]
 

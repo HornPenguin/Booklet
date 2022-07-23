@@ -1,0 +1,25 @@
+[build-system]
+requires =[s-"setuptools>=61.0]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "HornPenguin Booklet"
+version = "0.0.1"
+authors =[
+    {name = "Hyun Seong Kim", email="hyunseong@hornpenguin.com"}
+]
+
+description = "PDF modulator for press and printing"
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: BSD 3-clause License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+
+"Homepage" = ""
+"Documentation" = "https://docs.hornpenguin.com/projects/booklet"

@@ -59,4 +59,22 @@ Click `Generation` button, progress popup windows will appear and *ping* sound w
 
 
 
+Command line
+-------------
 
+Same with gui method, but all those options are passed by argument.
+
+.. code-block::
+
+    usage: booklet [-h] [--version] [--format-help] [-i INPUT] [-o OUTPUT] [-n NAME] [--page-range [PAGE_RANGE ...]]
+               [--blank-mode {back,front,both}] [--sig-composition SIG_COMPOSITION SIG_COMPOSITION]
+               [--riffle-direction {right,left}] [--fold]
+               [--format {Default,A3,A4,A5,B3,B4,B5,B6,JIS B3,JIS B4,JIS B5,JIS B6,Letter,Legal,Tabloid,GOV Letter,GOV Legal,ANSI A,ANSI B,ARCH A,ARCH B} | --custom-format CUSTOM_FORMAT CUSTOM_FORMAT]
+               [--imposition] [--split] [--trim] [-reg] [--cmyk] [--sigproof [SIGPROOF]] [-y]
+               [inputfile] [outputpath]
+
+For example, if we transform the given pdf `input.pdf` to `signature.pdf` with 16 sheets signature composed of 4 sheets subsignature, marking signature proof to brown (hexcode = `#964B00`),
+
+.. code-block::
+
+    booklet input.pdf signature.pdf -sig-composition 4 4 --sigproof #964B00
