@@ -7,7 +7,7 @@ from booklet.images import icon_name
 PLATFORM = platform.system()
 dir_sep = "\\" if PLATFORM == "Windows" else "/"
 
-name = "main.py"
+name = "mainw.py"
 
 WORK_PATH = "tem"
 ICON_NAME = os.path.join("resources", icon_name)
@@ -29,8 +29,10 @@ for arg in argv:
         
 
 if CONSOLE:
-    name = "main_console.py"
-    PROGRAM_NAME += "_console"
+    name = "main.py"
+else:
+    PROGRAM_NAME += "w"
+
 FILE_NAME = os.path.join("booklet", name)
 
 print("pyinstaller: -", pyinstall_argv)
@@ -94,4 +96,8 @@ if __name__ == "__main__":
     if len(sphinx_argv) > 0:
         print("Generate documents(Sphinx)")
         os.system("make " + " ".join(sphinx_argv))
+
+
+os.rmdir(WORK_PATH)
+
 print("Finished")

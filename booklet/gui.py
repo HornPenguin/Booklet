@@ -32,20 +32,20 @@
 
 """
 
-import os
-import sys
+import platform, os, sys
+
+if platform.system() == "Darwin":
+    import tkmacosx as tkosx
 
 sys.path.insert(0, os.path.abspath("."))
 
 import tkinter as tk
 from tkinter import ttk, filedialog
 from tkinter.colorchooser import askcolor
-from typing import runtime_checkable
 from functools import partial
 import re
-from math import log2, floor
+from math import log2
 from PIL import Image, ImageTk
-from datetime import datetime
 import simpleaudio
 
 
@@ -786,14 +786,25 @@ class Booklet:
         self.sigproof_checkbox = ttk.Checkbutton(
             self.Frame_ad_printing, variable=self.sigproofbool
         )
-        self.sigproof_button = tk.Button(
-            self.Frame_ad_printing,
-            width=3,
-            height=1,
-            text="  ",
-            bg=self.sig_color.get(),
-            command=self.sig_color_set,
-        )
+        if self.platform == "Darwin":
+            self.sigproof_button = tkosx.Button(
+                self.Frame_ad_printing,
+                width=3,
+                height=1,
+                text="  ",
+                bg=self.sig_color.get(),
+                command=self.sig_color_set,
+            )
+
+        else:
+            self.sigproof_button = tk.Button(
+                self.Frame_ad_printing,
+                width=3,
+                height=1,
+                text="  ",
+                bg=self.sig_color.get(),
+                command=self.sig_color_set,
+            )
         self.sigproof_icon = ttk.Label(self.Frame_ad_printing, image=sigproof_icon)
         self.sigproof_icon.photo = sigproof_icon
 
