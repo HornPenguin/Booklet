@@ -45,15 +45,13 @@ from booklet.images import icon_path
 from booklet.gui import Booklet
 
 # Below codes are adding splash page for onefile execution case.
-try:
-    import pyi_splash  # Fake module for PyInstaller process
 
-    if pyi_splash.is_alive():
-        pyi_splash.update_text("Opening HornPenguin Booklet ... ")
-        pyi_splash.update_text("...")
-        pyi_splash.close()
-except:
-    pass  
+import pyi_splash  # Fake module for PyInstaller process
+if pyi_splash.is_alive():
+    pyi_splash.update_text("Opening HornPenguin Booklet ... ")
+    pyi_splash.update_text("...")
+    pyi_splash.close()
+ 
 
 if __name__ == "__main__":
 

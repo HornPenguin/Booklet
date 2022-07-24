@@ -115,8 +115,6 @@ class Booklet:
         self.window.call("set_theme", "light")
         self.window.title("HornPenguin Booklet")
 
-        self.logo = ImageTk.PhotoImage(logo, master=self.window)
-
         self.range_vaildation = re.compile(re_range_validation)
         self.character_vailidation = re.compile(re_character_validation)
 
@@ -132,13 +130,15 @@ class Booklet:
 
         self.initiate_window()
 
-        self.iconbitmapbool = True
-        if platform == "Linux":
-            self.iconbitmapbool = False
 
-        if self.iconbitmapbool:
-            self.icon_path = icon_path
-            self.window.iconbitmap(self.icon_path)
+        self.platform = platform
+
+        self.logo = ImageTk.PhotoImage(logo, master=self.window)
+        if self.platform == "Linux":
+            self.window.tk.call("wm", "iconphoto", self.window._w, self.logo)
+        self.icon_path = icon_path
+        self.icon_setting(self.window)
+
 
         # Menu setting
         # Help: About, Format, Tutorial, License, Contact, Source, homepage, support
@@ -188,6 +188,14 @@ class Booklet:
         self.trimbool = tk.BooleanVar(value=False)
         self.registrationbool = tk.BooleanVar(value=False)
         self.cmykbool = tk.BooleanVar(value=False)
+
+    def icon_setting(self, window):
+        try:
+            window.iconbitmap(self.icon_path)
+        except:
+            pass
+
+            
 
     def initiate_window(self):
         self.window.winfo_height
