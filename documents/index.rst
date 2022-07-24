@@ -6,6 +6,9 @@
 HornPenguin Booklet
 ===============================================
 
+.. image:: _static/main.png
+
+
 HornPenguin Booklet is a free and open source booklet generating 
 program. It can reorder the pages, rotate and transform for fold signature,
 and add printing markers for color printing. 

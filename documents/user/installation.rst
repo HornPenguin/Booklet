@@ -8,52 +8,19 @@ Basically, we offer two type of program, *command line* interface and *gui* inte
 Command interface
 ====================
 
-pip
-------
-
 
 
 Windows, Linux
 ------------------
 
-Download executable file from ``dist`` directory in project repository.
-and execution in command line interface, Windows(cmd, powershell), Linux(bash, zsh, ...).
-``.zip`` files are one directory program. They have less initiation time than one file type. 
+Download executable file [SourceForge project page](https://sourceforge.net/projects/hornpenguinbooklet/).
 
 **Windows**
 
 .. code-block:: 
 
-    booklet_console.exe
-    booklet_console_windows.zip
-
-
-**Linux**
-
-.. code-block:: 
-
-    booklet_console
-    booklet_console_linux.zip
-
-
-OSX
-------
-Dveloper does not have any Mac computer. (ㅜㅜ, :<)
-Please use :code:``pip`` install.
-
-
-
-Gui mode
-==========
-
-Gui application using tkinter. 
-
-**Windows**
-
-.. code-block:: 
-
-    booklet.exe
-    booklet_Windows.zip
+    booklet.exe # command line interface
+    bookletw.zip # graphic interface
 
 
 **Linux**
@@ -61,7 +28,13 @@ Gui application using tkinter.
 .. code-block:: 
 
     booklet
-    booklet_Linux.zip
+    bookletw
+
+OSX
+------
+Dveloper does not have any Mac computer. (ㅜㅜ, :<)
+Please build or ditectly execute from source.
+
 
 
 From source
@@ -106,6 +79,8 @@ If you are using Ubuntu you can install :code:`build-essential` from repository.
     
     sudo apt install build-essential libasound2-dev
 
+In Mac, they are automatically installed. 
+
 Execution with python 
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -131,6 +106,12 @@ Build
 This project uses pyinstaller as a build tool to generate standalone executable file.
 In the root, there is a :code:`build.py`. It is a simple python script to initiate build process.
 
+It needs *pyinstaller*. You can install it with next command,
+
+.. code-block::
+
+    pip install pyinstaller
+
 There are prefixed arguments in `build.py` and you can use additional pyinstaller arguments.
 
 Build with command line interface
@@ -154,7 +135,7 @@ Build with graphic user interface
 
 .. code-block:: 
 
-    python build.py --onedir
+    python build.py --onedir 
 
 The :code:`--onedir` option automatically add platform name to its directory name.
 
