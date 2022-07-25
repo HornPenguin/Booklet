@@ -197,7 +197,7 @@ Additional
 * CMYK: Add square Cyan, Magenta, Yellow, Key(black) color markers to left side.
 
 Generation
-^^^^^^^^^^^^^^
+--------------
 
 .. image:: ../_static/generate_button.png
 
