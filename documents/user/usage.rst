@@ -201,7 +201,7 @@ Generation
 
 .. image:: ../_static/generate_button.png
 
-Click `Generation` button, progress popup windows will appear and *ping* sound will notice the job finihed.
+Click `Generation` button, progress popup windows will appear and *ping* sound will notice the job finished.
 
 
 .. image:: ../_static/Progress.png
