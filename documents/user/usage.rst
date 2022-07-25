@@ -68,7 +68,7 @@ Default value conserves the original page size.
     :align: center
 
     * - .. image:: ../_static/help.png
-      - .. image:: ../_static/paperformat.png
+      - .. image:: ../_static/PaperFormat.png
 
 
 See dimension(mm) in above `Help` -> `Paper Format` reference.
