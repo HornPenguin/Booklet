@@ -13,14 +13,14 @@ Command interface
 Windows, Linux
 ------------------
 
-Download executable file [SourceForge project page](https://sourceforge.net/projects/hornpenguinbooklet/).
+Download executable file :ref:`SourceForge project page <https://sourceforge.net/projects/hornpenguinbooklet/>`.
 
 **Windows**
 
 .. code-block:: 
 
     booklet.exe # command line interface
-    bookletw.zip # graphic interface
+    bookletw.exe # graphic interface
 
 
 **Linux**
@@ -33,7 +33,8 @@ Download executable file [SourceForge project page](https://sourceforge.net/proj
 OSX
 ------
 Dveloper does not have any Mac computer. (ㅜㅜ, :<)
-Please build or ditectly execute from source.
+Please build yourself or ditectly execute from source. 
+See below section.
 
 
 
@@ -42,6 +43,9 @@ From source
 
 This section describes execution and build process with
 source directory.
+
+Structure of project directory
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Directory**
 
@@ -90,7 +94,7 @@ From the root of project directory,
 
 .. code-block:: 
 
-    python ./booklet/main_console.py 
+    python ./booklet/main_console.py {INPUT} {OUTPUTPAHT} {options}
 
 See :ref:`usage <usage_label>` for options and basic usages.
 
@@ -125,14 +129,12 @@ Build with command line interface
 
     python build.py --console --onedir
 
-Build with graphic user interface
-
-*with splash image*.
+Build with graphic user interface *with splash image*.
 
 .. code-block:: 
 
-    python build.py --onefile --splash=resources/splash.png
-
+    python build.py --onefile --splash=resources\\splash.png
+     
 .. code-block:: 
 
     python build.py --onedir 

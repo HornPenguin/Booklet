@@ -46,12 +46,12 @@ from booklet.gui import Booklet
 
 # Below codes are adding splash page for onefile execution case.
 
-import pyi_splash  # Fake module for PyInstaller process
-if pyi_splash.is_alive():
-    pyi_splash.update_text("Opening HornPenguin Booklet ... ")
-    pyi_splash.update_text("...")
-    pyi_splash.close()
- 
+#import pyi_splash  # Fake module for PyInstaller process
+#if pyi_splash.is_alive():
+#    pyi_splash.update_text("Opening HornPenguin Booklet ... ")
+#    pyi_splash.update_text("...")
+#    pyi_splash.close()
+
 
 if __name__ == "__main__":
 

@@ -4,28 +4,53 @@ Usage
 ===============
 
 
-
-
 Basic
 ------------
 
 Select PDF file to modulate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. 
-    .. image:: file_selection.png
+.. image:: _static/select_file001.png
 
-Programs automatically detect meta datas, title, authors, and pages, of given pdf files.
+Click the grey button with :code:`...` notation on right of intputbox to choose manuscript.
+Otherwise, you can type file path directly to input box including file name, but it is not recommended. 
+
+
+.. image:: _static/select_file002.png
+
+In this example, we chose :code:`test.pdf` file. 
+HornPenguin Booklet automatically detects meta datas, title, authors, and pages, of the given pdf files.
 In cui, just typing path of selected pdf file.
 
-Settings
-^^^^^^^^^^^^
+Basic Settings
+^^^^^^^^^^^^^^^^
 
-* File name: Name of output file. You can modify it, but beaware that it does not check existence of given file. Default value: `{original file name}_HP_BOOKLET.pdf`
-* Leaves: Number of sheets per each signature. When you choose specific number of sheets, additional blank pages will be shown right to selection box.
+.. image:: _static/output_setting001.png
+
+*Output path* is a directory path that output file wil be saved, Default value is the path of original file.
+You can modify it with clicking grey button, :code:`...`, or directly modify path string in inputbox.
+
+
+*File name* is a name of output file. Default value is :code:`{original file name}_HP_BOOKLET.pdf`. 
+You can modify it, but beaware that it does not check existence of given file. 
+If there is same file in output path, it will be overwritten by the new file. 
+
+.. image:: _static/output_setting002.png
+
+*Leaves* is a number of sheets per each signatures. 
+When you choose specific number of sheets, additional blank pages will be shown right to selection box.
+In this case, manuscript file has 32 number of sheets, so it will be 0 for 4, 8, 16, 32 number of sheets.
+In the list of sheet numbers, you can see some numbers have a subfix :code:`f`.
+:code:`f` indicates fold support numbers. if you select one of those numbers, the fold check will be activated.
+
+
 * Book Format: Page dimension of output file. Default: original page size. See dimension(mm) in above `Help` -> `Paper Format` reference.
 * Fold: Fold option is restricted to some special sheet numbers and they are notated "{number}f"
 * Riffling: Riffle direction of output file. Default: `right`. `left` is for old Asian, Arabic, and Hebrew manuscript.
+
+
+.. image::_static/output_setting001.png
+
 
 
  

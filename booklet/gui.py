@@ -195,8 +195,6 @@ class Booklet:
         except:
             pass
 
-            
-
     def initiate_window(self):
         self.window.winfo_height
         x = int((self.window.winfo_screenwidth() - self.window.winfo_width()) / 2)
@@ -225,8 +223,8 @@ class Booklet:
         sub_window = tk.Toplevel(self.window)
         sub_window.title(title)
         sub_window.resizable(False, True)
-        if self.iconbitmapbool:
-            sub_window.iconbitmap(self.icon_path)
+        
+        self.icon_setting(sub_window)
 
         if not hasattr(text, "__iter__"):
             text = [text]
@@ -284,8 +282,8 @@ class Booklet:
         else:
             sub_window.resizable(False, False)
 
-        if self.iconbitmapbool:
-            sub_window.iconbitmap(self.icon_path)
+        self.icon_setting(sub_window)
+        
 
         table = ttk.Treeview(sub_window, selectmode="browse", height=36)
         table.pack(fill="both")
@@ -459,7 +457,10 @@ class Booklet:
         self.lvalues = [
             f"{4*(i+1)}" if (i + 1) % 2 and i != 2 else f"{4*(i+1)}f"
             for i in range(0, 8)
-        ] + ["2"]
+        ]
+        self.lvalues.remove("28")
+        self.lvalues.append("64f")
+        self.lvalues.append("2")
         self.leaves = ttk.Combobox(
             self.Frame_output, value=self.lvalues, state="readonly"
         )
@@ -906,6 +907,7 @@ class Booklet:
                 file_name_with_format = os.path.split(str(filename))[1]
                 file_name = file_name_with_format.split(".pdf")
                 self.filename.set(file_name[0] + "_HP_BOOKLET" + ".pdf")
+                self.output_entry.insert(0, os.path.split(str(filename))[0])
 
                 print(f"title:{self.title.get()}\nfile:{filename}")
                 self.Generate_button.config(state=tk.ACTIVE)
@@ -1095,8 +1097,8 @@ class Booklet:
         tpadx = tpady = 10
         sub_window = tk.Toplevel(self.window)
         sub_window.title(f"{self.filename.get()}")
-        if self.iconbitmapbool:
-            sub_window.iconbitmap(self.icon_path)
+
+        self.icon_setting(sub_window)
 
         progress_length = 2 * len(page_range) if impositionbool else len(page_range)
         print("Pro_length:", progress_length)
