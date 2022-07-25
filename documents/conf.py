@@ -54,6 +54,7 @@ exclude_patterns = []
 
 html_permalinks_icon = '<span>#</span>'
 html_theme = 'sphinxawesome_theme'
+html_favicon = 'HornPavicon.ico'
 
 html_theme_options = {
     "extra_header_links" : {"Docs": "docs", "홈":"publisher"}

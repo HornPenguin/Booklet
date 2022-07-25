@@ -13,7 +13,7 @@ Command interface
 Windows, Linux
 ------------------
 
-Download executable file :ref:`SourceForge project page <https://sourceforge.net/projects/hornpenguinbooklet/>`.
+Download executable file `SourceForge project page <https://sourceforge.net/projects/hornpenguinbooklet/>`.
 
 **Windows**
 

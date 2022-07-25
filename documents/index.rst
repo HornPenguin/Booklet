@@ -44,11 +44,6 @@ Structure of Program
    user/usage
    user/terms
    
-.. toctree::
-   :maxdepth: 2
-   :caption: Core
-
-   booklet
 
 Indices and tables
 ==================

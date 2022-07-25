@@ -170,13 +170,14 @@ In the same way, let's get a front layout matrix of the :math:`16` sheets signat
 .. math:: 
 
     \begin{bmatrix}
-        8, 1 \\
-        5, 4
+        8& 1 \\
+        5& 4
     \end{bmatrix} \rightarrow 
     \begin{bmatrix}
-        1, 4 \\
-        8, 5
-    \begin{bmatrix}
+        1& 4 \\
+        8& 5
+    \end{bmatrix}
+
 
 *Expanding*:
 
@@ -189,23 +190,27 @@ In the same way, let's get a front layout matrix of the :math:`16` sheets signat
 
 .. math:: 
 
-    [1,4] \rightarrow [[16 ,1],[4, 13]]\\\\
+    [1, 4] \rightarrow 
+    [ [16 , 1 ], [4, 13] ] 
 
-    [8, 5] \rightarrow [[9, 8], [5, 12]]
+.. math:: 
+
+    [8, 5] \rightarrow 
+    [ [ 9 , 8 ], [ 5 , 12 ] ]
 
 See update steps of front matrix:
 
 .. math:: 
 
-    [4, 1] \rightarrow 
+    \begin{bmatrix} 4& 1\end{bmatrix} \rightarrow 
     \begin{bmatrix} 
-        8, 1 \\
-        5, 4
-    \end{bmarix} \rightarrow 
+        8& 1 \\
+        5& 4
+    \end{bmatrix} \rightarrow 
     \begin{bmatrix} 
-        16, 1, 4, 13 \\
-        9, 8, 5, 12
-    \end{bmarix}
+        16& 1& 4& 13 \\
+        9& 8& 5& 12
+    \end{bmatrix}
 
 Rotating Page
 ------------------
