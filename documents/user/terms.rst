@@ -80,6 +80,65 @@ Supporting *RL* is not complicate. Just reverse order the pages before applying 
 Imposition
 -------------
 
+The imposition means a locating works of pages to paper and the result of those works.
+Unless you binding book in old Asia style (their method can use single paper as basic signature) , 
+you must print signature considering fold action.
+This is why the manuscript for book should have a number of pages which is a multiple of 4.
+
+
+Imposition layout update
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+It will be worth to describe folding layout update process.
+
+* :math:`n` sheets signature contains :math:`n` number of pages.
+* Imposition of :math:`n` sheets signatures are divided into two sections, the front page and the back page.
+
+This process covers next signatures.
+
+.. math:: 
+
+    a_0 = 4 \\\\
+
+    a_n = 2 \cdot a_{n-1}
+
+
+Let's start from :math:`4` sheets signature, its page layout is a :math:`(1,2)`.
+
+Front page: :math:`[4, 1]`
+
+Back page: :math:`[2, 3]`
+
+from these two matrix, we will get page imposition of :math:`8` sheets signature.
+
+Imagine the folding process of :math:`4` sheets signature to make :math:`8` sheets signature.
+We rotate 90 degree and split them into :math:`2` sub sections.
+Interesting point is that, the :math:`k`-th page of :math:`n+1` sheets signature always exists in :math:`k`-th page of :math:`n` sheets signature, :math:`1 \leq k \leq n`.
+In addition, the two pages, :math:`a, b`, seperated by the creasing line have next relationship, :math:`a+b = n-1`. 
+
+These are all we need. The remains are just following them.
+
+Rotating
+~~~~~~~~~
+
+Rotating elements of matrix can be divided into two steps, transpose and flip.
+Rotating the elements of 90 degree in counter-clockwise direction,
+
+transpose:
+
+.. math:: 
+
+    [4, 1] \rightarrow \begin{bmatrix} 4 \\ 1 \end{bmatrix}
+
+
+.. math:: 
+
+    \begin{pmatrix}
+    1
+    \end{pmatrix}
+
+
+    
 Printing markers
 ================================
 
