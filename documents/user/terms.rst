@@ -27,6 +27,9 @@ Therefore, permitted numbers are :math:`4, 8, 16, 32, 64` and :math:`12, 24`.
 :math:`12, 24` signatures are differ in its fold progress with :math:`4, 8, 16, 32, 64`.
 Bigger sheets can be used :math:`>64` to make single signature, but it is not practical.
 
+
+.. image:: ../_static/gathering_inserting.png
+
 There are two types of methods to combine signatures, 
 **inserting** and **gathering**. They are same after cutting the edges, but its order of pages are differ by types.
 The *gathering* does not affect to order of each siganature but *inserting* does to match the correct ordering of pages. 
@@ -51,6 +54,8 @@ See graphical examples.
 Riffle direction
 --------------------
 
+.. image:: ../_static/riffle.png
+
 **Riffle direction** is a direction of riffling while you read contents of book.
 It depends on reading direction of language. The most common direction is a horizontal, from left top to right bottom(HLTRB) direction.
 There were various reading direction by the language system. Most of them are not used in recent era, but from left to right reading direction
@@ -66,7 +71,7 @@ Belows are uncommon example languages in reading direction.
     It is one example that how the curtural difference, in case writing direction, are visually expressed.
 * Hebrew and Arabic: RL system
 * Ancient Egyt: Very special they used both direction LR and RL. The same characters can written symmetrically by the direction.
-* Elder Island script, Ogham scripts: It also has abnormal direction very rare. It direction is vertically from bottom to top.
+* Elder Island script, Ogham scripts: It also has an abnormal direction. Its direction is vertically from bottom to top.
 
 
 From top to bottom, or from bottom to top are not affected by the order of pages.
@@ -114,9 +119,10 @@ from these two matrix, we will get page imposition of :math:`8` sheets signature
 Imagine the folding process of :math:`4` sheets signature to make :math:`8` sheets signature.
 We rotate 90 degree and split them into :math:`2` sub sections.
 Interesting point is that, the :math:`k`-th page of :math:`n+1` sheets signature always exists in :math:`k`-th page of :math:`n` sheets signature, :math:`1 \leq k \leq n`.
-In addition, the two pages, :math:`a, b`, seperated by the creasing line have next relationship, :math:`a+b = n-1`. 
+In addition, the two pages, :math:`a, b`, seperated by the creasing line have next relationship, :math:`a+b = n-+1`. 
 
 These are all we need. The remains are just following them.
+
 
 Rotating
 ~~~~~~~~~
@@ -124,29 +130,97 @@ Rotating
 Rotating elements of matrix can be divided into two steps, transpose and flip.
 Rotating the elements of 90 degree in counter-clockwise direction,
 
-transpose:
+*Transpose*:
 
 .. math:: 
 
     [4, 1] \rightarrow \begin{bmatrix} 4 \\ 1 \end{bmatrix}
 
+*Flip*:
 
 .. math:: 
 
-    \begin{pmatrix}
-    1
-    \end{pmatrix}
+    \begin{bmatrix} 4 \\ 1 \end{bmatrix} \rightarrow \begin{bmatrix} 1 \\ 4 \end{bmatrix}
+
+Expanding
+~~~~~~~~~~~
+
+Now expand each line using :math:`a+b = n+1`.
+Bascially, in single number case, additional number is left of the previous number. 
+
+.. math:: 
+
+    8 = 8 + 1 -1, [1] \rightarrow [8 ,1] \\\\
+
+    5 = 8 +1 -4,  [4] \rightarrow [5, 4]
+
+Then, we get a front layout matrix of the :math:`8` sheets signature.
+In the same way, let's get a front layout matrix of the :math:`16` sheets signature.
+
+*Rotating*:
+
+.. math:: 
+
+    \begin{bmatrix}
+        8, 1 \\
+        5, 4
+    \end{bmatrix} \rightarrow 
+    \begin{bmatrix}
+        1, 4 \\
+        8, 5
+    \begin{bmatrix}
+
+*Expanding*:
+
+.. note:: 
+
+    There is a little different in :math:`n>4` case. 
+    In expanding steps, you must divide one row numbers into sub groups whose length is :math:`2`.
+    The prior one is same with :math:`n=4` case but the second number is remained at right in expanding progress.
+    For example, if we have :math:`[13, 12, 4, 5, 1, 8, ...]` row then, :math:`[[13, 12], [4, 5], [1, 8], ...]` and expand them.
+
+.. math:: 
+
+    [1,4] \rightarrow [[16 ,1],[4, 13]]\\\\
+
+    [8, 5] \rightarrow [[9, 8], [5, 12]]
+
+See update steps of front matrix:
+
+.. math:: 
+
+    [4, 1] \rightarrow 
+    \begin{bmatrix} 
+        8, 1 \\
+        5, 4
+    \end{bmarix} \rightarrow 
+    \begin{bmatrix} 
+        16, 1, 4, 13 \\
+        9, 8, 5, 12
+    \end{bmarix}
+
+Rotating Page
+------------------
+
+Imposition work includes folding work. 
+That is, pages must be roated in right direction to match a direction of each pages after fold. 
+In imposition layout, it is simple. Just rotating :math:`2, 4, 6, ..., 2k, ...` rows of 180 degree.
 
 
-    
+
+
 Printing markers
 ================================
 
 Signature proof
 -----------------
 
+.. image:: ../_static/proof.png
+
 **Signature proof** is a ordering proof makrer on spine of signatures. It helps for people to arrange the signatures in right order
 and check missing signatures.
+
+
 
 Trim marker
 -----------------
