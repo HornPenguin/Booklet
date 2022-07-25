@@ -47,7 +47,6 @@ For example, :math:`16` sheets signature has next variation.
 * :math:`2 \times 8`
 * :math:`4 \times 4`
 
-See graphical examples.
 
 
 
@@ -63,18 +62,27 @@ frequently used in many situations more than the people think.
 
 Belows are uncommon example languages in reading direction.
 
-* Old asian: East asians used VRTLB(vertical, from right top to left bottom) system. 
-    Now, vertical writing is rarely seem in modern texts in asia (it is differ by the countries), but as a design or a research works, they are still adopted in many works.
+* Asia, Korea, Japan, China ... etc 
+    
+    East asians used **VRTLB** (vertical, from right top to left bottom) system. 
+    Now, vertical writing is rarely seem in modern texts in asia (it is differ by the countries), but as a design or a research work, they are still adopted in many works.
     For example, some Japan mangas using vertical writing in their speech bubbles. There is a good different point in speech bubble by the writing direction in Japan and Korea. 
     Japan's speech bubbles are vertically long while the Korea's are horizontally long. 
     Korea also use vertical writing sometimes but not as popular as Japan. This difference are affecting to their speech bubble shape in comics.
     It is one example that how the curtural difference, in case writing direction, are visually expressed.
-* Hebrew and Arabic: RL system
-* Ancient Egyt: Very special they used both direction LR and RL. The same characters can written symmetrically by the direction.
-* Elder Island script, Ogham scripts: It also has an abnormal direction. Its direction is vertically from bottom to top.
+* Hebrew and Arabic 
+    
+    RL system
+* Ancient Egyt 
+    
+    Their system was very special. They used both direction LR and RL. 
+    The same characters can be written symmetrically by the direction.
+* Elder Island script, Ogham scripts 
+    
+    It also has an abnormal direction. Its direction is vertically from bottom to top.
 
 
-From top to bottom, or from bottom to top are not affected by the order of pages.
+From top to bottom, or from bottom to top are not affected by the order of pages if you riffle horizontally.
 However, whether the reading direction is LR or RL affects the page ordering considering reading efficiency.
 
 The default setting of HornPenguin Booklet is a LR direction and support *RL*.
