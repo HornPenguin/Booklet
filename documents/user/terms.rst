@@ -130,8 +130,8 @@ from these two matrix, we will get page imposition of :math:`8` sheets signature
 
 Imagine the folding process of :math:`4` sheets signature to make :math:`8` sheets signature.
 We rotate 90 degrees and split them into :math:`2` sub-sections.
-Interesting point is that, the :math:`k`-th page of :math:`n+1` sheets signature always exists in :math:`k`-th page of :math:`n` sheets signature, :math:`1 \leq k \leq n`.
-In addition, the two pages, :math:`a, b`, seperated by the creasing line have next relationship, :math:`a+b = n-+1`. 
+Interesting point is that, the :math:`k`-th page of :math:`2n` sheets signature always exists in :math:`k`-th page of :math:`n` sheets signature, :math:`1 \leq k \leq n`.
+In addition, the two pages, :math:`a, b`, seperated by the creasing line have next relationship, :math:`a+b = n+1`. 
 
 These are all we need. The remains are just following them.
 
