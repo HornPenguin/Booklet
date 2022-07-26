@@ -3,7 +3,7 @@ Installation
 ===============
 
 HPBooklet provides 3 types of executable files for Windows, Linux(Ubuntu), and OSX.
-Basically, we offer two type of program, *command line* interface and *gui* interface.
+Basically, we offer two types of program, *command line* interface and *GUI* interface.
 
 Command interface
 ====================
@@ -32,16 +32,17 @@ Download executable file `SourceForge project page <https://sourceforge.net/proj
 
 OSX
 ------
-Dveloper does not have any Mac computer. (ㅜㅜ, :<)
-Please build yourself or ditectly execute from source. 
-See below section.
+
+The developer does not have a Mac computer. (ㅜㅜ, :<)
+Please build yourself or directly execute from sources. 
+See the below section.
 
 
 
 From source
 --------------------
 
-This section describes execution and build process with
+This section describes the execution and build process with
 source directory.
 
 Structure of project directory
@@ -49,7 +50,7 @@ Structure of project directory
 
 **Directory**
 
-- :code:`booklet`: python source codes.
+- :code:`booklet`: Python source codes.
 - :code:`dist`: Standalone executable files for OSs.
 - :code:`documents`: Sphinx rst documents
 - :code:`images`: Miscellaneous images, in working images or original :code:`.odg` files.
@@ -76,7 +77,7 @@ Install above dependencies with next command.
 
     pip install PyPDF2 reportlab Pillow simpleaudio
 
-For :code:`simpleaudio` in Ubuntu, it requires compilers, build tools and prerequest library :code:`libasound2-dev` to install. 
+For :code:`simpleaudio` in Ubuntu, it requires compilers, build tools, and prerequisite library :code:`libasound2-dev` to install. 
 If you are using Ubuntu you can install :code:`build-essential` from repository.
 
 .. code-block:: 
@@ -107,8 +108,8 @@ See :ref:`usage <usage_label>` for options and basic usages.
 Build
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-This project uses pyinstaller as a build tool to generate standalone executable file.
-In the root, there is a :code:`build.py`. It is a simple python script to initiate build process.
+This project uses pyinstaller as a build tool to generate a standalone executable files.
+In the root, there is a :code:`build.py`. It is a simple python script to initiate the build process.
 
 It needs *pyinstaller*. You can install it with next command,
 

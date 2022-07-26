@@ -3,7 +3,7 @@
 **Version** 0.0.1
 
 <p align="center">
-  <img src="images/splash.png">
+  <img src="documents/_static_/main.png">
 </p>
 
 **HornPenguin Booklet** is a simple software generating booklet and signature for bookbinding from your pdf files.
@@ -106,10 +106,12 @@ Further routines for next version
 **Simple**
 
 * Add more color markers
+* Precious setting of rectangle object 
 
 **Little troublesome**
 
 * Converting PDF with image before transformation.(some pdfs are broken in their fonts or positions of elements during transformation)
+  Additional libraries are too heavy...
 
 **Annoying**
 
@@ -118,5 +120,5 @@ Further routines for next version
 
 ## License
 
-This program distributed under BSD-3 license
+This program distributed under BSD 3-clause license
 See detail license text in "[LICENSE](LICENSE)" file in repository.

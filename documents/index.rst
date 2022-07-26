@@ -9,16 +9,16 @@ HornPenguin Booklet
 .. image:: _static/main.png
 
 
-HornPenguin Booklet is a free and open source booklet generating 
-program. It can reorder the pages, rotate and transform for fold signature,
-and add printing markers for color printing. 
+HornPenguin Booklet is a free and open source booklet generating program. 
+It can reorder the pages, rotate and transform for fold signature, 
+and add printing markers for color printing.
 
-You can print your own book signatures and simple pamplet with your home printer.
+You can print your book signatures and a simple pamphlet with your home printer.
 
-* Support diffence signature size from 4 to 32.
-* Change page size during generating signature.
+* Support difference signature size from 4 to 64.
+* Change page size during generating a signature.
 * Left riffling direction is supported for old Asian and Arabic bookbindings.
-* Printing markers; trim, CMYK, signature proof are supported.
+* Printing markers: trim, CMYK, signature proofs are supported.
 
 
   
@@ -26,13 +26,13 @@ You can print your own book signatures and simple pamplet with your home printer
 Structure of Program
 --------------------------
 
-+--------------+-----------------+---------------+
-|  Interface   |PDF modulation   | PDF generation|
-+--------------+-----------------+---------------+
-|GUI(tkinter)  | PyPDF2          | reportlab     |
-+--------------+                 |               |
-|CUI(argparse) |                 |               |
-+--------------+-----------------+---------------+
++------------------+-------------------+-------------------+
+|  **Interface**   | **PDF modulation**| **PDF generation**|
++------------------+-------------------+-------------------+
+|GUI(tkinter)      | PyPDF2            | reportlab         |
++------------------+                   |                   |
+|CUI(argparse)     |                   |                   |
++------------------+-------------------+-------------------+
 
 
 
