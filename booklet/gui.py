@@ -54,7 +54,6 @@ import PyPDF2 as pypdf
 
 from booklet import textdata, signature
 from booklet.utils import *
-from booklet.permutation import Permutation
 
 
 # Tab_advanced
@@ -131,10 +130,11 @@ class Booklet:
         self.initiate_window()
 
 
-        self.platform = platform
+        self.platform_linux = True if platform == "Linux" else False
+        self.platform_mac = True if platform == "Darwin" else False
 
         self.logo = ImageTk.PhotoImage(logo, master=self.window)
-        if self.platform == "Linux":
+        if self.platform_linux:
             self.window.tk.call("wm", "iconphoto", self.window._w, self.logo)
         self.icon_path = icon_path
         self.icon_setting(self.window)
@@ -588,6 +588,7 @@ class Booklet:
             anchor="w",
             bg="white",
         )
+        
 
         self.sigcomposition_label = ttk.Label(
             self.Frame_ad_imposition,
@@ -795,7 +796,7 @@ class Booklet:
         self.sigproof_checkbox = ttk.Checkbutton(
             self.Frame_ad_printing, variable=self.sigproofbool
         )
-        if self.platform == "Darwin":
+        if self.platform_mac:
             self.sigproof_button = tkosx.Button(
                 self.Frame_ad_printing,
                 width=3,
@@ -1037,10 +1038,14 @@ class Booklet:
             self.page_range_size.set(range)
             self.fold_enable(True)
             self.pagerange_example.config(bg="#ffffff")
+            if self.platform_mac:
+                self.pagerange_example.config(highlightbackground = "#ffffff")
             self.Generate_button.config(state=tk.ACTIVE)
 
         else:
             self.pagerange_example.config(bg="#d0342c")
+            if self.platform_mac:
+                self.pagerange_example.config(highlightbackground = "#d0342c")
             self.Generate_button.config(state=tk.DISABLED)
 
         return True
