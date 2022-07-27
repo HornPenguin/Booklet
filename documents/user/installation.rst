@@ -13,7 +13,11 @@ Command interface
 Windows, Linux
 ------------------
 
-Download executable file `SourceForge project page <https://sourceforge.net/projects/hornpenguinbooklet/>`.
+Download executable file from `Sourceforge <https://sourceforge.net/projects/hornpenguinbooklet/>`_.
+
+.. raw:: html
+
+    <a href="https://sourceforge.net/projects/hornpenguinbooklet/files/latest/download"><img alt="Download HornPenguin Booklet" src="https://a.fsdn.com/con/app/sf-download-button" width=276 height=48 srcset="https://a.fsdn.com/con/app/sf-download-button?button_size=2x 2x"></a>
 
 **Windows**
 
@@ -36,6 +40,13 @@ OSX
 The developer does not have a Mac computer. (ㅜㅜ, :<)
 Please build yourself or directly execute from sources. 
 See the below section.
+
+.. warning:: 
+
+    Python is compatible for major three OSs, however, the implementations of tkinter in those OSs are different in details.
+    For example, there is a :code`iconbitmap` issue in Linux environment and basic tkiner Label and Button are not work properly in OSX of color routines.
+    The developer tested and saw those bugs and fixed them with best efforts (`tkmacosx` module was useful), but there can be some bugs in Linux and Mac environments.
+    Please notice the developer those bugs to fix.
 
 
 
@@ -70,6 +81,7 @@ Dependencies
 * `reportlab <https://www.reportlab.com/>`_
 * `Pillow <https://pillow.readthedocs.io/en/stable/>`_
 * `simpleaudio <https://simpleaudio.readthedocs.io/en/latest/>`_
+* `tkmacosc <https://pypi.org/project/tkmacosx/>`_: OSX specific dependency
 
 Install above dependencies with next command. 
 
@@ -85,6 +97,7 @@ If you are using Ubuntu you can install :code:`build-essential` from repository.
     sudo apt install build-essential libasound2-dev
 
 In Mac, they are automatically installed. 
+
 
 Execution with python 
 ^^^^^^^^^^^^^^^^^^^^^^^^

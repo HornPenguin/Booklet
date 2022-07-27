@@ -234,7 +234,7 @@ Signature proof
 
 .. image:: ../_static/proof.png
 
-**Signature proof** is a ordering proof makrer on spine of signatures. It helps for people to arrange the signatures in right order
+**Signature proof** is a ordering proof marker on the spine of signatures. It helps for people to arrange the signatures in right order
 and check missing signatures.
 
 
