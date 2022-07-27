@@ -3,7 +3,7 @@
 **Version** 0.0.1
 
 <p align="center">
-  <img src="documents/_static_/main.png">
+  <img src="./documents/_static/main.png">
 </p>
 
 **HornPenguin Booklet** is a simple software generating booklet and signature for bookbinding from your pdf files.
@@ -14,19 +14,10 @@ You can print your own book signatures and simple pamplet with your home printer
 * Left riffling direction is supported for old asian bookbinding.
 * Printing markers; trim, CMYK, signature proof, ... .
 
-See further details and usage examples in project [documents](https://hpbooklet.readthedocs.io/en/latest/). 
+See further details and usage examples in project [documents](https://docs.hornpenguin.com/projects/booklet/). 
 
-## Layout of Signatures
+[![Download HornPenguin Booklet](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/hornpenguinbooklet/files/latest/download)
 
-Output pdf will be arranged as next image for 4, 12 leaves as F, B, F, B, ... order.
-
-For example, 4 leaves per signature: 4, 1, 2, 3, 8, 5, 6, 7, 12, 9, 10, 11.
-
-<p align="center">
-  <img width="780" height="550" src="images/Signature.png">
-</p>
-
-Above image shows order of pages per each case of signatures: 4, 12 and how to fold and attaching each sheets. The right, 12 leaves sig, also can be combined with other signatures to form a book or it can be complete in itself as a pamplet.
 
 ## UI
 
@@ -42,36 +33,24 @@ You must notice that the *onefile* files requires some time to execute at initia
 * **Windows**
 
   ```
-  Booklet.exe
-  Booklet_Windows.zip
+  booklet.exe # console program
+  bbokletw.exe # GUI program
   ```
 
 * **Linux**
   ```
-  Booklet
-  Booklet.tgz
+  booklet # console program
+  bbokletw # GUI program
   ```
 * OSX
 
-  No, but you can excute `main.py` with your python environment.
+  No, but you can excute python source code.
 
-or you can directly execute `main.py` with your python environment. Just check the prerequists in **Dependencies** section.
+or you can directly execute `main.py` or `mainw.py` with your python environment. Just check the prerequists in **Dependencies** section.
 It is recommended if there are some errors in the execution files or you are using OSX. (I don't have Mac yet.)
 
 
-### Manuscript Frame
-
-1. File selector: Choose original file.
-2. Title, Author(s), Pages, Format: Automatically detect metadata of the selected pdf file. They will be remianed in generated signature or booklet file. 
-
-### Output Frame
-
-1. Output directory: Generated file location.
-2. File name: Choose file name of output. Initial value is original file. 
-3. Leaves: Number of leabes per signature. 'f' suffix means fold support number.
-4. Book Format: Output page size. 'Default' value remains original size. See other ISO dimensions of format in 'Help' -> 'Format' above menu.
-5. Fold: Option for fold signature. Pages will be rotated and rearranged for folding. (Not supported yet)
-6. Riffling direction: Default is 'right' value. 'left' value is for an traditional asian bookbinding which riffles from right to left. 
+### UI
 
 <p align="center">
   <img src="images/ui_windows.png">
@@ -85,6 +64,7 @@ It is recommended if there are some errors in the execution files or you are usi
 * [PyPDF2](https://pypdf2.readthedocs.io/)
 * [Pillow](https://pillow.readthedocs.io/en/stable/)
 * [simpleaudio](https://simpleaudio.readthedocs.io/en/latest/)
+* [tkmacosx](https://pypi.org/project/tkmacosx/) : Mac only
 
 Install them with next command
 
