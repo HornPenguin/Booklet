@@ -17,22 +17,10 @@ You can print your book signatures and a simple pamphlet with your home printer.
 
 * Support difference signature size from 4 to 64.
 * Change page size during generating a signature.
-* Left riffling direction is supported for old Asian and Arabic bookbindings.
+* Left riffling direction is supported for old Asian, Hebrew, and Arabic bookbindings.
 * Printing markers: trim, CMYK, signature proofs are supported.
 
 
-  
-
-Structure of Program
---------------------------
-
-+------------------+-------------------+-------------------+
-|  **Interface**   | **PDF modulation**| **PDF generation**|
-+------------------+-------------------+-------------------+
-|GUI(tkinter)      | PyPDF2            | reportlab         |
-+------------------+                   |                   |
-|CUI(argparse)     |                   |                   |
-+------------------+-------------------+-------------------+
 
 
 
@@ -43,6 +31,8 @@ Structure of Program
    user/installation
    user/usage
    user/terms
+   user/license
+   user/about
    
 
 Indices and tables
