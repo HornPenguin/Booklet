@@ -9,9 +9,10 @@
 <title>booklet.utils module | HornPenguin Booklet 0.0.1 documentation</title>
 <link href="_static/pygments.css" rel="stylesheet"/>
 <link href="_static/theme.e6081a2fb60dd7bf7015.css" rel="stylesheet"/>
+<link href="_static/HornPavicon.ico" rel="shortcut icon"/>
 <link href="search.html" rel="search" title="Search"/>
 <link href="genindex.html" rel="index" title="Index"/>
-<link href="booklet.permutation.html" rel="prev" title="booklet.permutation module"/>
+<link href="booklet.textdata.html" rel="prev" title="booklet.textdata module"/>
 </head>
 <body class="antialiased text-gray scroll-smooth">
 <div class="h-screen xl:grid xl:grid-layout" data-action="keydown@window-&gt;search#focus" data-controller="sidebar search" id="page">
@@ -27,7 +28,10 @@
 <svg aria-hidden="true" class="fill-current stroke-current h-8 w-8" stroke-width="0.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
 </button>
 <input aria-label="Search the docs" class="pr-2 bg-transparent text-inherit focus:outline-none w-0 md:w-auto focus:w-full transition-all duration-100" data-search-target="searchInput" id="search-input" name="q" placeholder="Search the docs" type="search"/>
-</form></div>
+</form><div class="shrink-0">
+<a class="h-14 inline-block leading-14 text-gray-100 bg-transparent tracking-wide font-medium hover:text-brand focus:bg-gray-700 focus:outline-none hover:no-underline focus:text-brand px-2 sm:px-4" href="docs.html">Docs</a>
+<a class="h-14 inline-block leading-14 text-gray-100 bg-transparent tracking-wide font-medium hover:text-brand focus:bg-gray-700 focus:outline-none hover:no-underline focus:text-brand px-2 sm:px-4" href="publisher.html">홈</a>
+</div></div>
 </div>
 </header>
 <aside class="grid-area-sidebar h-full fixed xl:relative inset-y-0 left-0 z-20 xl:z-0 print:hidden overflow-y-auto transition-all transform transform-gpu -translate-x-full opacity-0 duration-300 xl:translate-x-0 xl:opacity-100" data-sidebar-target="sidebar">
@@ -35,19 +39,27 @@
 <div class="nav-toc flex-1 pl-6"><p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
 <ul>
 <li class="toctree-l1"><div class="nav-link"><svg class="expand" data-action="click-&gt;sidebar#expand keydown-&gt;sidebar#expandKeyPressed" tabindex="0" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/installation.html">Installation</a></div><ul>
-<li class="toctree-l2"><div class="nav-link"><svg class="expand" data-action="click-&gt;sidebar#expand keydown-&gt;sidebar#expandKeyPressed" tabindex="0" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/installation.html#command-mode">Command mode</a></div><ul>
-<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/installation.html#pip">pip</a></div></li>
+<li class="toctree-l2"><div class="nav-link"><svg class="expand" data-action="click-&gt;sidebar#expand keydown-&gt;sidebar#expandKeyPressed" tabindex="0" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/installation.html#command-interface">Command interface</a></div><ul>
 <li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/installation.html#windows-linux">Windows, Linux</a></div></li>
 <li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/installation.html#osx">OSX</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/installation.html#from-source">From source</a></div></li>
 </ul>
 </li>
-<li class="toctree-l2"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/installation.html#gui-mode">Gui mode</a></div></li>
 </ul>
 </li>
 <li class="toctree-l1"><div class="nav-link"><svg class="expand" data-action="click-&gt;sidebar#expand keydown-&gt;sidebar#expandKeyPressed" tabindex="0" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/usage.html">Usage</a></div><ul>
-<li class="toctree-l2"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/usage.html#basic">Basic</a></div></li>
-<li class="toctree-l2"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/usage.html#advanced">Advanced</a></div></li>
-<li class="toctree-l2"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/usage.html#printing-markers">Printing markers</a></div></li>
+<li class="toctree-l2"><div class="nav-link"><svg class="expand" data-action="click-&gt;sidebar#expand keydown-&gt;sidebar#expandKeyPressed" tabindex="0" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/usage.html#basic">Basic</a></div><ul>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/usage.html#select-pdf-file-to-modulate">Select PDF file to modulate</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/usage.html#basic-settings">Basic Settings</a></div></li>
+</ul>
+</li>
+<li class="toctree-l2"><div class="nav-link"><svg class="expand" data-action="click-&gt;sidebar#expand keydown-&gt;sidebar#expandKeyPressed" tabindex="0" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/usage.html#advanced-options">Advanced options</a></div><ul>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/usage.html#sheet-works">Sheet works</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/usage.html#printing-markers">Printing markers</a></div></li>
+</ul>
+</li>
+<li class="toctree-l2"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/usage.html#generation">Generation</a></div></li>
+<li class="toctree-l2"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/usage.html#command-line">Command line</a></div></li>
 </ul>
 </li>
 <li class="toctree-l1"><div class="nav-link"><svg class="expand" data-action="click-&gt;sidebar#expand keydown-&gt;sidebar#expandKeyPressed" tabindex="0" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/terms.html">Terms of Book and Printing</a></div><ul>
@@ -55,6 +67,7 @@
 <li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/terms.html#signature">Signature</a></div></li>
 <li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/terms.html#riffle-direction">Riffle direction</a></div></li>
 <li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/terms.html#imposition">Imposition</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/terms.html#rotating-page">Rotating Page</a></div></li>
 </ul>
 </li>
 <li class="toctree-l2"><div class="nav-link"><svg class="expand" data-action="click-&gt;sidebar#expand keydown-&gt;sidebar#expandKeyPressed" tabindex="0" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/terms.html#printing-markers">Printing markers</a></div><ul>
@@ -65,13 +78,21 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/license.html">License</a></div></li>
+<li class="toctree-l1"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/about.html">Structure of Program</a></div></li>
+<li class="toctree-l1"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/about.html#other-programs">Other programs</a></div></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Core</span></p>
+<p class="caption" role="heading"><span class="caption-text">Code Details</span></p>
 <ul class="current">
 <li class="toctree-l1 current expanded"><div class="nav-link"><svg class="expand" data-action="click-&gt;sidebar#expand keydown-&gt;sidebar#expandKeyPressed" tabindex="0" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg><a class="reference internal" data-action="click-&gt;sidebar#close" href="booklet.html">booklet package</a></div><ul class="current">
 <li class="toctree-l2 current expanded"><div class="nav-link"><svg class="expand" data-action="click-&gt;sidebar#expand keydown-&gt;sidebar#expandKeyPressed" tabindex="0" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg><a class="reference internal" data-action="click-&gt;sidebar#close" href="booklet.html#submodules">Submodules</a></div><ul class="current">
-<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="booklet.signature.html">booklet.signature module</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="booklet.gui.html">booklet.gui module</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="booklet.images.html">booklet.images module</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="booklet.main.html">booklet.main module</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="booklet.mainw.html">booklet.mainw module</a></div></li>
 <li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="booklet.permutation.html">booklet.permutation module</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="booklet.signature.html">booklet.signature module</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="booklet.textdata.html">booklet.textdata module</a></div></li>
 <li class="toctree-l3 current expanded"><div class="nav-link"><a class="current reference internal" data-action="click-&gt;sidebar#close" href="#">booklet.utils module</a></div></li>
 </ul>
 </li>
@@ -92,14 +113,14 @@
 <span class="mr-1">/</span><span aria-current="page">booklet.utils module</span>
 </nav>
 <article class="flex-1" role="main">
-<section id="booklet-utils-module">
-<h1>booklet.utils module<a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet-utils-module"><span>#</span></a></h1>
-<p>Miscelleneous routines, math, unit_conversion, list modulation, …</p>
-<span class="target" id="module-booklet.utils"></span><p>Miscellaneous uitls</p>
-<dl class="py function">
+<section id="module-booklet.utils">
+<span id="booklet-utils-module"></span><h1>booklet.utils module<a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#module-booklet.utils"><span>#</span></a></h1>
+<p>Miscellaneous uitls</p>
+<dl class="py function code-definition">
 <dt class="sig sig-object py" id="booklet.utils.cmyk_to_rgb">
-<span class="sig-prename descclassname">booklet.utils.</span><span class="sig-name descname">cmyk_to_rgb</span><span class="sig-paren">(</span><em class="sig-param"><span class="n">C</span><span class="p">:</span><span class="w"> </span><span class="n">float</span></em>, <em class="sig-param"><span class="n">M</span><span class="p">:</span><span class="w"> </span><span class="n">float</span></em>, <em class="sig-param"><span class="n">Y</span><span class="p">:</span><span class="w"> </span><span class="n">float</span></em>, <em class="sig-param"><span class="n">K</span><span class="p">:</span><span class="w"> </span><span class="n">float</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint">Tuple<span class="p">[</span>int<span class="p">,</span><span class="w"> </span>int<span class="p">,</span><span class="w"> </span>int<span class="p">]</span></span></span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.cmyk_to_rgb"><span>#</span></a></dt>
-<dd><p>Convert CMYK code to RGB code.</p>
+<code class="sig-prename descclassname">booklet.utils.</code><code class="sig-name descname">cmyk_to_rgb</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">C</span><span class="p">:</span><span class="w"> </span><span class="n">float</span></em>, <em class="sig-param"><span class="n">M</span><span class="p">:</span><span class="w"> </span><span class="n">float</span></em>, <em class="sig-param"><span class="n">Y</span><span class="p">:</span><span class="w"> </span><span class="n">float</span></em>, <em class="sig-param"><span class="n">K</span><span class="p">:</span><span class="w"> </span><span class="n">float</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint">Tuple<span class="p">[</span>int<span class="p">,</span><span class="w"> </span>int<span class="p">,</span><span class="w"> </span>int<span class="p">]</span></span></span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.cmyk_to_rgb"><span>#</span></a></dt>
+<dd>
+<p>Convert CMYK code to RGB code.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -111,51 +132,58 @@
 </dd>
 </dl>
 </dd></dl>
-<dl class="py function">
+<dl class="py function code-definition">
 <dt class="sig sig-object py" id="booklet.utils.concatenate">
-<span class="sig-prename descclassname">booklet.utils.</span><span class="sig-name descname">concatenate</span><span class="sig-paren">(</span><em class="sig-param"><span class="n">lists</span></em><span class="sig-paren">)</span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.concatenate"><span>#</span></a></dt>
-<dd></dd></dl>
-<dl class="py function">
+<code class="sig-prename descclassname">booklet.utils.</code><code class="sig-name descname">concatenate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lists</span></em><span class="sig-paren">)</span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.concatenate"><span>#</span></a></dt>
+<dd>
+</dd></dl>
+<dl class="py function code-definition">
 <dt class="sig sig-object py" id="booklet.utils.flip">
-<span class="sig-prename descclassname">booklet.utils.</span><span class="sig-name descname">flip</span><span class="sig-paren">(</span><em class="sig-param"><span class="n">matrix</span></em><span class="sig-paren">)</span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.flip"><span>#</span></a></dt>
-<dd></dd></dl>
-<dl class="py function">
+<code class="sig-prename descclassname">booklet.utils.</code><code class="sig-name descname">flip</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">matrix</span></em><span class="sig-paren">)</span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.flip"><span>#</span></a></dt>
+<dd>
+</dd></dl>
+<dl class="py function code-definition">
 <dt class="sig sig-object py" id="booklet.utils.get_file_info">
-<span class="sig-prename descclassname">booklet.utils.</span><span class="sig-name descname">get_file_info</span><span class="sig-paren">(</span><em class="sig-param"><span class="n">path_string</span><span class="p">:</span><span class="w"> </span><span class="n">str</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint">Tuple<span class="p">[</span>Union<span class="p">[</span>bool<span class="p">,</span><span class="w"> </span>str<span class="p">]</span><span class="p">,</span><span class="w"> </span>Union<span class="p">[</span>bool<span class="p">,</span><span class="w"> </span>str<span class="p">]</span><span class="p">,</span><span class="w"> </span>Union<span class="p">[</span>bool<span class="p">,</span><span class="w"> </span>int<span class="p">]</span><span class="p">,</span><span class="w"> </span>Union<span class="p">[</span>bool<span class="p">,</span><span class="w"> </span>list<span class="p">[</span>float<span class="p">,</span><span class="w"> </span>float<span class="p">]</span><span class="p">]</span><span class="p">]</span></span></span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.get_file_info"><span>#</span></a></dt>
-<dd></dd></dl>
-<dl class="py function">
+<code class="sig-prename descclassname">booklet.utils.</code><code class="sig-name descname">get_file_info</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path_string</span><span class="p">:</span><span class="w"> </span><span class="n">str</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint">Tuple<span class="p">[</span>Union<span class="p">[</span>bool<span class="p">,</span><span class="w"> </span>str<span class="p">]</span><span class="p">,</span><span class="w"> </span>Union<span class="p">[</span>bool<span class="p">,</span><span class="w"> </span>str<span class="p">]</span><span class="p">,</span><span class="w"> </span>Union<span class="p">[</span>bool<span class="p">,</span><span class="w"> </span>int<span class="p">]</span><span class="p">,</span><span class="w"> </span>Union<span class="p">[</span>bool<span class="p">,</span><span class="w"> </span>list<span class="p">[</span>float<span class="p">,</span><span class="w"> </span>float<span class="p">]</span><span class="p">]</span><span class="p">]</span></span></span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.get_file_info"><span>#</span></a></dt>
+<dd>
+</dd></dl>
+<dl class="py function code-definition">
 <dt class="sig sig-object py" id="booklet.utils.get_page_range">
-<span class="sig-prename descclassname">booklet.utils.</span><span class="sig-name descname">get_page_range</span><span class="sig-paren">(</span><em class="sig-param"><span class="n">page_range_string</span><span class="p">:</span><span class="w"> </span><span class="n">str</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint">list</span></span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.get_page_range"><span>#</span></a></dt>
-<dd></dd></dl>
-<dl class="py function">
+<code class="sig-prename descclassname">booklet.utils.</code><code class="sig-name descname">get_page_range</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">page_range_string</span><span class="p">:</span><span class="w"> </span><span class="n">str</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint">list</span></span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.get_page_range"><span>#</span></a></dt>
+<dd>
+</dd></dl>
+<dl class="py function code-definition">
 <dt class="sig sig-object py" id="booklet.utils.hex_to_cmyk">
-<span class="sig-prename descclassname">booklet.utils.</span><span class="sig-name descname">hex_to_cmyk</span><span class="sig-paren">(</span><em class="sig-param"><span class="n">hex</span><span class="p">:</span><span class="w"> </span><span class="n">str</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint">Tuple<span class="p">[</span>float<span class="p">,</span><span class="w"> </span>float<span class="p">,</span><span class="w"> </span>float<span class="p">,</span><span class="w"> </span>float<span class="p">]</span></span></span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.hex_to_cmyk"><span>#</span></a></dt>
-<dd><p>Convert hex string to cmyk tuple</p>
+<code class="sig-prename descclassname">booklet.utils.</code><code class="sig-name descname">hex_to_cmyk</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hex</span><span class="p">:</span><span class="w"> </span><span class="n">str</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint">Tuple<span class="p">[</span>float<span class="p">,</span><span class="w"> </span>float<span class="p">,</span><span class="w"> </span>float<span class="p">,</span><span class="w"> </span>float<span class="p">]</span></span></span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.hex_to_cmyk"><span>#</span></a></dt>
+<dd>
+<p>Convert hex string to cmyk tuple</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>hex</strong> (<em>str</em>) – HEX code string</p>
 </dd>
 </dl>
 </dd></dl>
-<dl class="py function">
+<dl class="py function code-definition">
 <dt class="sig sig-object py" id="booklet.utils.open_url">
-<span class="sig-prename descclassname">booklet.utils.</span><span class="sig-name descname">open_url</span><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span><span class="p">:</span><span class="w"> </span><span class="n">str</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint">NoReturn</span></span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.open_url"><span>#</span></a></dt>
-<dd><p>open given url site in default webbrowser</p>
+<code class="sig-prename descclassname">booklet.utils.</code><code class="sig-name descname">open_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span><span class="p">:</span><span class="w"> </span><span class="n">str</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint">NoReturn</span></span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.open_url"><span>#</span></a></dt>
+<dd>
+<p>open given url site in default webbrowser</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>url</strong> (<em>str</em>) – url of site</p>
 </dd>
 </dl>
 </dd></dl>
-<dl class="py function">
+<dl class="py function code-definition">
 <dt class="sig sig-object py" id="booklet.utils.pts_mm">
-<span class="sig-prename descclassname">booklet.utils.</span><span class="sig-name descname">pts_mm</span><span class="sig-paren">(</span><em class="sig-param"><span class="n">size</span><span class="p">:</span><span class="w"> </span><span class="n">tuple</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint">tuple</span></span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.pts_mm"><span>#</span></a></dt>
-<dd><p>Unit conversion between point and mm.</p>
+<code class="sig-prename descclassname">booklet.utils.</code><code class="sig-name descname">pts_mm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">size</span><span class="p">:</span><span class="w"> </span><span class="n">tuple</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint">tuple</span></span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.pts_mm"><span>#</span></a></dt>
+<dd>
+<p>Unit conversion between point and mm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>size</strong> (<em>tuple</em><em>(</em><em>float</em><em>, </em><em>float</em><em>)</em>) – Tuple of two point or mm unit size.</p></li>
-<li><p><strong>mode</strong> (bool, default= <code class="code docutils literal notranslate">True</code>) – Determines the direction of conversion. <code class="code docutils literal notranslate">True</code>: point to mm, <code class="code docutils literal notranslate">False</code>: mm to point.</p></li>
+<li><p><strong>mode</strong> (bool, defaults to <code class="code docutils literal notranslate">True</code>) – Determines the direction of conversion. <code class="code docutils literal notranslate">True</code>: point to mm, <code class="code docutils literal notranslate">False</code>: mm to point.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -166,14 +194,16 @@
 </dd>
 </dl>
 </dd></dl>
-<dl class="py function">
+<dl class="py function code-definition">
 <dt class="sig sig-object py" id="booklet.utils.reshape">
-<span class="sig-prename descclassname">booklet.utils.</span><span class="sig-name descname">reshape</span><span class="sig-paren">(</span><em class="sig-param"><span class="n">list_1d</span></em>, <em class="sig-param"><span class="n">shape</span></em><span class="sig-paren">)</span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.reshape"><span>#</span></a></dt>
-<dd></dd></dl>
-<dl class="py function">
+<code class="sig-prename descclassname">booklet.utils.</code><code class="sig-name descname">reshape</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">list_1d</span></em>, <em class="sig-param"><span class="n">shape</span></em><span class="sig-paren">)</span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.reshape"><span>#</span></a></dt>
+<dd>
+</dd></dl>
+<dl class="py function code-definition">
 <dt class="sig sig-object py" id="booklet.utils.resources_path">
-<span class="sig-prename descclassname">booklet.utils.</span><span class="sig-name descname">resources_path</span><span class="sig-paren">(</span><em class="sig-param"><span class="n">relative_path</span><span class="p">:</span><span class="w"> </span><span class="n">str</span></em>, <em class="sig-param"><span class="n">directory</span><span class="p">:</span><span class="w"> </span><span class="n">str</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint">str</span></span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.resources_path"><span>#</span></a></dt>
-<dd><p>Get correct resource directory path to use temper directory.</p>
+<code class="sig-prename descclassname">booklet.utils.</code><code class="sig-name descname">resources_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">relative_path</span><span class="p">:</span><span class="w"> </span><span class="n">str</span></em>, <em class="sig-param"><span class="n">directory</span><span class="p">:</span><span class="w"> </span><span class="n">str</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint">str</span></span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.resources_path"><span>#</span></a></dt>
+<dd>
+<p>Get correct resource directory path to use temper directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -183,10 +213,11 @@
 </dd>
 </dl>
 </dd></dl>
-<dl class="py function">
+<dl class="py function code-definition">
 <dt class="sig sig-object py" id="booklet.utils.rgb_to_hex">
-<span class="sig-prename descclassname">booklet.utils.</span><span class="sig-name descname">rgb_to_hex</span><span class="sig-paren">(</span><em class="sig-param"><span class="n">r</span><span class="p">:</span><span class="w"> </span><span class="n">int</span></em>, <em class="sig-param"><span class="n">g</span><span class="p">:</span><span class="w"> </span><span class="n">int</span></em>, <em class="sig-param"><span class="n">b</span><span class="p">:</span><span class="w"> </span><span class="n">int</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint">str</span></span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.rgb_to_hex"><span>#</span></a></dt>
-<dd><p>Convert RGB code to hex string</p>
+<code class="sig-prename descclassname">booklet.utils.</code><code class="sig-name descname">rgb_to_hex</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">r</span><span class="p">:</span><span class="w"> </span><span class="n">int</span></em>, <em class="sig-param"><span class="n">g</span><span class="p">:</span><span class="w"> </span><span class="n">int</span></em>, <em class="sig-param"><span class="n">b</span><span class="p">:</span><span class="w"> </span><span class="n">int</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint">str</span></span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.rgb_to_hex"><span>#</span></a></dt>
+<dd>
+<p>Convert RGB code to hex string</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -197,10 +228,11 @@
 </dd>
 </dl>
 </dd></dl>
-<dl class="py function">
+<dl class="py function code-definition">
 <dt class="sig sig-object py" id="booklet.utils.split_list">
-<span class="sig-prename descclassname">booklet.utils.</span><span class="sig-name descname">split_list</span><span class="sig-paren">(</span><em class="sig-param"><span class="n">li</span><span class="p">:</span><span class="w"> </span><span class="n">list</span></em>, <em class="sig-param"><span class="n">n</span><span class="p">:</span><span class="w"> </span><span class="n">int</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'l'</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint">list</span></span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.split_list"><span>#</span></a></dt>
-<dd><p>Split given list to sublists.</p>
+<code class="sig-prename descclassname">booklet.utils.</code><code class="sig-name descname">split_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">li</span><span class="p">:</span><span class="w"> </span><span class="n">list</span></em>, <em class="sig-param"><span class="n">n</span><span class="p">:</span><span class="w"> </span><span class="n">int</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'l'</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint">list</span></span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.split_list"><span>#</span></a></dt>
+<dd>
+<p>Split given list to sublists.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -211,10 +243,11 @@
 </dd>
 </dl>
 </dd></dl>
-<dl class="py function">
+<dl class="py function code-definition">
 <dt class="sig sig-object py" id="booklet.utils.transpose">
-<span class="sig-prename descclassname">booklet.utils.</span><span class="sig-name descname">transpose</span><span class="sig-paren">(</span><em class="sig-param"><span class="n">matrix</span><span class="p">:</span><span class="w"> </span><span class="n">list</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint">list</span></span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.transpose"><span>#</span></a></dt>
-<dd><p>Transpose operation of given 2-dim list</p>
+<code class="sig-prename descclassname">booklet.utils.</code><code class="sig-name descname">transpose</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">matrix</span><span class="p">:</span><span class="w"> </span><span class="n">list</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint">list</span></span><a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#booklet.utils.transpose"><span>#</span></a></dt>
+<dd>
+<p>Transpose operation of given 2-dim list</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>matrix</strong> (<em>list</em>) – 2-dimension numerical list</p>

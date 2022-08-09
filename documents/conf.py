@@ -16,6 +16,8 @@ sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.join(os.path.abspath('..'), "booklet"))
 sys.path.insert(0, os.path.abspath('..'))
 
+from booklet.main import __version__ as release_str
+
 # -- Project information -----------------------------------------------------
 
 project = 'HornPenguin Booklet'
@@ -23,7 +25,7 @@ copyright = '2022, Hyun Seong Kim'
 author = 'Hyun Seong Kim'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.1'
+release = release_str
 
 
 # -- General configuration ---------------------------------------------------

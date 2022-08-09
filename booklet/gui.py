@@ -34,6 +34,8 @@
 
 import platform, os, sys
 
+from traitlets import default
+
 if platform.system() == "Darwin":
     import tkmacosx as tkosx
 
@@ -50,9 +52,8 @@ import simpleaudio
 
 
 # ---------------------------------------------------------
-import PyPDF2 as pypdf
 
-from booklet import textdata, signature
+from booklet import data, signature
 from booklet.utils import *
 
 
@@ -77,16 +78,16 @@ class Booklet:
         tutorial,
         textpady,
         logo,
+        icons,
         beep_file,
-        re_range_validation=textdata.re_get_ranges,
-        re_character_validation=textdata.re_check_permited_character,
+        re_range_validation=data.re_get_ranges,
+        re_character_validation=data.re_check_permited_character,
         fix=False,
         width=390,
         height=780,
         platform="Windows",
     ):
-        """
-        tkinter gui class
+        """tkinter gui class
 
         :param icon_path: Program app icon path.
         :param homepage: Company url.
@@ -95,7 +96,7 @@ class Booklet:
         :param logo: Gui setting, ui logo image path
         :param re_range_validation: Regular expression to validate the range of pages.
         :param re_character_validation: Regular expression to confirm vaild characters in page ragne input.
-        :param fix: Bool, gui setting, tkinter gui window size modulation permission setting.
+        :param fix: Gui setting, tkinter gui window size modulation permission setting.
         :param width: Int, The width of program window. It is not absolute setting. Some
         """
 
@@ -123,9 +124,11 @@ class Booklet:
 
         self.tab_basic = ttk.Frame(self.Tabwindow)
         self.tab_advance = ttk.Frame(self.Tabwindow)
+        self.tab_utils = ttk.Frame(self.Tabwindow)
 
         self.Tabwindow.add(self.tab_basic, text="basic")
         self.Tabwindow.add(self.tab_advance, text="advanced")
+        self.Tabwindow.add(self.tab_utils, text="utils")
 
         self.initiate_window()
 
@@ -139,6 +142,7 @@ class Booklet:
         self.icon_path = icon_path
         self.icon_setting(self.window)
 
+        self.icons = icons
 
         # Menu setting
         # Help: About, Format, Tutorial, License, Contact, Source, homepage, support
@@ -189,6 +193,74 @@ class Booklet:
         self.registrationbool = tk.BooleanVar(value=False)
         self.cmykbool = tk.BooleanVar(value=False)
 
+        # Window setting
+        self.basic_inputbox(
+            row=1,
+            column=0,
+            padx=5,
+            pady=10,
+            width=370,
+            height=160,
+            relief="solid",
+            padding="4 4 10 10",
+        )
+        self.basic_outputbox(
+            row=1,
+            column=1,
+            padx=5,
+            pady=10,
+            width=370,
+            height=200,
+            relief="solid",
+            padding="4 4 10 10",
+        )
+
+        self.advanced_imposition(
+            row=1,
+            column=0,
+            padx=5,
+            pady=10,
+            width=450,
+            height=220,
+            relief="solid",
+            padding="4 4 10 10",
+        )
+
+        self.advanced_printing(
+            row=1,
+            column=1,
+            padx=5,
+            pady=10,
+            width=450,
+            height=140,
+            relief="solid",
+            padding="4 4 10 10",
+        )
+
+        self.utils_note(
+            row =1,
+            column =0,
+            padx=5,
+            pady=10,
+            width=450,
+            height=220,
+            relief="solid",
+            padding="4 4 10 10",
+        )
+        self.utils_misc(
+            row =1,
+            column =1,
+            padx=5,
+            pady=10,
+            width=450,
+            height=220,
+            relief="solid",
+            padding="4 4 10 10",
+        )
+
+        self.genbutton(
+            row=2, column=0, columnspan=2, width=370, height=50, padding="2 2 2 2"
+        )
     def icon_setting(self, window):
         try:
             window.iconbitmap(self.icon_path)
@@ -307,7 +379,7 @@ class Booklet:
 
         about_window = partial(
             self.popup_window,
-            text=textdata.about_text,
+            text=data.about_text,
             title="About",
             tpadx=10,
             tpady=2.5,
@@ -319,8 +391,8 @@ class Booklet:
             self.popup_window_table,
             320,
             480,
-            textdata.format_head,
-            textdata.format_table,
+            data.format_head,
+            data.format_table,
             "Paper Format",
             30,
             2.5,
@@ -336,7 +408,7 @@ class Booklet:
 
         license = partial(
             self.popup_window,
-            text=textdata.license,
+            text=data.license,
             title="License",
             tpadx=10,
             tpady=0,
@@ -347,6 +419,11 @@ class Booklet:
         self.menu_help.add_command(label="License", command=license)
 
     def beep(self) -> NoReturn:
+        """Generate bepp sound
+
+        Returns:
+            NoReturn: It takes 0.5 sec for beeping (ping sound).
+        """
         wave_obj = simpleaudio.WaveObject.from_wave_file(self.beep_file)
         play_obj = wave_obj.play()
         play_obj.wait_done()
@@ -472,7 +549,7 @@ class Booklet:
         self.text_format = ttk.Label(
             self.Frame_output, text="Book Format", justify=tk.LEFT, anchor="w"
         )
-        self.format_list = [x for x in textdata.PaperFormat.keys()]
+        self.format_list = [x for x in data.PaperFormat.keys()]
         self.format = ttk.Combobox(
             self.Frame_output, value=self.format_list, state="readonly"
         )
@@ -523,7 +600,6 @@ class Booklet:
     # Tab Advanced
     def advanced_imposition(
         self,
-        icons: dict,
         row,
         column,
         padx,
@@ -544,9 +620,9 @@ class Booklet:
             padding=padding,
         )
         imposition_icon = ImageTk.PhotoImage(
-            icons["imposition"], master=self.Frame_ad_imposition
+            self.icons["imposition"], master=self.Frame_ad_imposition
         )
-        split_icon = ImageTk.PhotoImage(icons["split"], master=self.Frame_ad_imposition)
+        split_icon = ImageTk.PhotoImage(self.icons["split"], master=self.Frame_ad_imposition)
 
         # self.FrameText_impositon = ttk.Label(self.Frame_ad_imposition, text="Sheet work setting",justify=tk.LEFT, anchor='w')
 
@@ -581,13 +657,22 @@ class Booklet:
             justify=tk.LEFT,
             anchor="w",
         )
-        self.pagerange_example = tk.Label(
-            self.Frame_ad_imposition,
-            text="1, 3-5, 10",
-            justify=tk.LEFT,
-            anchor="w",
-            bg="white",
-        )
+        if self.platform_mac:
+            self.pagerange_example = tkosx.Label(
+                self.Frame_ad_imposition,
+                text="1, 3-5, 10",
+                justify=tk.LEFT,
+                anchor="w",
+                bg="white",
+            )
+        else:
+            self.pagerange_example = tk.Label(
+                self.Frame_ad_imposition,
+                text="1, 3-5, 10",
+                justify=tk.LEFT,
+                anchor="w",
+                bg="white",
+            )
         
 
         self.sigcomposition_label = ttk.Label(
@@ -760,7 +845,6 @@ class Booklet:
 
     def advanced_printing(
         self,
-        icons: dict,
         row,
         column,
         padx,
@@ -782,13 +866,13 @@ class Booklet:
 
         # Imagesetting
         sigproof_icon = ImageTk.PhotoImage(
-            icons["proof"], master=self.Frame_ad_printing
+            self.icons["proof"], master=self.Frame_ad_printing
         )
-        trim_icon = ImageTk.PhotoImage(icons["trim"], master=self.Frame_ad_printing)
+        trim_icon = ImageTk.PhotoImage(self.icons["trim"], master=self.Frame_ad_printing)
         registration_icon = ImageTk.PhotoImage(
-            icons["registration"], master=self.Frame_ad_printing
+            self.icons["registration"], master=self.Frame_ad_printing
         )
-        cmyk_icon = ImageTk.PhotoImage(icons["cmyk"], master=self.Frame_ad_printing)
+        cmyk_icon = ImageTk.PhotoImage(self.icons["cmyk"], master=self.Frame_ad_printing)
 
         self.sigproof_label = ttk.Label(
             self.Frame_ad_printing, text="Signature proof", justify=tk.LEFT, anchor="w"
@@ -881,7 +965,88 @@ class Booklet:
             sticky="ns",
         )
 
+    def utils_note(self,
+        row,
+        column,
+        padx,
+        pady,
+        width,
+        height,
+        relief,
+        padding):
+        
+        self.Frame_utils_note = ttk.LabelFrame(
+            master=self.tab_utils,
+            text="Note",
+            width=width,
+            height=height,
+            relief=relief,
+            padding=padding,
+        )
+
+        self.Frame_utils_note.grid(
+            row= row,
+            column = column,
+            ipadx = padx,
+            padx = (2*padx, 2*padx),
+            pady= pady,
+            sticky = "ns"
+        )
+    
+    def utils_misc(self,
+        row,
+        column,
+        padx,
+        pady,
+        width,
+        height,
+        relief,
+        padding):
+        
+        self.Frame_utils_misc = ttk.LabelFrame(
+            master=self.tab_utils,
+            text="Miscellaneous",
+            width=width,
+            height=height,
+            relief=relief,
+            padding=padding,
+        )
+
+        self.Frame_custom_leaves = ttk.LabelFrame(
+            master = self.Frame_utils_misc,
+            text = "Custom imposition",
+            width= width*0.8,
+            height=height*0.8,
+            relief=relief,
+            padding=padding,
+        )
+
+        self.imageconvert_bool = tk.BooleanVar(value=False)
+        self.imageconvert_label = ttk.Label(self.Frame_utils_misc, text="Convert to image")
+        self.imageconvert_checkbox = ttk.Checkbutton(self.Frame_utils_misc, variable=self.imageconvert_bool)
+        self.imageconvertexplain_label = ttk.Label(self.Frame_utils_misc, text="Prevent the broken \nin transformation.")
+        
+        self.imageconvert_label.grid(row=0, column=0)
+        self.imageconvert_checkbox.grid(row=0, column=1)
+        self.imageconvertexplain_label.grid(row=0, column=2)
+
+        self.Frame_custom_leaves.grid(row=1, column=0, columnspan=3)
+
+        self.Frame_utils_misc.grid(
+            row= row,
+            column = column,
+            ipadx = padx,
+            padx = (2*padx, 2*padx),
+            pady= pady,
+            sticky = "ns"
+        )
+    #--------------------------
     def open_file(self):
+        """Search the pdf file and, if it is vaild file, extract basic meta informations from the file.
+
+        Returns:
+            int: Return zero.
+        """
         filename = filedialog.askopenfilename(
             initialdir="~", title="Select Manuscript", filetypes=(("PDF", "*.pdf"),)
         )
@@ -920,6 +1085,11 @@ class Booklet:
         return 0
 
     def open_output_directory(self):
+        """Open an output directory path of the result file.
+
+        Returns:
+            _type_: _description_
+        """
         directory = filedialog.askdirectory(
             initialdir="~",
             title="Select Directory",
@@ -930,6 +1100,11 @@ class Booklet:
         return 0
 
     def fold_enable(self, event):
+        """Event function when use choose one item of the leaves list.
+           * Disable or enable fold checkbox below the leaves listbox.
+           * Calculate the additional blank pages of the each choosed leaves number.  
+
+        """
 
         leaves = self.leaves.get()
         fcheck = False
@@ -1069,7 +1244,7 @@ class Booklet:
         if formatname == "Default":
             return 1
         else:
-            width, height = textdata.PaperFormat[formatname].split("x")
+            width, height = data.PaperFormat[formatname].split("x")
 
             self.custom_width.set(width)
             self.custom_height.set(height)
@@ -1167,7 +1342,7 @@ class Booklet:
                 wh[1] = float(wh[1])
             else:
                 formatbool = True
-                wh = textdata.PaperFormat[formatname].split("x")
+                wh = data.PaperFormat[formatname].split("x")
 
             format_width = wh[0]  # mm
             format_height = wh[1]
@@ -1284,9 +1459,9 @@ if __name__ == "__main__":
 
     hpbooklet = HP_Booklet(
         icon_path,
-        homepage=textdata.homepage,
-        source=textdata.git_repository,
-        tutorial=textdata.git_repository,
+        homepage=data.homepage,
+        source=data.git_repository,
+        tutorial=data.git_repository,
         textpady=text_pady,
         logo=logo,
     )

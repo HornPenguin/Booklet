@@ -79,6 +79,27 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="license.html">License</a></div></li>
+<li class="toctree-l1"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="about.html">Structure of Program</a></div></li>
+<li class="toctree-l1"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="about.html#other-programs">Other programs</a></div></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Details</span></p>
+<ul>
+<li class="toctree-l1"><div class="nav-link"><svg class="expand" data-action="click-&gt;sidebar#expand keydown-&gt;sidebar#expandKeyPressed" tabindex="0" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg><a class="reference internal" data-action="click-&gt;sidebar#close" href="../booklet.html">booklet package</a></div><ul>
+<li class="toctree-l2"><div class="nav-link"><svg class="expand" data-action="click-&gt;sidebar#expand keydown-&gt;sidebar#expandKeyPressed" tabindex="0" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg><a class="reference internal" data-action="click-&gt;sidebar#close" href="../booklet.html#submodules">Submodules</a></div><ul>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="../booklet.gui.html">booklet.gui module</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="../booklet.images.html">booklet.images module</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="../booklet.main.html">booklet.main module</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="../booklet.mainw.html">booklet.mainw module</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="../booklet.permutation.html">booklet.permutation module</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="../booklet.signature.html">booklet.signature module</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="../booklet.textdata.html">booklet.textdata module</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="../booklet.utils.html">booklet.utils module</a></div></li>
+</ul>
+</li>
+<li class="toctree-l2"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="../booklet.html#module-booklet">Module contents</a></div></li>
+</ul>
+</li>
 </ul>
 </div>
 <button class="text-4xl text-gray-800 p-4 bottom-0 hover:text-brand xl:hidden focus:text-brand self-center" data-action="sidebar#close" title="Close navigation menu">
@@ -101,23 +122,24 @@
 <section id="select-pdf-file-to-modulate">
 <h3>Select PDF file to modulate<a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#select-pdf-file-to-modulate"><span>#</span></a></h3>
 <img alt="../_images/select_file001.png" src="../_images/select_file001.png"/>
-<p>Click the grey button with <code class="code docutils literal notranslate">...</code> notation on right of intputbox to choose manuscript.
-Otherwise, you can type file path directly to input box including file name, but it is not recommended.</p>
+<p>Click the grey button with <code class="code docutils literal notranslate">...</code> notation on the right of the input box to choose a manuscript.
+Otherwise, you can type the file path directly to the input box including the file name, but it is not recommended.</p>
 <img alt="../_images/select_file002.png" src="../_images/select_file002.png"/>
 <p>In this example, we chose <code class="code docutils literal notranslate">test.pdf</code> file.
-HornPenguin Booklet automatically detects meta datas, title, authors, and pages, of the given pdf files.
-In cui, just typing path of selected pdf file.</p>
+HornPenguin Booklet automatically detects meta data, title, authors, and pages, of the given pdf files.
+In CUI mode, just type the path of the selected pdf file.</p>
 </section>
 <section id="basic-settings">
 <h3>Basic Settings<a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#basic-settings"><span>#</span></a></h3>
 <section id="output-path-and-file-name">
 <h4>Output path and File name<a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#output-path-and-file-name"><span>#</span></a></h4>
 <img alt="../_images/output_setting001.png" src="../_images/output_setting001.png"/>
-<p><em>Output path</em> is a directory path that output file will be saved, Default value is the path of original file.
-You can modify it with clicking grey button, <code class="code docutils literal notranslate">...</code>, or directly modify path string in inputbox.</p>
-<p><em>File name</em> is a name of output file. Default value is <code class="code docutils literal notranslate">{original file name}_HP_BOOKLET.pdf</code>.
-You can modify it, but beaware that it does not check existence of given file.
-If there is same file in output path, it will be overwritten by the new file.</p>
+<p><em>Output path</em> is a directory path where the output file will be saved,
+The default value is the path of the original file.
+You can modify it by clicking the grey button, <code class="code docutils literal notranslate">...</code>, or directly modify the path string in the input box.</p>
+<p><em>File name</em> is the name of the output file. The default value is <code class="code docutils literal notranslate">{original file name}_HP_BOOKLET.pdf</code>.
+You can modify it, but be aware that it does not check the existence of the given file.
+If there is a same file in the output path, it will be overwritten by the new file.</p>
 </section>
 <section id="leaves">
 <h4>Leaves<a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#leaves"><span>#</span></a></h4>
@@ -131,13 +153,13 @@ In the list of sheet numbers, you can see some numbers have a subfix <code class
 <section id="book-format">
 <h4>Book format<a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#book-format"><span>#</span></a></h4>
 <img alt="../_images/output_setting003.png" src="../_images/output_setting003.png"/>
-<p><em>Book Format</em> is a page dimension of output file.
-Default value conserves the original page size.</p>
+<p><em>Book Format</em> is a page dimension of the output file.
+The default value conserves the original page size.</p>
 <table class="docutils align-center">
 <tbody>
 <tr class="row-odd"><td><img alt="../_images/help.png" src="../_images/help.png"/>
 </td>
-<td><img alt="../_images/paperformat.png" src="../_images/paperformat.png"/>
+<td><img alt="../_images/PaperFormat.png" src="../_images/PaperFormat.png"/>
 </td>
 </tr>
 </tbody>
@@ -148,14 +170,14 @@ Default value conserves the original page size.</p>
 <h4>Fold<a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#fold"><span>#</span></a></h4>
 <img alt="../_images/output_setting004.png" src="../_images/output_setting004.png"/>
 <p><em>Fold</em> option is restricted to some special sheet numbers in <em>Leaves</em> and they are notated <code class="code docutils literal notranslate">{number}f</code>.
-The defualt transformation does not rotating pages for fold.
-Check this option, if you want to get direct result to fold.
-It is automatically checked when you check <em>imposition</em> option in advanced tab.</p>
+The default transformation does not rotate pages for the fold.
+Check this option, if you want to get a direct result file to fold.
+It is automatically checked when you check <em>imposition</em> option in the advanced tab.</p>
 </section>
 <section id="riffling-direction">
 <h4>Riffling direction<a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#riffling-direction"><span>#</span></a></h4>
-<p><em>Riffling direction</em> is a riffling direction of output file.
-Default: <cite>right</cite>. <cite>left</cite> is for old Asian, Arabic, and Hebrew manuscript.</p>
+<p><em>Riffling direction</em> is a riffling direction of the output file.
+The default: <cite>right</cite>. <cite>left</cite> is for old Asian, Arabic, and Hebrew manuscripts.</p>
 </section>
 </section>
 </section>
@@ -170,12 +192,12 @@ You can modify more detailed options.</p>
 <section id="blank-page-s">
 <h4>Blank page(s)<a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#blank-page-s"><span>#</span></a></h4>
 <img alt="../_images/Blank.png" src="../_images/Blank.png"/>
-<p><em>Blank page(s)</em> option sets mode of blank page.
+<p><em>Blank page(s)</em> option sets the mode of blank page addition.
 This mode indicates the location where the additional blank pages are added.
 Supported options are <code class="code docutils literal notranslate">back</code>, <code class="code docutils literal notranslate">front</code>, <code class="code docutils literal notranslate">both</code>.
 When you choose <code class="code docutils literal notranslate">both</code> option, the additional pages will be distributed equally front and back.
-If the additional pages are odd, then back pages will be prior than front.
-Default is <cite>back</cite>.</p>
+If the additional pages are odd, then the back pages will be prior to the front.
+The default is <cite>back</cite>.</p>
 </section>
 <section id="page-range">
 <h4>Page range<a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#page-range"><span>#</span></a></h4>
@@ -186,12 +208,12 @@ You can combine independent single pages and several page ranges with comma, <co
 Example: <code class="code docutils literal notranslate">1-20, 23, 25, 40-100</code>.
 The total pages in page range will be calulated and shown next to input box.
 Beaware that if the given range string is not vaild (pages must be in right order and must not exceed max page range) , it will deactivate <cite>Generate</cite> button below.
-Default is <code class="code docutils literal notranslate">1-{total pages of original file}</code>.</p>
+The default is <code class="code docutils literal notranslate">1-{total pages of original file}</code>.</p>
 <p>Let’s see an example, the above image shows the default range of <code class="code docutils literal notranslate">test.pdf</code>, because its total range is from 1 to 32.
 You can set specific range like below.</p>
 <img alt="../_images/Page_range002.png" src="../_images/Page_range002.png"/>
-<p>See the right of inputbox. It was updated by change of input range.</p>
-<p>If range is not vaild, you can see next, the example box changes its background color red and <code class="code docutils literal notranslate">Generate`</code> button is deactivated.</p>
+<p>See the right of the input box. It was updated by a change of input range.</p>
+<p>If the range is not valid, you can see next, that the example box changes its background color to red and <code class="code docutils literal notranslate">Generate`</code> button is deactivated.</p>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><img alt="../_images/Page_range003.png" src="../_images/Page_range003.png"/>
@@ -205,17 +227,17 @@ You can set specific range like below.</p>
 <section id="custom-format">
 <h4>Custom format<a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#custom-format"><span>#</span></a></h4>
 <img alt="../_images/custom_format.png" src="../_images/custom_format.png"/>
-<p>You can set custom paper format that does not listed in <cite>Paper format</cite> table.
-The front is width and the back is height of format.
-Default value is original paper size or predefined paper format in basic options.
+<p>You can set a custom paper format that is not listed in <cite>Paper format</cite> table.
+The front is the width and the back is the height of the format.
+The default value is the original paper size or predefined paper format in basic options.
 See paper format reference in <code class="code docutils literal notranslate">Help -&gt; Paper Format</code> popup.</p>
 </section>
 <section id="signature-composition">
 <h4>Signature composition<a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#signature-composition"><span>#</span></a></h4>
 <img alt="../_images/sig_compose001.png" src="../_images/sig_compose001.png"/>
-<p>You can set number of inserting per given number of sheets in signature.
-You can change the number of inserting.
-Default value 1 and there are different options that make the number of sheets a multiple of 4.</p>
+<p>You can set a number of inserting per given number of sheets in signature.
+The number of inserts you can choose will be presented in list box.
+The default value is 1 and there are different options that make the number of sheets a multiple of 4.</p>
 <p>In above case, 32 sheets, if you choose 4, then,</p>
 <img alt="../_images/sig_compose002.png" src="../_images/sig_compose002.png"/>
 </section>
@@ -227,7 +249,7 @@ This option activate <em>fold</em> option in basic tab.</p>
 </section>
 <section id="split">
 <h4>Split<a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#split"><span>#</span></a></h4>
-<p>Save the output file with sepration by each signatures.</p>
+<p>Save the output file with separation by each signature.</p>
 </section>
 </section>
 <section id="printing-markers">
@@ -258,7 +280,7 @@ Additional</p>
 <div class="highlight"><pre><code><span class="n">usage</span><span class="p">:</span> <span class="n">booklet</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="nb">format</span><span class="o">-</span><span class="n">help</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">i</span> <span class="n">INPUT</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">OUTPUT</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">n</span> <span class="n">NAME</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">page</span><span class="o">-</span><span class="nb">range</span> <span class="p">[</span><span class="n">PAGE_RANGE</span> <span class="o">...</span><span class="p">]]</span>
            <span class="p">[</span><span class="o">--</span><span class="n">blank</span><span class="o">-</span><span class="n">mode</span> <span class="p">{</span><span class="n">back</span><span class="p">,</span><span class="n">front</span><span class="p">,</span><span class="n">both</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">sig</span><span class="o">-</span><span class="n">composition</span> <span class="n">SIG_COMPOSITION</span> <span class="n">SIG_COMPOSITION</span><span class="p">]</span>
            <span class="p">[</span><span class="o">--</span><span class="n">riffle</span><span class="o">-</span><span class="n">direction</span> <span class="p">{</span><span class="n">right</span><span class="p">,</span><span class="n">left</span><span class="p">}]</span> <span class="p">[</span><span class="o">--</span><span class="n">fold</span><span class="p">]</span>
-           <span class="p">[</span><span class="o">--</span><span class="nb">format</span> <span class="p">{</span><span class="n">Default</span><span class="p">,</span><span class="n">A3</span><span class="p">,</span><span class="n">A4</span><span class="p">,</span><span class="n">A5</span><span class="p">,</span><span class="n">B3</span><span class="p">,</span><span class="n">B4</span><span class="p">,</span><span class="n">B5</span><span class="p">,</span><span class="n">B6</span><span class="p">,</span><span class="n">JIS</span> <span class="n">B3</span><span class="p">,</span><span class="n">JIS</span> <span class="n">B4</span><span class="p">,</span><span class="n">JIS</span> <span class="n">B5</span><span class="p">,</span><span class="n">JIS</span> <span class="n">B6</span><span class="p">,</span><span class="n">Letter</span><span class="p">,</span><span class="n">Legal</span><span class="p">,</span><span class="n">Tabloid</span><span class="p">,</span><span class="n">GOV</span> <span class="n">Letter</span><span class="p">,</span><span class="n">GOV</span> <span class="n">Legal</span><span class="p">,</span><span class="n">ANSI</span> <span class="n">A</span><span class="p">,</span><span class="n">ANSI</span> <span class="n">B</span><span class="p">,</span><span class="n">ARCH</span> <span class="n">A</span><span class="p">,</span><span class="n">ARCH</span> <span class="n">B</span><span class="p">}</span> <span class="o">|</span> <span class="o">--</span><span class="n">custom</span><span class="o">-</span><span class="nb">format</span> <span class="n">CUSTOM_FORMAT</span> <span class="n">CUSTOM_FORMAT</span><span class="p">]</span>
+           <span class="p">[</span><span class="o">--</span><span class="nb">format</span> <span class="p">{</span><span class="n">The</span> <span class="n">default</span><span class="p">,</span><span class="n">A3</span><span class="p">,</span><span class="n">A4</span><span class="p">,</span><span class="n">A5</span><span class="p">,</span><span class="n">B3</span><span class="p">,</span><span class="n">B4</span><span class="p">,</span><span class="n">B5</span><span class="p">,</span><span class="n">B6</span><span class="p">,</span><span class="n">JIS</span> <span class="n">B3</span><span class="p">,</span><span class="n">JIS</span> <span class="n">B4</span><span class="p">,</span><span class="n">JIS</span> <span class="n">B5</span><span class="p">,</span><span class="n">JIS</span> <span class="n">B6</span><span class="p">,</span><span class="n">Letter</span><span class="p">,</span><span class="n">Legal</span><span class="p">,</span><span class="n">Tabloid</span><span class="p">,</span><span class="n">GOV</span> <span class="n">Letter</span><span class="p">,</span><span class="n">GOV</span> <span class="n">Legal</span><span class="p">,</span><span class="n">ANSI</span> <span class="n">A</span><span class="p">,</span><span class="n">ANSI</span> <span class="n">B</span><span class="p">,</span><span class="n">ARCH</span> <span class="n">A</span><span class="p">,</span><span class="n">ARCH</span> <span class="n">B</span><span class="p">}</span> <span class="o">|</span> <span class="o">--</span><span class="n">custom</span><span class="o">-</span><span class="nb">format</span> <span class="n">CUSTOM_FORMAT</span> <span class="n">CUSTOM_FORMAT</span><span class="p">]</span>
            <span class="p">[</span><span class="o">--</span><span class="n">imposition</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">split</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">trim</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">reg</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">cmyk</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">sigproof</span> <span class="p">[</span><span class="n">SIGPROOF</span><span class="p">]]</span> <span class="p">[</span><span class="o">-</span><span class="n">y</span><span class="p">]</span>
            <span class="p">[</span><span class="n">inputfile</span><span class="p">]</span> <span class="p">[</span><span class="n">outputpath</span><span class="p">]</span>
 </code></pre></div></div>

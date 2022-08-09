@@ -1,5 +1,4 @@
-"""
-Miscellaneous uitls 
+"""Miscellaneous uitls 
 """
 import os, sys
 from pathlib import Path
@@ -23,6 +22,7 @@ def resources_path(relative_path: str, directory: str) -> str:
 
     :param relative_path: The relative directory or file path.
     :param directory: The prime directory name, prior to relative path.
+
     """
     # Get absolute path to resources, works for dev and for PyInstaller
     try:
@@ -41,10 +41,11 @@ def pts_mm(size: tuple, mode=True) -> tuple:  # mode: True(pts -> mm), False(mm 
     :param size: Tuple of two point or mm unit size.
     :type size: tuple(float, float)
     :param mode: Determines the direction of conversion. :code:`True`: point to mm, :code:`False`: mm to point.
-    :type mode: bool, default= :code:`True`
+    :type mode: bool, defaults to :code:`True`
 
     :return: (x, y)
     :rtype: float tuple
+
     """
     if mode:  # pts to mm
         x = round(size[0] / mm, 0)
@@ -62,6 +63,7 @@ def open_url(url: str) -> NoReturn:
     
     :param url: url of site
     :type url: str
+
     """
     return webbrowser.open(url)
 
@@ -126,6 +128,7 @@ def rgb_to_hex(r: int, g: int, b: int) -> str:
     :type g: int
     :param b: Blue color code. range=[0, 255].
     :type b: int
+
     """
     rcode = str(hex(r)).split("x")[1]
     gcode = str(hex(g)).split("x")[1]
@@ -147,6 +150,7 @@ def split_list(li: list, n: int, mode="l") -> list:
     :param li: list, list to be splited.
     :param n: int, The length or the number of sublist. It must be a divider of the length of :param:`li` list.
     :param mode: str, The mode of split, `l`: length of sublist, `n`: number of sublist
+
     """
     if mode != "l" and mode != "n":
         raise ValueError("The 'mode' parameter must be 'l' or 'n', current = {mode}")
@@ -182,6 +186,7 @@ def transpose(matrix: list) -> list:
 
     :param matrix: 2-dimension numerical list
     :type matrix: list
+    
     """
     row_length = len(matrix)
     column_length = len(matrix[0])

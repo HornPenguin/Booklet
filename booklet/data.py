@@ -57,3 +57,10 @@ format_table = [
 PaperFormat = {"Default": "0x0"}
 for format in format_table:
     PaperFormat[format[0]] = f"{format[1]}x{format[2]}"
+
+
+#Note-------------------------------------
+pagespec = ["Both", "Odd", "Even", "Odd(only)", "Even(only)"]
+pagespec_e = ["Both", "Odd", "Even"]
+pagealign1 = ["L", "R", "C"]
+pagealign2 = ["LR", "CC", "RL", "LL", "LC", "RL", "RC", "CL", "CR"]

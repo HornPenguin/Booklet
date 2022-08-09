@@ -8,7 +8,7 @@ import PyPDF2 as pypdf
 from reportlab.pdfgen import canvas
 
 from booklet.utils import *
-from booklet.textdata import PaperFormat
+from booklet.data import PaperFormat
 from booklet.permutation import Permutation
 
 fold_arrange = {  # From left-top to right-bottom

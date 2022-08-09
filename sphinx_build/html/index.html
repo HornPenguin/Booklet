@@ -78,6 +78,27 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/license.html">License</a></div></li>
+<li class="toctree-l1"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/about.html">Structure of Program</a></div></li>
+<li class="toctree-l1"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="user/about.html#other-programs">Other programs</a></div></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Details</span></p>
+<ul>
+<li class="toctree-l1"><div class="nav-link"><svg class="expand" data-action="click-&gt;sidebar#expand keydown-&gt;sidebar#expandKeyPressed" tabindex="0" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg><a class="reference internal" data-action="click-&gt;sidebar#close" href="booklet.html">booklet package</a></div><ul>
+<li class="toctree-l2"><div class="nav-link"><svg class="expand" data-action="click-&gt;sidebar#expand keydown-&gt;sidebar#expandKeyPressed" tabindex="0" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg><a class="reference internal" data-action="click-&gt;sidebar#close" href="booklet.html#submodules">Submodules</a></div><ul>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="booklet.gui.html">booklet.gui module</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="booklet.images.html">booklet.images module</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="booklet.main.html">booklet.main module</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="booklet.mainw.html">booklet.mainw module</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="booklet.permutation.html">booklet.permutation module</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="booklet.signature.html">booklet.signature module</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="booklet.textdata.html">booklet.textdata module</a></div></li>
+<li class="toctree-l3"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="booklet.utils.html">booklet.utils module</a></div></li>
+</ul>
+</li>
+<li class="toctree-l2"><div class="nav-link"><a class="reference internal" data-action="click-&gt;sidebar#close" href="booklet.html#module-booklet">Module contents</a></div></li>
+</ul>
+</li>
 </ul>
 </div>
 <button class="text-4xl text-gray-800 p-4 bottom-0 hover:text-brand xl:hidden focus:text-brand self-center" data-action="sidebar#close" title="Close navigation menu">
@@ -90,41 +111,37 @@
 <section id="hornpenguin-booklet">
 <h1>HornPenguin Booklet<a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#hornpenguin-booklet"><span>#</span></a></h1>
 <img alt="_images/main.png" src="_images/main.png"/>
-<p>HornPenguin Booklet is a free and open source booklet generating
-program. It can reorder the pages, rotate and transform for fold signature,
+<p>HornPenguin Booklet is a free and open source booklet generating program.
+It can reorder the pages, rotate and transform for fold signature,
 and add printing markers for color printing.</p>
-<p>You can print your own book signatures and simple pamplet with your home printer.</p>
+<p>You can print your book signatures and a simple pamphlet with your home printer.</p>
 <ul class="simple">
-<li><p>Support diffence signature size from 4 to 32.</p></li>
-<li><p>Change page size during generating signature.</p></li>
-<li><p>Left riffling direction is supported for old Asian and Arabic bookbindings.</p></li>
-<li><p>Printing markers; trim, CMYK, signature proof are supported.</p></li>
+<li><p>Support difference signature size from 4 to 64.</p></li>
+<li><p>Change page size during generating a signature.</p></li>
+<li><p>Left riffling direction is supported for old Asian, Hebrew, and Arabic bookbindings.</p></li>
+<li><p>Printing markers: trim, CMYK, signature proofs are supported.</p></li>
 </ul>
-<section id="structure-of-program">
-<h2>Structure of Program<a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#structure-of-program"><span>#</span></a></h2>
-<table class="docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p>Interface</p></td>
-<td><p>PDF modulation</p></td>
-<td><p>PDF generation</p></td>
-</tr>
-<tr class="row-even"><td><p>GUI(tkinter)</p></td>
-<td rowspan="2"><p>PyPDF2</p></td>
-<td rowspan="2"><p>reportlab</p></td>
-</tr>
-<tr class="row-odd"><td><p>CUI(argparse)</p></td>
-</tr>
-</tbody>
-</table>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="user/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="user/usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="user/terms.html">Terms of Book and Printing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user/license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user/about.html">Structure of Program</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user/about.html#other-programs">Other programs</a></li>
 </ul>
 </div>
-</section>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Code Details</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="booklet.html">booklet package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="booklet.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="booklet.html#module-booklet">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
 </section>
 <section id="indices-and-tables">
 <h1>Indices and tables<a aria-label="Click to copy this link" class="headerlink tooltipped tooltipped-ne" data-action="click-&gt;clipboard#copyHeaderLink" data-controller="clipboard" href="#indices-and-tables"><span>#</span></a></h1>

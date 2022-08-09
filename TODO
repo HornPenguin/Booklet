@@ -1,0 +1,23 @@
+* Graphic-Console unifying
+  * Done
+
+* Image convert routine implementation.
+  *  pdf2image: MIT
+
+* Note routine implementation
+  * Add header, footter: font, size, color, margin, align
+  * font, size
+  * page number location
+  * total page
+  
+  Note Mode : On/Off
+  Note Pages: Total number of Note <- Must be a multiple of 4
+  Page numbering: None/ Header, Footer, [Both, ODD(n), ODD(y), EVEN(n), EVEN(y)], {[L ,R ,C], [LR, LL, LC, RR, RL ,RC, CC, CR, CL]}
+  Header: None, [Both, Odd, Even], [Align], size
+  Footer: None, [Both, Odd, Even], [Align], size
+
+* Custom Leaves Setting
+  - Number of Leaves:
+  - signature layout [] 
+  - Front: 
+  - Back:

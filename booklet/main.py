@@ -37,17 +37,20 @@ __license__ = "BSD license"
 name = "Booklet"
 
 import argparse
-import sys, os, re
+import sys, os, re, platform
 sys.path.insert(0, os.path.abspath("."))
 import PyPDF2 as pypdf
+from PIL import Image
 
 
 import booklet.signature as sig
-import booklet.textdata as textdata
+import booklet.data as data
 
-from booklet.utils import get_page_range, pts_mm
-from booklet.textdata import PaperFormat
+from booklet.utils import *
+from booklet.data import *
 
+from booklet.images import icon_path
+from booklet.gui import Booklet
 
 des = """PDF modulation for printing and press----------------------------------------------------"""
 epi = (
@@ -63,7 +66,7 @@ class Format_Help(argparse.Action):
             + "width(mm)".ljust(length)
             + "height(mm)".ljust(length)
         )
-        for format in textdata.format_table:
+        for format in data.format_table:
             print(
                 f"{format[0]}".ljust(length)
                 + f"{format[1]}".ljust(length)
@@ -92,8 +95,8 @@ def dir_path(string):
 
 
 # range validation
-range_validation_re = re.compile(textdata.re_get_ranges)
-character_vailidation_re = re.compile(textdata.re_check_permited_character)
+range_validation_re = re.compile(data.re_get_ranges)
+character_vailidation_re = re.compile(data.re_check_permited_character)
 
 
 def range_validation(string):  # only max
@@ -142,6 +145,11 @@ parser.add_argument(
     action=Format_Help,
     nargs=0,
     help="print table of paper format lists.",
+)
+
+parser.add_argument(
+    "-c",
+    "--console", action="store_true", help="Execute with console mode."
 )
 
 # file path
@@ -203,7 +211,7 @@ formatgroup.add_argument(
     "--format",
     nargs=1,
     type=str,
-    choices=list(textdata.PaperFormat.keys()),
+    choices=list(data.PaperFormat.keys()),
     default="Default",
     help="Output paper size format of signature, 'Default': conserves original file paper size. See options with '--format-help'.",
 )
@@ -238,7 +246,7 @@ parser.add_argument(
     type=color_check,
     const="#729fcf",
     nargs="?",
-    help="add signature proof that help to check order and missing signature. colorcode is a hex code. default = #729fcf.",
+    help="add signature proof that help to check order and missing signature. colorcode is a hex code. Defaults to #729fcf.",
 )
 parser.add_argument("-y", action="store_true")
 
@@ -284,134 +292,174 @@ if __name__ == "__main__":
 
     args = parser.parse_args(sys.argv[1:])
 
-    start_1 = False
-    start_2 = False
-    # Path validation
-    inputfile = ""
-    outputpath = ""
-    pagerange = ""
-    if args.inputfile is not None:
-        inputfile = args.inputfile
-        start_1 =True
-    elif args.input is not None:
-        inputfile = args.input[0]
-        start_1 =True
-    elif args.format_help is None:
-        raise ValueError("No input file")
-    
-    if args.outputpath is not None:
-        outputpath = args.outputpath
-        start_2 =True
-    elif args.output is not None:
-        outputpath = args.output[0]
-        start_2 =True
-    else:
-        outputpath = os.getcwd()
-        start_2 =True
-    
-    if start_1 and start_2:
-        # name checker
-        if check_dir(outputpath):
-            if args.name is not None:
-                name = args.name
+    if args.console is True:
+
+        start_1 = False
+        start_2 = False
+        # Path validation
+        inputfile = ""
+        outputpath = ""
+        pagerange = ""
+        if args.inputfile is not None:
+            inputfile = args.inputfile
+            start_1 =True
+        elif args.input is not None:
+            inputfile = args.input[0]
+            start_1 =True
+        elif args.format_help is None:
+            raise ValueError("No input file")
+
+        if args.outputpath is not None:
+            outputpath = args.outputpath
+            start_2 =True
+        elif args.output is not None:
+            outputpath = args.output[0]
+            start_2 =True
+        else:
+            outputpath = os.getcwd()
+            start_2 =True
+
+        if start_1 and start_2:
+            # name checker
+            if check_dir(outputpath):
+                if args.name is not None:
+                    name = args.name
+                else:
+                    name_formatted = os.path.split(inputfile)[1]
+                    name = name_formatted.split(".pdf")[0] + "_HP_BOOKLET" + ".pdf"
+                outputpath = os.path.join(outputpath, name)
+
+            pre_pdf = pypdf.PdfFileReader(inputfile)
+            page_max = len(pre_pdf.pages)
+            default_size = [
+                float(pre_pdf.getPage(0).mediaBox.width),
+                float(pre_pdf.getPage(0).mediaBox.height),
+            ]
+
+            # page range
+            if args.page_range is not None:
+                for li in args.page_range:
+                    st = "".join(li)
+                    pagerange += st
             else:
-                name_formatted = os.path.split(inputfile)[1]
-                name = name_formatted.split(".pdf")[0] + "_HP_BOOKLET" + ".pdf"
-            outputpath = os.path.join(outputpath, name)
+                pagerange = f"1-{page_max}"
 
-        pre_pdf = pypdf.PdfFileReader(inputfile)
-        page_max = len(pre_pdf.pages)
-        default_size = [
-            float(pre_pdf.getPage(0).mediaBox.width),
-            float(pre_pdf.getPage(0).mediaBox.height),
-        ]
-
-        # page range
-        if args.page_range is not None:
-            for li in args.page_range:
-                st = "".join(li)
-                pagerange += st
-        else:
-            pagerange = f"1-{page_max}"
-
-        #riffle
-        rifflebool = True
-        if args.riffle_direction == "left":
-            rifflebool = False
+            #riffle
+            rifflebool = True
+            if args.riffle_direction == "left":
+                rifflebool = False
 
 
-        # format setting
-        if args.format is None or args.format == "Default":
-            width, height = pts_mm(default_size)
-            format = [width, height]
-        else:
-            format_size = PaperFormat[args.format].split("x")
-            format = [float(format_size[0]), float(format_size[1])]
+            # format setting
+            if args.format is None or args.format == "Default":
+                width, height = pts_mm(default_size)
+                format = [width, height]
+            else:
+                format_size = PaperFormat[args.format].split("x")
+                format = [float(format_size[0]), float(format_size[1])]
 
-        # sig composition
+            # sig composition
 
-        nn = args.sig_composition[0]
-        ns = args.sig_composition[1]
-        if not check_composition(nn, ns):
-            raise ValueError(f"sig composition {nn} {ns} are not vaild.")
-        nl = nn * ns
-        sig_composition = [nl, nn, ns]
+            nn = args.sig_composition[0]
+            ns = args.sig_composition[1]
+            if not check_composition(nn, ns):
+                raise ValueError(f"sig composition {nn} {ns} are not vaild.")
+            nl = nn * ns
+            sig_composition = [nl, nn, ns]
 
-        # blank
-        blank = [args.blank_mode, cal_blank_page(len(get_page_range(pagerange)), nl)]
+            # blank
+            blank = [args.blank_mode, cal_blank_page(len(get_page_range(pagerange)), nl)]
 
-        # sigproof
-        if args.sigproof is not None:
-            sigproof = [True, args.sigproof[0]]
-        else:
-            sigproof = [False, ""]
+            # sigproof
+            if args.sigproof is not None:
+                sigproof = [True, args.sigproof[0]]
+            else:
+                sigproof = [False, ""]
 
-        printbool = args.trim or args.registration or args.cmyk or sigproof[0]
+            printbool = args.trim or args.registration or args.cmyk or sigproof[0]
 
-        # Print work info
-        print(f"Input:{inputfile}")
-        print(f"output:{outputpath}")
-        print(f"page range:{pagerange}")
-        print(f"blank:add {blank[1]} to {blank[0]}")
-        print(f"signature composition:{sig_composition[0]} signature, inserting {sig_composition[1]} {sig_composition[2]} sub signatures")
-        print(f"riffle direction:{args.riffle_direction}")
-        print(f"paper format: {args.format} {format[0]}x{format[1]} (mm)")
-        print(f"fold:{args.fold}")
-        print(f"imposition:{args.imposition}")
-        print(f"split per signature:{args.split}")
+            # Print work info
+            print(f"Input:{inputfile}")
+            print(f"output:{outputpath}")
+            print(f"page range:{pagerange}")
+            print(f"blank:add {blank[1]} to {blank[0]}")
+            print(f"signature composition:{sig_composition[0]} signature, inserting {sig_composition[1]} {sig_composition[2]} sub signatures")
+            print(f"riffle direction:{args.riffle_direction}")
+            print(f"paper format: {args.format} {format[0]}x{format[1]} (mm)")
+            print(f"fold:{args.fold}")
+            print(f"imposition:{args.imposition}")
+            print(f"split per signature:{args.split}")
 
-        print("Printing-----------------")
-        sigproof_str = f"{sigproof[0]}"
-        if sigproof[0]:
-            sigproof_str += f" color={args.sigproof[0]}"
-        print(f"trim:{args.trim}, registration:{args.registration}, cmyk:{args.cmyk}, sigproof: {sigproof_str}")
+            print("Printing-----------------")
+            sigproof_str = f"{sigproof[0]}"
+            if sigproof[0]:
+                sigproof_str += f" color={args.sigproof[0]}"
+            print(f"trim:{args.trim}, registration:{args.registration}, cmyk:{args.cmyk}, sigproof: {sigproof_str}")
 
-        if not args.y:
-            print("Continue?(Y/N):")
-            answer = input()
-            if answer != "y" and answer != "Y":
-                sys.exit()
+            if not args.y:
+                print("Continue?(Y/N):")
+                answer = input()
+                if answer != "y" and answer != "Y":
+                    sys.exit()
 
-        pages = sig.get_exact_page_range(pagerange=pagerange, blank=blank)
-        page_len =len(pages) * (2 if printbool or args.imposition else 1)
-        # generate----------------------------
-        sig.generate_signature(
-            inputfile=inputfile,
-            output=outputpath,
-            pagerange=pagerange,
-            blank=blank,
-            sig_com=sig_composition,
-            riffle=rifflebool,
-            fold=True if args.imposition else args.fold,
-            format=format,
-            imposition=args.imposition,
-            split=args.split,
-            trim=args.trim,
-            registration=args.registration,
-            cmyk=args.cmyk,
-            sigproof=sigproof,
-            progress=[page_len]
+            pages = sig.get_exact_page_range(pagerange=pagerange, blank=blank)
+            page_len =len(pages) * (2 if printbool or args.imposition else 1)
+            # generate----------------------------
+            sig.generate_signature(
+                inputfile=inputfile,
+                output=outputpath,
+                pagerange=pagerange,
+                blank=blank,
+                sig_com=sig_composition,
+                riffle=rifflebool,
+                fold=True if args.imposition else args.fold,
+                format=format,
+                imposition=args.imposition,
+                split=args.split,
+                trim=args.trim,
+                registration=args.registration,
+                cmyk=args.cmyk,
+                sigproof=sigproof,
+                progress=[page_len]
+            )
+
+            print("\n")
+            print(f"Done {os.path.split(outputpath)[1]}.")
+    else:
+        text_pady = 3
+        beep_file_name = "beep_ping.wav"
+        beep_file = resources_path(beep_file_name, "resources\\sound")
+
+        logo_width = logo_height = 70
+        logo = Image.open(resources_path("logo.png", "resources")).resize(
+            (logo_width, logo_height), Image.Resampling(1)
         )
 
-        print("\n")
-        print(f"Done {os.path.split(outputpath)[1]}.")
+        imposition_iconpaths = {
+            name: resources_path(f"{name}.png", "resources")
+            for name in imposition_icon_names
+        }
+        printing_iconpaths = {
+            name: resources_path(f"{name}.png", "resources") for name in printing_icon_names
+        }
+        printing_icons = {
+            name: Image.open(printing_iconpaths[name]) for name in printing_icon_names
+        }
+        imposition_icons = {
+            name: Image.open(imposition_iconpaths[name]) for name in imposition_icon_names
+        }
+        icons = {**imposition_icons, **printing_icons}
+
+        hpbooklet = Booklet(
+            icon_path,
+            homepage=homepage,
+            source=git_repository,
+            tutorial=tutorial,
+            textpady=text_pady,
+            beep_file=beep_file,
+            logo=logo,
+            icons= icons,
+            platform=platform.system(),
+        )
+        hpbooklet.window.mainloop()
+

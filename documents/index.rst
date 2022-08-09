@@ -33,6 +33,13 @@ You can print your book signatures and a simple pamphlet with your home printer.
    user/terms
    user/license
    user/about
+
+
+.. toctree:: 
+   :maxdepth: 2
+   :caption: Code Details
+
+   booklet
    
 
 Indices and tables
