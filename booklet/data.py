@@ -61,6 +61,7 @@ for format in format_table:
 
 #Note-------------------------------------
 pagespec = ["Both", "Odd", "Even", "Odd(only)", "Even(only)"]
-pagespec_e = ["Both", "Odd", "Even"]
-pagealign1 = ["L", "R", "C"]
-pagealign2 = ["LR", "CC", "RL", "LL", "LC", "RL", "RC", "CL", "CR"]
+pagehf = ["Header", "Footer","HF", "FH"]
+pagehf_e = ["Header", "Footer"]
+pagealign = ["LR", "CC", "RL", "LL", "LC", "RR", "RC", "CL", "CR"]
+pagealign_e = ["L", "R", "C"]

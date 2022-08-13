@@ -458,8 +458,7 @@ if __name__ == "__main__":
             textpady=text_pady,
             beep_file=beep_file,
             logo=logo,
-            icons= icons,
-            platform=platform.system(),
+            icons= icons
         )
         hpbooklet.window.mainloop()
 
