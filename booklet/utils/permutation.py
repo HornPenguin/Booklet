@@ -29,9 +29,10 @@
 
 from __future__ import annotations
 import sys
+
 sys.path.append("..")
 sys.path.append(".")
-from typing import Union,  NoReturn
+from typing import Union, NoReturn
 
 
 from itertools import permutations
@@ -40,10 +41,13 @@ from booklet.utils.matrix import split_list
 # Permutations routine and utils
 class Permutation:
     """Permutation implementation"""
+
     @classmethod
     def get_permutations(
         cls, n: int, per=False
-    ) -> Union[list[Permutation], list[list[int]]]:  # get list of permutations for given 'n'
+    ) -> Union[
+        list[Permutation], list[list[int]]
+    ]:  # get list of permutations for given 'n'
         """Return all permuation of length :math:`n`. Based on standard permutation routine in :code:`itertools`.
 
         :param n: Length of permuatation. Bigger than 0
@@ -59,8 +63,9 @@ class Permutation:
             return [cls(n, p) for p in per]
         else:
             return [p for p in per]
+
     @classmethod
-    def from_lists(cls, lists:Union[list[int], list[list[int]]]) -> Permutation:
+    def from_lists(cls, lists: Union[list[int], list[list[int]]]) -> Permutation:
         """Generate :class:`booklet.permutation.Permutation` from lists
 
         :param lists: list of integers or list of integer lists. In other words, 1-dim and 2-dim integer arrays are supported
@@ -71,20 +76,21 @@ class Permutation:
         l = []
         for li in lists:
             if type(li) == list:
-                l += li 
+                l += li
             else:
-                l.append(li)  
+                l.append(li)
         n = len(l)
         return cls(n, l)
+
     @classmethod
     def reverse_permutation(cls, n: int) -> Permutation:
-        """Do not confuse with *inverse* permutation. 
-        It only reverses order of 1 step increasing permutation. 
+        """Do not confuse with *inverse* permutation.
+        It only reverses order of 1 step increasing permutation.
         For example, :code:`reverse_permutation(3) == Permutation(3,[3, 2, 1])`.
 
         :param n: length of permutation
         :type n: int
-        :return: Reverse permutation of length :math:`n`. 
+        :return: Reverse permutation of length :math:`n`.
         :rtype: Permutation
         """
         return cls(n, range(n, 0, -1))
@@ -142,14 +148,16 @@ class Permutation:
 
         return self.plist[key - 1]
 
-    def __mul__(self, other: Permutation) -> Permutation: # p3 = p1*p2
+    def __mul__(self, other: Permutation) -> Permutation:  # p3 = p1*p2
         if self.n != other.n:
             raise ValueError(f"{self.n} and {other.n} are not same.")
 
         rlist = [other[x] for x in self.plist]
         return Permutation(self.n, rlist)
 
-    def index_mul(self, other: Permutation, oper=False) -> Union[list, Permutation]: # Direction is reverse from `*`
+    def index_mul(
+        self, other: Permutation, oper=False
+    ) -> Union[list, Permutation]:  # Direction is reverse from `*`
         rlist = [self[x] for x in other.plist]
         if oper:
             self.plist = rlist
@@ -158,7 +166,9 @@ class Permutation:
 
     def index_mul_partial(
         self, sub_permutation: Permutation, oper: bool = False
-    ) -> Union[list, Permutation]:  # Same with `index_mul` but literally work by sub permutation
+    ) -> Union[
+        list, Permutation
+    ]:  # Same with `index_mul` but literally work by sub permutation
         if not isinstance(sub_permutation, Permutation):
             raise ValueError(
                 f"Given parameter must be 'Permutation' object. \n Current object:{type(sub_permutation)}"
@@ -181,7 +191,9 @@ class Permutation:
         else:
             return Permutation(self.n, rlist)
 
-    def permute_to_list_index(self, li: list) -> list: # Applying permutation to the given list
+    def permute_to_list_index(
+        self, li: list
+    ) -> list:  # Applying permutation to the given list
         if not hasattr(li, "__iter__"):
             li = [li]
         if len(li) != self.n:
@@ -190,11 +202,11 @@ class Permutation:
         rlist = [li[x - 1] for x in self.plist]
         return rlist
 
-    def inverse(self) -> Permutation: # p * p.inverse() = identity permutation
+    def inverse(self) -> Permutation:  # p * p.inverse() = identity permutation
         ilist = [self.plist.index(x) + 1 for x in range(1, self.n + 1)]
         return Permutation(self.n, ilist)
 
-    def notation_cauchy(self) -> str: # Get Cauchy representation of permutation
+    def notation_cauchy(self) -> str:  # Get Cauchy representation of permutation
         return f"{list(range(1, self.n+1))}\n{self.plist}"
 
     def __canocial_order(self, cyclist: list) -> list:
@@ -214,7 +226,7 @@ class Permutation:
 
     def notation_cyclic(
         self, canonical: bool = False, string: bool = False, sep: str = ""
-    ) -> Union[str, list]: # Get cyclic representation of permutation
+    ) -> Union[str, list]:  # Get cyclic representation of permutation
         cycliclist = []
         index = list(range(1, self.n + 1))
         i = 1

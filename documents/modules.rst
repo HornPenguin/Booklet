@@ -1,6 +1,8 @@
 booklet
 =======
 
+.. _api_reference:
+
 .. toctree::
    :maxdepth: 4
 

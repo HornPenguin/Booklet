@@ -49,15 +49,23 @@ beep_file = resources_path(beep_file_name, "resouce\\sound")
 task_bar_icon = icon_path
 logo_width = logo_height = 70
 logo = Image.open(resources_path("logo.png", "resources")).resize(
-        (logo_width, logo_height), Image.Resampling(1)
-    )
+    (logo_width, logo_height), Image.Resampling(1)
+)
 
 imposition_icon_names = ["imposition", "split"]
-imposition_iconpaths = {name: resources_path(f"{name}.png", "resources") for name in imposition_icon_names}
-imposition_icons = {name: Image.open(imposition_iconpaths[name]) for name in imposition_icon_names}
+imposition_iconpaths = {
+    name: resources_path(f"{name}.png", "resources") for name in imposition_icon_names
+}
+imposition_icons = {
+    name: Image.open(imposition_iconpaths[name]) for name in imposition_icon_names
+}
 printing_icon_names = ["proof", "cmyk", "registration", "trim"]
-printing_iconpaths = {name: resources_path(f"{name}.png", "resources") for name in printing_icon_names}
-printing_icons = {name: Image.open(printing_iconpaths[name]) for name in printing_icon_names}
+printing_iconpaths = {
+    name: resources_path(f"{name}.png", "resources") for name in printing_icon_names
+}
+printing_icons = {
+    name: Image.open(printing_iconpaths[name]) for name in printing_icon_names
+}
 
 icons = {**imposition_icons, **printing_icons}
 
@@ -117,9 +125,9 @@ for format in format_table:
     PaperFormat[format[0]] = f"{format[1]}x{format[2]}"
 
 
-#Note-------------------------------------
+# Note-------------------------------------
 pagespec = ["Both", "Odd", "Even", "Odd(only)", "Even(only)"]
-pagehf = ["Header", "Footer","HF", "FH"]
+pagehf = ["Header", "Footer", "HF", "FH"]
 pagehf_e = ["Header", "Footer"]
 pagealign = ["LR", "CC", "RL", "LL", "LC", "RR", "RC", "CL", "CR"]
 pagealign_e = ["L", "R", "C"]

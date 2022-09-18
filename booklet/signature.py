@@ -18,22 +18,24 @@ fold_arrange = {  # From left-top to right-bottom
     16: [[16, 1, 4, 13, 9, 8, 5, 12], [10, 7, 6, 11, 15, 2, 3, 14]],
     24: [
         [24, 1, 12, 13, 21, 4, 9, 16, 20, 5, 8, 17],
-        [14, 11, 2, 23, 15, 10, 3, 22, 18, 7, 6, 19]
+        [14, 11, 2, 23, 15, 10, 3, 22, 18, 7, 6, 19],
     ],
-    32: [[20, 13, 12, 21, 29, 4, 5, 28, 32, 1, 8, 25, 17, 16, 9, 24],
-         [22, 11, 14, 19, 27, 6, 3, 30, 26, 7, 2, 31, 23, 10, 15, 18]
+    32: [ 
+        [32, 1, 8, 25, 17, 16, 9, 24, 20, 13, 12, 21, 29, 4, 5, 28],
+        [26, 7, 2, 31, 23, 10, 15, 18, 22, 11, 14, 19, 27, 6, 3, 30]
     ],
-    64: [[ 44, 21, 28, 37, 40, 25, 24, 41, 53, 12, 5, 60, 57, 8, 9, 56, 52, 13, 4, 61, 64, 1, 16, 49, 45, 20, 29, 36, 33, 32, 17, 48],
-         [ 46, 19, 30, 35, 34, 31, 18, 47, 51, 14, 3, 62, 63, 2, 15, 50, 54, 11, 6, 59, 58, 7, 10, 55, 43, 22, 27, 38, 39, 26, 23, 42]
-    ]
+    64: [
+        [44, 21, 28, 37, 40, 25, 24, 41, 53, 12, 5, 60, 57, 8, 9, 56, 52, 13, 4, 61, 64, 1, 16, 49, 45, 20, 29, 36, 33, 32, 17, 48],
+        [46, 19, 30, 35, 34, 31, 18, 47, 51, 14, 3, 62, 63, 2, 15, 50, 54, 11, 6, 59, 58, 7, 10, 55, 43, 22, 27, 38, 39, 26, 23, 42]
+    ],
 }
 
 # Signature modulation-----------------------------------------------------------
 def __fold_matrix_update(n: int, matrix: list) -> list:
     """Update :math:`n` signature page layout to :math:`n+1` layout.
-    
-    :param n: update number   
-    :param matrix: :math:`n-1` signature page layout matrix. Must be a :math:'n-1' level matrix for given :param:`n`. 
+
+    :param n: update number
+    :param matrix: :math:`n-1` signature page layout matrix. Must be a :math:'n-1' level matrix for given :param:`n`.
 
     :type n: int
     :type matrix: list[list]
@@ -41,7 +43,7 @@ def __fold_matrix_update(n: int, matrix: list) -> list:
     This function imitates fold process to increase the number of sheets in signature.
 
     1. Rotating it elements counter-clockwise.
-    2. Adding corresponding :math:`n` page numbers. 
+    2. Adding corresponding :math:`n` page numbers.
     3. Return the next level signature layout matrix.
 
     Rotating process is same with transpose and filp vertically.
@@ -93,7 +95,7 @@ def sig_layout(n: int) -> tuple:
     elif n < 4 or n % 4 != 0:
         raise ValueError(f"n:{n} must be a positive integer that multiple of 4.")
     if n % 3 == 0:
-        if n >24:
+        if n > 24:
             raise ValueError("Only 12 and 24 sheets signatures are")
         i = log2(n) - log2(3) - 1
         return (3, int(2**i))
@@ -176,6 +178,7 @@ def signature_permutation(n: int, nn: int, ns: int) -> Permutation:
             fold_arrange_n(ns, per=True), oper=False
         )
     return permutation_signature
+
 
 # Printing markers--------------------------------------------------------
 def __drawRegistationMark(
@@ -321,8 +324,6 @@ def page_printing_layout(
     if registration:
         l = (4 / 5) * nd
         dis = nd / 2
-
-        
 
         if not trim:
             # horizontal line
@@ -538,24 +539,27 @@ def generate_signature(
     registration: bool,
     cmyk: bool,
     sigproof: list[bool, str],
-    progress: list=[None],  # length, tkinter_progress_barm, tkinter_progress_text, tkinter_windows
+    progress: list = [
+        None
+    ],  # length, tkinter_progress_barm, tkinter_progress_text, tkinter_windows
 ):
-    update_type = 0 
+    update_type = 0
     current = 1
-    def update(update_type,  current):
+
+    def update(update_type, current):
         if update_type == 0:
             pass
         elif update_type == 1:
-            progress_bar["value"] =  current
+            progress_bar["value"] = current
             progress_text.set(f"{progress_bar['value']/progress_length *100:.2f}%")
             progress_window.update()
-        elif update_type ==2 :
-            
-            percent = 100 * (current/ progress_length)
-            bar = '█'* int(percent) + '-'*(100-int(percent))
-            endstr = "\r" if (percent - 100) < 0.01 else "\n" 
+        elif update_type == 2:
+
+            percent = 100 * (current / progress_length)
+            bar = "█" * int(percent) + "-" * (100 - int(percent))
+            endstr = "\r" if (percent - 100) < 0.01 else "\n"
             print(f"\r|{bar}| {percent:.2f}%", end="\r")
-        
+
         return current + 1
 
     if progress[0] == None:
@@ -567,12 +571,11 @@ def generate_signature(
         progress_text = progress[2]
         progress_window = progress[3]
 
-    elif len(progress) == 1 :
+    elif len(progress) == 1:
         update_type = 2
         progress_length = progress[0]
     else:
         raise ValueError(f"{progress}")
-       
 
     manuscript, writer, meta = get_writer_and_manuscript(inputfile)
     page_range = get_exact_page_range(pagerange, blank)
@@ -580,17 +583,17 @@ def generate_signature(
     blocks, composition, layout = get_arrange_determinant(page_range, sig_com, fold)
     format_width, format_height = pts_mm(format, False)  # mm to pts
 
-
-
     if fold and layout[0] > 1:
         transformation_ = pypdf.Transformation().rotate(180)
         for block in blocks:
             per_block = per_sig.permute_to_list_index(block)
             if sig_com[0] != 1:
-                per_block = Permutation.subpermutation_to_list_index(per_riffle, per_block)
+                per_block = Permutation.subpermutation_to_list_index(
+                    per_riffle, per_block
+                )
 
             pages = split_list(per_block, int(sig_com[2] / 2))
-            
+
             for p in range(0, len(pages)):
                 splitted_pages = split_list(pages[p], layout[1])
 
@@ -614,7 +617,7 @@ def generate_signature(
                         else:
                             writer.add_blank_page(format_width, format_height)
 
-                        current = update(update_type,  current)
+                        current = update(update_type, current)
                     if k < len(fold_list):
                         for i in fold_list[k]:
                             if i != 0:
@@ -622,20 +625,24 @@ def generate_signature(
                                 left = page.mediabox[0]
                                 bottom = page.mediabox[1]
                                 page.add_transformation(
-                                    pypdf.Transformation().translate(tx=-left, ty=-bottom)
+                                    pypdf.Transformation().translate(
+                                        tx=-left, ty=-bottom
+                                    )
                                 )
                                 transformation = transformation_.translate(
                                     tx=format_width, ty=format_height
                                 )
                                 page.add_transformation(transformation)
-                                page.cropbox.setUpperRight([format_width, format_height])
+                                page.cropbox.setUpperRight(
+                                    [format_width, format_height]
+                                )
                                 page.scale_to(format_width, format_height)
                                 writer.add_page(page)
                             else:
                                 writer.add_blank_page(format_width, format_height)
 
-                            current = update(update_type,  current)
-    else:   
+                            current = update(update_type, current)
+    else:
         for block in blocks:
             per_block = per_sig.permute_to_list_index(block)
             if sig_com[0] != 1:
@@ -655,7 +662,7 @@ def generate_signature(
                     page.scale_to(format_width, format_height)
                     writer.add_page(page)
 
-                current = update(update_type,  current)
+                current = update(update_type, current)
     ndbool = trim or registration or cmyk
     printbool = sigproof[0] or ndbool
 
@@ -667,7 +674,7 @@ def generate_signature(
         tem_pdf, temfile, cropsize = page_printing_layout(
             (format_width, format_height),
             len(page_range),
-            n = composition,
+            n=composition,
             nd=nd,
             d=d,
             proof=sigproof[0],
@@ -687,13 +694,13 @@ def generate_signature(
             return (x, y)
 
         nre = int(sig_com[2] / 2) if sig_com[2] > 2 and imposition else 1
-        #print(f"Debuge: nre={nre}, tem_page:{len(tem_pdf.pages)}")
+        # print(f"Debuge: nre={nre}, tem_page:{len(tem_pdf.pages)}")
         for i in range(0, len(tem_pdf.pages)):
             page = tem_pdf.pages[i]
 
             for k in range(0, nre):
                 l = i * nre + k
-                #print(l, f"{i}x{int(sig_com[2]/2)}+{k}", len(writer.pages))
+                # print(l, f"{i}x{int(sig_com[2]/2)}+{k}", len(writer.pages))
 
                 page_wm = writer.pages[l]
                 x, y = position(k + 1, layout)
@@ -704,7 +711,7 @@ def generate_signature(
                 page_wm.cropbox.setUpperRight(cropsize)
                 page.merge_page(page_wm)
 
-                current = update(update_type,  current)
+                current = update(update_type, current)
         if split:
             path_and_name = output.split(".pdf")[0]
             for i in range(0, len(tem_pdf.pages))[0::2]:

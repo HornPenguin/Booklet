@@ -24,25 +24,32 @@ class Format_Help(argparse.Action):
 
         setattr(namespace, self.dest, values)
 
+
 # Argument typing function
-def type_file_path(string:str):
+def type_file_path(string: str):
     if os.path.isfile(string):
         return string
     else:
         raise FileNotFoundError(string)
-def type_dir_path(string:str):
+
+
+def type_dir_path(string: str):
     if os.path.isdir(string) or os.path.isfile(string):
         return string
-    elif '\\' not in string and '/' not in string:
+    elif "\\" not in string and "/" not in string:
         return string
     elif os.path.isdir(os.path.split(string)[0]):
         return string
     else:
         raise NotADirectoryError(string)
+
+
 # range validation
 range_validation_re = re.compile(data.re_get_ranges)
 character_vailidation_re = re.compile(data.re_check_permited_character)
-def type_page_range(string:str):  # only max
+
+
+def type_page_range(string: str):  # only max
     text = string.replace(" ", "")
     # self.pagerange_var.set(text)
     vaild = True
@@ -50,7 +57,9 @@ def type_page_range(string:str):  # only max
         raise ValueError(f"{string} is not a vaild range.")
     else:
         return string
-def type_color(string:str):
+
+
+def type_color(string: str):
     if string == None:
         return "#729fcf"
     text = string
@@ -70,50 +79,53 @@ def type_color(string:str):
         except:
             raise ValueError
     return string
+
+
 # ---------------------------------------
 
-parser = argparse.ArgumentParser(prog=f"{project_name}", description=data.des, epilog=data.epi)
+parser = argparse.ArgumentParser(
+    prog=f"{project_name}", description=data.des, epilog=data.epi
+)
 
 # Console activation
 parser.add_argument(
-    "-c",
-    "--console", action="store_true", help="Execute with console mode."
-    )
+    "-c", "--console", action="store_true", help="Execute with console mode."
+)
 # Program version
 parser.add_argument(
     "--version", action="version", version="%(prog)s " + f"{__version__}"
-    )
+)
 # Additional help informations
 parser.add_argument(
     "--format-help",
     action=Format_Help,
     nargs=0,
     help="Print table of paper format lists.",
-    )
+)
 # File IO
 inputgroup = parser.add_mutually_exclusive_group()
 inputgroup.add_argument(
     "inputfile", nargs="?", type=type_file_path, help="The input pdf file path."
-    )
+)
 inputgroup.add_argument(
     "-i", "--input", nargs=1, type=type_file_path, help="The input pdf file path."
-    )
+)
 outputgroup = parser.add_mutually_exclusive_group()
 outputgroup.add_argument(
     "outputpath",
     nargs="?",
     type=type_dir_path,
     help="The output file path can contain file name or not.",
-    )
+)
 outputgroup.add_argument(
     "-o", "--output", nargs=1, type=type_dir_path, help="The ouput file path."
-    )
+)
 parser.add_argument(
     "-n",
     "--name",
     type=str,
     help="The output file name, if output path contains file name, path name is prior than this argument.",
-    )
+)
 
 # Manuscript Feature
 parser.add_argument(
@@ -122,41 +134,34 @@ parser.add_argument(
     action="append",
     nargs="*",
     help="The page range to moldulate in the input file. Example: 1-3, 10, 14-20.",
-    )
+)
 parser.add_argument(
-    "--split", 
-    action="store_true", 
-    help="split pdf pages with each signatures."
+    "--split", action="store_true", help="split pdf pages with each signatures."
 )
 # ToImage Feature
 parser.add_argument(
     "--toimage",
     action="store_true",
-    help="Convert all pages to image page to prevent content breaking during transformation."
-    )
-parser.add_argument(
-    "-dpi",
-    type = int,
-    default = 600,
-    help = "Dpi value of image of pages."
-    )
+    help="Convert all pages to image page to prevent content breaking during transformation.",
+)
+parser.add_argument("-dpi", type=int, default=600, help="Dpi value of image of pages.")
 # Note Feature
 
 # Signature Feature
 parser.add_argument(
     "--blank-mode",
-    type = str,
+    type=str,
     choices=["back", "front", "both"],
     default="back",
     help="Where additional blank pages are added, defaults to 'back'.",
-    )
+)
 parser.add_argument(
-    "--sig-composition", 
-    nargs=2, 
-    type=int, 
-    default=(1, 4), 
-    help="Signature composition (i, f). i is a inserted number of signature and f is a number of sheets in sub-signature, defaults to 1 4"
-    )
+    "--sig-composition",
+    nargs=2,
+    type=int,
+    default=(1, 4),
+    help="Signature composition (i, f). i is a inserted number of signature and f is a number of sheets in sub-signature, defaults to 1 4",
+)
 parser.add_argument(
     "--riffle",
     nargs=1,
@@ -185,7 +190,7 @@ formatgroup.add_argument(
 parser.add_argument(
     "--imposition",
     action="store_true",
-    help="default conversion only rearrange and rotate, this option locates them in each pages. enable \'fold\' option True",
+    help="default conversion only rearrange and rotate, this option locates them in each pages. enable 'fold' option True",
 )
 parser.add_argument(
     "--sigproof",
@@ -210,7 +215,3 @@ parser.add_argument(
 
 # Miscellaneous
 parser.add_argument("-y", action="store_true")
-
-
-
-

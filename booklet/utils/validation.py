@@ -30,10 +30,10 @@ from __future__ import annotations
 
 from typing import Union, NoReturn
 from pathlib import Path
-from numbers import Number 
+from numbers import Number
 
 
-def check_path(_path:Union[str, Path], mode:str) -> bool:
+def check_path(_path: Union[str, Path], mode: str) -> bool:
     """_summary_
 
     :param _path: _description_
@@ -48,7 +48,9 @@ def check_path(_path:Union[str, Path], mode:str) -> bool:
         return True
     except:
         return False
-def path(_path:Union[str, Path], mode:str="f") -> NoReturn:
+
+
+def path(_path: Union[str, Path], mode: str = "f") -> NoReturn:
     """_summary_
 
     :param _path: _description_
@@ -64,17 +66,19 @@ def path(_path:Union[str, Path], mode:str="f") -> NoReturn:
     """
     if type(_path) == str:
         _path = Path(_path)
-     # type check--------------------------
-    if not isinstance(_path, Path): 
+    # type check--------------------------
+    if not isinstance(_path, Path):
         raise TypeError("The given argument is not a string and path object")
     # file, directory check---------------
     if not _path.exists:
         raise ValueError(f"No such file or directory exists. {str(_path)}")
-    if mode=='f' and not _path.is_file():
+    if mode == "f" and not _path.is_file():
         raise ValueError(f"Invaild file path, not a file. {str(_path)}")
-    elif mode =='d' and not _path.is_dir():
+    elif mode == "d" and not _path.is_dir():
         raise ValueError(f"Invaild directory path, not a directory. {str(_path)}")
-def check_integer(i:int, positive:bool=False) -> bool:
+
+
+def check_integer(i: int, positive: bool = False) -> bool:
     """_summary_
 
     :param i: _description_
@@ -84,12 +88,14 @@ def check_integer(i:int, positive:bool=False) -> bool:
     :return: :code:`True` or :code:`False`
     :rtype: bool
     """
-    try: 
+    try:
         integer(i, positive)
         return True
     except:
         return False
-def integer(i:Union[str, Number], positive:bool=False) -> NoReturn:
+
+
+def integer(i: Union[str, Number], positive: bool = False) -> NoReturn:
     """_summary_
 
     :param i: Unknown value
@@ -102,15 +108,16 @@ def integer(i:Union[str, Number], positive:bool=False) -> NoReturn:
     :rtype: NoReturn
     """
     if type(i) == str:
-            try:
-                i = int(i)
-            except:
-                raise TypeError(f"Not an integer object or integer string. {type(i)}_{i}")
+        try:
+            i = int(i)
+        except:
+            raise TypeError(f"Not an integer object or integer string. {type(i)}_{i}")
     if type(i) == int:
-        if i<0 and positive:
+        if i < 0 and positive:
             raise ValueError(f"Not a positive value. {i}")
 
-def check_number(i:Union[str, Number], positive=False) -> bool:
+
+def check_number(i: Union[str, Number], positive=False) -> bool:
     """Validate the type of the given value and its sign whether positive or negative. Return boolean value.
 
     :param i: Unknown value
@@ -125,7 +132,9 @@ def check_number(i:Union[str, Number], positive=False) -> bool:
         return True
     except:
         return False
-def number(i:Union[str, Number], positive=False) -> NoReturn:
+
+
+def number(i: Union[str, Number], positive=False) -> NoReturn:
     """Validate the type of the given value and its sign whether positive or negative. Raise error.
 
     :param i: Unknown value
@@ -140,7 +149,7 @@ def number(i:Union[str, Number], positive=False) -> NoReturn:
     :rtype: NoReturn
     """
     if type(i) == str:
-        if '.' in i:
+        if "." in i:
             try:
                 i = float(i)
             except:
@@ -152,8 +161,8 @@ def number(i:Union[str, Number], positive=False) -> NoReturn:
                 raise ValueError("Invaild string, not an integer")
     if not isinstance(i, Number):
         raise TypeError(f"Invaild type: {type(i)}_{i}")
-    
-    if i<0 and positive == False:
+
+    if i < 0 and positive == False:
         raise ValueError(f"Not a positive value. {i}")
 
 
@@ -163,6 +172,3 @@ if __name__ == "__main__":
     for test in tests:
         print(f"{test}, {type(test)}")
         print(f"result:{check_number(test, True)}")
-
-
-

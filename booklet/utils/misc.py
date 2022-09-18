@@ -37,7 +37,7 @@ import webbrowser
 
 # system related routine
 def resources_path(rel_path: str, dir: str) -> str:
-    """Get absolute resource path to use temper directory. 
+    """Get absolute resource path to use temper directory.
 
     :param rel_path: Relative path that used inside of codes
     :type rel_path: str
@@ -54,6 +54,8 @@ def resources_path(rel_path: str, dir: str) -> str:
         base_path = os.path.abspath(".")
 
     return os.path.join(base_path, dir, rel_path)
+
+
 # Open webbrowser with a given url
 def open_url(url: str) -> NoReturn:
     """Open the website of the given url with system default browser.
@@ -65,18 +67,20 @@ def open_url(url: str) -> NoReturn:
     """
     return webbrowser.open(url)
 
+
 class NamedTempFile:
-    """NamedTemporary file IO warpper for reading and writing 
-    """
-    def __init__(self, tempfile, mode=None, delete:bool = False):
+    """NamedTemporary file IO warpper for reading and writing"""
+
+    def __init__(self, tempfile, mode=None, delete: bool = False):
         if tempfile.delete:
             raise ValueError("Named Temporary File must be in non-delete mode.")
         self.path = Path(tempfile.name)
-        self.mode = tempfile.mode if mode ==None else mode
-        self.delete = delete if type(delete) ==bool else False
+        self.mode = tempfile.mode if mode == None else mode
+        self.delete = delete if type(delete) == bool else False
         tempfile.close()
-        #os.unlink(self.path)
+        # os.unlink(self.path)
         self.stream = open(self.path, self.mode)
+
     def __del__(self, *args):
         self.stream.close()
         if self.delete:
@@ -84,6 +88,7 @@ class NamedTempFile:
                 os.unlink(self.path)
             except:
                 pass
+
     def __exit__(self, *args):
         self.stream.close()
         if self.delete:
@@ -91,43 +96,63 @@ class NamedTempFile:
                 os.unlink(self.path)
             except:
                 pass
+
     @classmethod
     def from_temp_setting(cls, *args, **kwargs):
         kwargs["delete"] = False
-        return cls(tempfile.NamedTemporaryFile(*args, **kwargs), mode="wb+", delete = True)
+        return cls(
+            tempfile.NamedTemporaryFile(*args, **kwargs), mode="wb+", delete=True
+        )
+
     @property
     def closed(self):
         return self.stream.closed
+
     def fileno(self):
         return self.stream.fileno()
+
     def truncate(self):
         return self.stream.truncate()
+
     def tell(self):
         return self.stream.tell()
+
     def isatty(self):
         return self.stream.isatty()
+
     def flush(self):
         return self.stream.flush()
+
     def seek(self, *args, **kwargs):
         return self.stream.seek(*args, **kwargs)
+
     def close(self):
         return self.stream.close()
+
     def readable(self):
         return self.stream.readable()
+
     def read(self, *args, **kwargs):
         return self.stream.read(*args, **kwargs)
+
     def readline(self, *args, **kwargs):
         return self.stream.readline(*args, **kwargs)
+
     def readlines(self, *args, **kwargs):
         return self.stream.readlines(*args, **kwargs)
+
     def writeable(self):
         return self.stream.writable()
+
     def write(self, *args, **kwargs):
         return self.stream.write(*args, **kwargs)
+
     def writeline(self, *args, **kwargs):
         return self.stream.writeline(*args, **kwargs)
+
     def writelines(self, *args, **kwargs):
         return self.stream.writelines(*args, **kwargs)
+
 
 # Maybe deprecation is wise for further code.
 def get_page_range(page_range_string: str) -> list:
@@ -137,10 +162,10 @@ def get_page_range(page_range_string: str) -> list:
         * Each pages can be a single page number.
         * Multiple consequence pages can be represented with start page, hypen, and end page.
 
-        Example: 
+        Example:
             input: 1-5, 15, 19, 40-46
             return: 1,2,3,4,5,15,19,40,41,42,43,44,45,46
-            
+
     :param page_range_string: Formatted string represent page range.
     :type page_range_string: str
     """
@@ -160,4 +185,3 @@ def get_page_range(page_range_string: str) -> list:
             rlist.append(int(st))
 
     return rlist
-

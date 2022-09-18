@@ -59,8 +59,8 @@ def parse_colr(data):
 
 def parse_resc(data):
     hnum, hden, vnum, vden, hexp, vexp = struct.unpack(">HHHHBB", data)
-    hdpi = ((hnum / hden) * (10 ** hexp) * 100) / 2.54
-    vdpi = ((vnum / vden) * (10 ** vexp) * 100) / 2.54
+    hdpi = ((hnum / hden) * (10**hexp) * 100) / 2.54
+    vdpi = ((vnum / vden) * (10**vexp) * 100) / 2.54
     return hdpi, vdpi
 
 

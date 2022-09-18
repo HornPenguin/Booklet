@@ -32,10 +32,12 @@ from reportlab.lib.units import mm
 
 # point <-> mm convert
 def __pts_mm(
-    value: Union[int, float, tuple[int, int], tuple[float, float]], 
-    mode=True) -> Union[int, float, tuple[int, int], tuple[float, float]]:  # mode: True(pts -> mm), False(mm -> pts)
+    value: Union[int, float, tuple[int, int], tuple[float, float]], mode=True
+) -> Union[
+    int, float, tuple[int, int], tuple[float, float]
+]:  # mode: True(pts -> mm), False(mm -> pts)
     """Unit conversion between point and mm.
-    
+
     :param value: Tuple of two point or mm unit value.
     :type value: tuple(float, float)
     :param mode: Determines the direction of conversion. :code:`True`: point to mm, :code:`False`: mm to point.
@@ -45,7 +47,7 @@ def __pts_mm(
     """
     if mode:  # pts to mm
         if type(value) == int or type(value) == float:
-            x = round(value/mm, 0)
+            x = round(value / mm, 0)
             return x
         else:
             x = round(value[0] / mm, 0)
@@ -59,7 +61,9 @@ def __pts_mm(
             x = value[0] * mm
             y = value[1] * mm
             return (x, y)
-def pts2mm(value:Union[int, tuple[int, int]]) -> Union[float, tuple[float, float]]:
+
+
+def pts2mm(value: Union[int, tuple[int, int]]) -> Union[float, tuple[float, float]]:
     """Wrapper of :py:func:`__pts_mm` of point to mm conversion.
 
     :param value: Point value or point value tuple of length 2.
@@ -68,7 +72,9 @@ def pts2mm(value:Union[int, tuple[int, int]]) -> Union[float, tuple[float, float
     :rtype: Union[float, tuple[float, float]]
     """
     return __pts_mm(value, mode=True)
-def mm2pts(value:Union[float, tuple[float, float]]) -> Union[int, tuple[int, int]]:
+
+
+def mm2pts(value: Union[float, tuple[float, float]]) -> Union[int, tuple[int, int]]:
     """
     Wrapper of :py:func:`__pts_mm` of mm to point conversion.
 
@@ -79,12 +85,13 @@ def mm2pts(value:Union[float, tuple[float, float]]) -> Union[int, tuple[int, int
     """
     return __pts_mm(value, mode=False)
 
+
 def __pts_pix(
-    value:Union[int, float, tuple[int, int], tuple[float, float]], 
-    mode:bool = True) -> Union[float, int, tuple[float, float], tuple[int, int]]: # 1 pix = 3/4 * (x, pts)
+    value: Union[int, float, tuple[int, int], tuple[float, float]], mode: bool = True
+) -> Union[float, int, tuple[float, float], tuple[int, int]]:  # 1 pix = 3/4 * (x, pts)
     """
-    Unit conversion between point and pixel. 
-    For :param:`mode`, :code:`True` is point to pixel, and :code:`False` is pixel to point. 
+    Unit conversion between point and pixel.
+    For :param:`mode`, :code:`True` is point to pixel, and :code:`False` is pixel to point.
 
     :param value: Point or pixel value or its tuple of length 2.
     :type value: Union[int, float, tuple[int, int], tuple[float, float]]
@@ -93,19 +100,21 @@ def __pts_pix(
     :return: Pixel or point value, or its tuple of length 2.
     :rtype: Union[float, int, tuple[float, float], tuple[int, int]]
     """
-    if mode: # pts -> pix
+    if mode:  # pts -> pix
         pts = value
-        pix = pts * (4/3)
+        pix = pts * (4 / 3)
         remainder = pix - int(pix)
         if remainder > 0.49999:
             pix = int(pix) + 1
         else:
             pix = int(pix)
         return pix
-    else: # pix -> pts
+    else:  # pix -> pts
         pix = value
         pts = pix * 0.75
         return pts
+
+
 def pts2pix(value: Union[float, tuple[float, float]]) -> Union[int, tuple[int, int]]:
     """
     Wrapper of :py:func:`__pts_pix` of point to pixel conversion.
@@ -116,6 +125,8 @@ def pts2pix(value: Union[float, tuple[float, float]]) -> Union[int, tuple[int, i
     :rtype: Union[int, tuple[int, int]]
     """
     return __pts_pix(value, mode=True)
+
+
 def pix2pts(value: Union[int, tuple[int, int]]) -> Union[float, tuple[float, float]]:
     """
     Wrapper of :py:func:`__pts_pix` of pixel to point conversion.

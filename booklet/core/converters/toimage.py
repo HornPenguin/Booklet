@@ -42,29 +42,32 @@ class ToImage(Converter):
     """
     Convert PDF to PDF whose pages are all single image each.
     """
+
     __name__ = "toimage"
     __description__ = "Convert PDF to PDF whose pages are all single image each"
 
     @property
     def name(self):
         return ToImage.__name__
+
     @property
     def description(self):
         return ToImage.__description__
 
-    def __init__(self, toimage:bool = False, dpi:int=600, mode="lgpl"):
+    def __init__(self, toimage: bool = False, dpi: int = 600, mode="lgpl"):
         self.toimage = bool(toimage)
         self._dpi = int(dpi) if Validation.check_integer(dpi, True) else 600
         self.mode = mode
 
     @property
     def dpi(self):
-        return self._dpi 
+        return self._dpi
+
     @dpi.setter
     def dpi(self, dpi):
         self._dpi = int(dpi) if Validation.check_integer(dpi, True) else 600
-    
-    def do(self, index:int, manuscript:Manuscript, file_mode:int):
+
+    def do(self, index: int, manuscript: Manuscript, file_mode: int):
         if not self.toimage:
             return 0
 
@@ -74,19 +77,18 @@ class ToImage(Converter):
             fmt="png",
             use_cropbox=True,
             transparent=False,
-            output_folder= manuscript.tem_directory.name
+            output_folder=manuscript.tem_directory.name,
         )
         new_pdf, new_file = self.get_new_pdf(index, manuscript)
         files = [im.filename for im in page_images]
         welldid = True
-        if self.mode == "lgpl": # Using img2pdf method
+        if self.mode == "lgpl":  # Using img2pdf method
             try:
                 with open(new_file.name, "wb") as f:
                     f.write(img2pdf.convert(files))
             except:
                 welldid = False
-        if not welldid: # PIL version
+        if not welldid:  # PIL version
             files[0].save(new_file.name, save_all=True, append_images=files[1:])
 
         manuscript.pdf_update(None, new_file.name)
-

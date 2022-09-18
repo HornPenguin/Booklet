@@ -35,6 +35,7 @@ from booklet.meta import __version__ as __version__
 from booklet.meta import name
 
 import sys, os
+
 sys.path.insert(0, os.path.abspath("."))
 import PyPDF2 as pypdf
 from PIL import Image
@@ -62,6 +63,8 @@ def check_dir(path):
             return False
         else:
             raise ValueError(f"Is it path? {path}")
+
+
 def check_composition(nn, ns):
     nl = nn * ns
     if nl % 4 != 0:
@@ -72,8 +75,10 @@ def check_composition(nn, ns):
         return False
     elif nl == 24 and nn not in [1, 2, 3, 6]:
         return False
-    
+
     return True
+
+
 def cal_blank_page(pages, nl):
     if pages < nl:
         return nl - pages
@@ -81,10 +86,11 @@ def cal_blank_page(pages, nl):
         k = pages % nl
         return (nl - k) if nl > 1 and k != 0 else 0
 
+
 if __name__ == "__main__":
     args = parser.parse_args(sys.argv[1:])
 
-    if args.console: # console mode
+    if args.console:  # console mode
 
         start_1 = False
         start_2 = False
@@ -94,22 +100,22 @@ if __name__ == "__main__":
         pagerange = ""
         if args.inputfile is not None:
             inputfile = args.inputfile
-            start_1 =True
+            start_1 = True
         elif args.input is not None:
             inputfile = args.input[0]
-            start_1 =True
+            start_1 = True
         elif args.format_help is None:
             raise ValueError("No input file")
 
         if args.outputpath is not None:
             outputpath = args.outputpath
-            start_2 =True
+            start_2 = True
         elif args.output is not None:
             outputpath = args.output[0]
-            start_2 =True
+            start_2 = True
         else:
             outputpath = os.getcwd()
-            start_2 =True
+            start_2 = True
 
         if start_1 and start_2:
             # name checker
@@ -144,7 +150,6 @@ if __name__ == "__main__":
             if args.riffle_direction == "left":
                 rifflebool = False
 
-
             # format setting
             if args.format is None or args.format == "Default":
                 width, height = pts2mm(default_size)
@@ -158,11 +163,11 @@ if __name__ == "__main__":
             # sig composition
             nl = args.sig_composition[0]
             nn = args.sig_composition[1]
-            ns = int(nl/nn)
+            ns = int(nl / nn)
             if not check_composition(nn, ns):
                 raise ValueError(f"sig composition {nl} {nn} are not vaild.")
             nl = nn * ns
-            _sig_composition= SigComposition(nl, nn)
+            _sig_composition = SigComposition(nl, nn)
 
             # blank
             blankmode = args.blank_mode
@@ -181,7 +186,9 @@ if __name__ == "__main__":
             print(f"output:{outputpath}")
             print(f"page range:{pagerange}")
             print(f"blank:add {blank[1]} to {blank[0]}")
-            print(f"signature composition:{nl} signature, inserting {nn} {ns} sub signatures")
+            print(
+                f"signature composition:{nl} signature, inserting {nn} {ns} sub signatures"
+            )
             print(f"riffle direction:{args.riffle_direction}")
             print(f"paper format: {args.format} {format[0]}x{format[1]} (mm)")
             print(f"fold:{args.fold}")
@@ -192,60 +199,61 @@ if __name__ == "__main__":
             sigproof_str = f"{sigproof[0]}"
             if sigproof[0]:
                 sigproof_str += f" color={args.sigproof[0]}"
-            print(f"trim:{args.trim}, registration:{args.registration}, cmyk:{args.cmyk}, sigproof: {sigproof_str}")
+            print(
+                f"trim:{args.trim}, registration:{args.registration}, cmyk:{args.cmyk}, sigproof: {sigproof_str}"
+            )
 
             if not args.y:
                 print("Continue?(Y/N):")
                 answer = input()
                 if answer != "y" and answer != "Y":
                     sys.exit()
-            
+
             # old code
-            #pages = sig.get_exact_page_range(pagerange=pagerange, blank=blank)
-            #page_len =len(pages) * (2 if printbool or args.imposition else 1)
+            # pages = sig.get_exact_page_range(pagerange=pagerange, blank=blank)
+            # page_len =len(pages) * (2 if printbool or args.imposition else 1)
 
             # generate----------------------------
-            
+
             default_gap = 5
             default_margin = 43
 
             manuscript = Manuscript(
-                input = inputfile,
-                output = outputpath,
-                page_range = pagerange
+                input=inputfile, output=outputpath, page_range=pagerange
             )
-            
-            toimage = ToImage(toimage = toimagebool, dpi = 300)
-            signature = Signature(sig_composition = _sig_composition, blank_mode = blankmode, riffle = rifflebool, fold = args.fold, paper_format = format)
+
+            toimage = ToImage(toimage=toimagebool, dpi=300)
+            signature = Signature(
+                sig_composition=_sig_composition,
+                blank_mode=blankmode,
+                riffle=rifflebool,
+                fold=args.fold,
+                paper_format=format,
+            )
             imposition = Imposition(
-                imposition = args.imposition,
-                gap = default_gap,
-                proof = sigproof[0],
-                proof_color = sigproof[1],
-                proof_width = default_gap*2,
-                imposition_layout = _sig_composition
+                imposition=args.imposition,
+                gap=default_gap,
+                proof=sigproof[0],
+                proof_color=sigproof[1],
+                proof_width=default_gap * 2,
+                imposition_layout=_sig_composition,
             )
             printing_mark = PrintingMark(
-                margin = default_margin,
-                crop = args.crop,
-                reg = args.registration,
-                cmyk = args.cmyk
+                margin=default_margin,
+                crop=args.crop,
+                reg=args.registration,
+                cmyk=args.cmyk,
             )
-            modifiers = [
-                toimage,
-                signature,
-                imposition,
-                printing_mark
-            ]
+            modifiers = [toimage, signature, imposition, printing_mark]
             for modifier in modifiers:
                 manuscript.modifier_register(modifier)
-            manuscript.update(do = "all", file_mode = "unsafe")
+            manuscript.update(do="all", file_mode="unsafe")
             if args.split:
                 manuscript.save_to_file(split=_sig_composition)
             else:
                 manuscript.save_to_file()
 
-            #sig.generate_signature(
+            # sig.generate_signature(
             #    inputfile=inputfile,
             #    output=outputpath,
             #    pagerange=pagerange,
@@ -261,11 +269,11 @@ if __name__ == "__main__":
             #    cmyk=args.cmyk,
             #    sigproof=sigproof,
             #    progress=[page_len]
-            #)
+            # )
 
             print("\n")
             print(f"Done {os.path.split(outputpath)[1]}.")
-    else: # guid mode
+    else:  # guid mode
         text_pady = 3
         beep_file_name = "beep_ping.wav"
         beep_file = resources_path(beep_file_name, "resources\\sound")
@@ -280,13 +288,15 @@ if __name__ == "__main__":
             for name in imposition_icon_names
         }
         printing_iconpaths = {
-            name: resources_path(f"{name}.png", "resources") for name in printing_icon_names
+            name: resources_path(f"{name}.png", "resources")
+            for name in printing_icon_names
         }
         printing_icons = {
             name: Image.open(printing_iconpaths[name]) for name in printing_icon_names
         }
         imposition_icons = {
-            name: Image.open(imposition_iconpaths[name]) for name in imposition_icon_names
+            name: Image.open(imposition_iconpaths[name])
+            for name in imposition_icon_names
         }
         icons = {**imposition_icons, **printing_icons}
 
@@ -298,7 +308,6 @@ if __name__ == "__main__":
             textpady=text_pady,
             beep_file=beep_file,
             logo=logo,
-            icons= icons
+            icons=icons,
         )
         hpbooklet.window.mainloop()
-

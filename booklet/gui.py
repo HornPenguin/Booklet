@@ -33,13 +33,14 @@ from functools import partial
 import re
 from math import log2
 
-#tkinter----------------------------------
+# tkinter----------------------------------
 import tkinter as tk
 from tkinter import filedialog
+
 if platform.system() != "Darwin":
     from tkinter import ttk
 else:
-    import tkmacosx as ttk #Mac OS specific module
+    import tkmacosx as ttk  # Mac OS specific module
 from tkinter.colorchooser import askcolor
 
 # 3rd parties----------------------------
@@ -60,8 +61,8 @@ from booklet.utils.color import hex2cmyk, cmyk2rgb, rgb2hex
 
 # UI--------------------------------------------------------------------------------------------
 class Booklet:
-    """Main GUI module
-    """
+    """Main GUI module"""
+
     def __init__(
         self,
         icon_path,
@@ -76,7 +77,7 @@ class Booklet:
         re_character_validation=data.re_check_permited_character,
         fix=False,
         width=390,
-        height=780
+        height=780,
     ):
         """init
 
@@ -194,7 +195,7 @@ class Booklet:
         self.splitpersigbool = tk.BooleanVar(value=False)
         self.sig_color = tk.StringVar(value="#729fcf")
 
-        self.margin = tk.IntVar(value = 20)
+        self.margin = tk.IntVar(value=20)
 
         # Printing--------------------------------------------------------
 
@@ -248,8 +249,8 @@ class Booklet:
         )
 
         self.utils_note(
-            row =1,
-            column =0,
+            row=1,
+            column=0,
             padx=5,
             pady=10,
             width=450,
@@ -258,8 +259,8 @@ class Booklet:
             padding="4 4 10 10",
         )
         self.utils_misc(
-            row =1,
-            column =1,
+            row=1,
+            column=1,
             padx=5,
             pady=10,
             width=450,
@@ -271,8 +272,9 @@ class Booklet:
         self.genbutton(
             row=2, column=0, columnspan=2, width=370, height=50, padding="2 2 2 2"
         )
+
     def icon_setting(self, window):
-        try: #Linux environment tkinter does not support and makes an error
+        try:  # Linux environment tkinter does not support and makes an error
             window.iconbitmap(self.icon_path)
         except:
             pass
@@ -293,8 +295,8 @@ class Booklet:
 
     def popup_window(
         self,
-        text:Union[str, list[str]],
-        title:str,
+        text: Union[str, list[str]],
+        title: str,
         tpadx=10,
         tpady=20,
         fix=False,
@@ -302,19 +304,17 @@ class Booklet:
         button_text="Ok",
         scroll=False,
     ):
-        """Common features of popup window
-        
-        """
+        """Common features of popup window"""
         sub_window = tk.Toplevel(self.window)
         sub_window.title(title)
         sub_window.resizable(False, True)
-        
+
         self.icon_setting(sub_window)
 
         if not hasattr(text, "__iter__"):
             text = [text]
 
-        if scroll: # add scroll bar to right of window
+        if scroll:  # add scroll bar to right of window
             frame = ttk.Frame(sub_window)
             scrollbar = ttk.Scrollbar(frame, orient="vertical")
             scrollbar.pack(side=tk.RIGHT, fill=tk.Y, anchor=tk.E)
@@ -368,7 +368,6 @@ class Booklet:
             sub_window.resizable(False, False)
 
         self.icon_setting(sub_window)
-        
 
         table = ttk.Treeview(sub_window, selectmode="browse", height=36)
         table.pack(fill="both")
@@ -470,7 +469,10 @@ class Booklet:
         # self.input_text.grid(row=0, column=0, sticky = tk.W, padx =3)
         self.input_entry = ttk.Entry(self.Frame_input, width=entry_width)
         self.input_button = ttk.Button(
-            self.Frame_input, text="...", width=3, command=partial(self.__event_open_file)
+            self.Frame_input,
+            text="...",
+            width=3,
+            command=partial(self.__event_open_file),
         )
 
         self.title_value = ttk.Label(
@@ -646,7 +648,9 @@ class Booklet:
         imposition_icon = ImageTk.PhotoImage(
             self.icons["imposition"], master=self.Frame_ad_imposition
         )
-        split_icon = ImageTk.PhotoImage(self.icons["split"], master=self.Frame_ad_imposition)
+        split_icon = ImageTk.PhotoImage(
+            self.icons["split"], master=self.Frame_ad_imposition
+        )
 
         # self.FrameText_impositon = ttk.Label(self.Frame_ad_imposition, text="Sheet work setting",justify=tk.LEFT, anchor='w')
 
@@ -698,7 +702,6 @@ class Booklet:
                 anchor="w",
                 bg="white",
             )
-        
 
         self.sigcomposition_label = ttk.Label(
             self.Frame_ad_imposition,
@@ -713,7 +716,9 @@ class Booklet:
             self.Frame_ad_imposition, value=[1], state="readonly", width=3
         )
         self.sigcomposition_nn_combo.current(0)
-        self.sigcomposition_nn_combo.bind("<<ComboboxSelected>>", self.__event_signature_set)
+        self.sigcomposition_nn_combo.bind(
+            "<<ComboboxSelected>>", self.__event_signature_set
+        )
         self.sigcomposition_times = ttk.Label(
             self.Frame_ad_imposition, text="x", justify=tk.LEFT, anchor="w"
         )
@@ -893,11 +898,15 @@ class Booklet:
         sigproof_icon = ImageTk.PhotoImage(
             self.icons["proof"], master=self.Frame_ad_printing
         )
-        trim_icon = ImageTk.PhotoImage(self.icons["trim"], master=self.Frame_ad_printing)
+        trim_icon = ImageTk.PhotoImage(
+            self.icons["trim"], master=self.Frame_ad_printing
+        )
         registration_icon = ImageTk.PhotoImage(
             self.icons["registration"], master=self.Frame_ad_printing
         )
-        cmyk_icon = ImageTk.PhotoImage(self.icons["cmyk"], master=self.Frame_ad_printing)
+        cmyk_icon = ImageTk.PhotoImage(
+            self.icons["cmyk"], master=self.Frame_ad_printing
+        )
 
         self.sigproof_label = ttk.Label(
             self.Frame_ad_printing, text="Signature proof", justify=tk.LEFT, anchor="w"
@@ -956,19 +965,18 @@ class Booklet:
         self.cmyk_icon = ttk.Label(self.Frame_ad_printing, image=cmyk_icon)
         self.cmyk_icon.photo = cmyk_icon
 
-        #margin setting 
+        # margin setting
         self.margin_label = ttk.Label(
             self.Frame_ad_printing, text="Margin(mm)", justify=tk.LEFT, anchor="w"
-            )
-        self.margin_entry = ttk.Entry(
-            self.Frame_ad_printing,
-            textvariable=self.margin,
-            width=int(entry_width / 2)
         )
-        int_vaild = (self.window.register(self.__int_validation),"%P")
-        int_invaild = (self.window.register(self.__int_invaild), )
-        self.margin_entry.config(validate="all", validatecommand=int_vaild, invalidcommand=int_invaild)
-
+        self.margin_entry = ttk.Entry(
+            self.Frame_ad_printing, textvariable=self.margin, width=int(entry_width / 2)
+        )
+        int_vaild = (self.window.register(self.__int_validation), "%P")
+        int_invaild = (self.window.register(self.__int_invaild),)
+        self.margin_entry.config(
+            validate="all", validatecommand=int_vaild, invalidcommand=int_invaild
+        )
 
         self.sigproof_label.grid(row=0, column=0, pady=self.text_pady)
         self.sigproof_checkbox.grid(row=0, column=1, columnspan=2, pady=self.text_pady)
@@ -1008,17 +1016,10 @@ class Booklet:
         )
 
     # -- Tab Utils
-    def utils_note(self,
-        row,
-        column,
-        padx,
-        pady,
-        width,
-        height,
-        relief,
-        padding,
-        entry_width = 41):
-        
+    def utils_note(
+        self, row, column, padx, pady, width, height, relief, padding, entry_width=41
+    ):
+
         self.Frame_utils_note = ttk.LabelFrame(
             master=self.tab_utils,
             text="Note",
@@ -1031,47 +1032,65 @@ class Booklet:
         self.notemode_bool = tk.BooleanVar(value=False)
         self.notemode_label = ttk.Label(self.Frame_utils_note, text="Note mode")
         self.notemode_checkbox = ttk.Checkbutton(
-            self.Frame_utils_note, 
-            variable = self.notemode_bool, 
-            command= self. __event_notemode_onoff)
+            self.Frame_utils_note,
+            variable=self.notemode_bool,
+            command=self.__event_notemode_onoff,
+        )
 
         self.notepage_str = tk.StringVar(value="")
         self.notepages_label = ttk.Label(self.Frame_utils_note, text="Note Pages")
-        self.notepages_entry = ttk.Entry(self.Frame_utils_note, textvariable = self.notepage_str, width=int(entry_width / 2))
-        int_vaild = (self.window.register(self.__int_validation),"%P")
-        int_invaild = (self.window.register(self.__int_invaild), )
-        self.notepages_entry.config(validate="all", validatecommand=int_vaild, invalidcommand=int_invaild)
+        self.notepages_entry = ttk.Entry(
+            self.Frame_utils_note,
+            textvariable=self.notepage_str,
+            width=int(entry_width / 2),
+        )
+        int_vaild = (self.window.register(self.__int_validation), "%P")
+        int_invaild = (self.window.register(self.__int_invaild),)
+        self.notepages_entry.config(
+            validate="all", validatecommand=int_vaild, invalidcommand=int_invaild
+        )
 
         self.Frame_pagenumbering = ttk.LabelFrame(
-            master = self.Frame_utils_note,
-            text = "Page numbering",
-            width= width*0.7,
-            height=height*0.7,
+            master=self.Frame_utils_note,
+            text="Page numbering",
+            width=width * 0.7,
+            height=height * 0.7,
             relief=relief,
             padding=padding,
         )
         self.pagenumbering_bool = tk.BooleanVar(value=False)
         self.pagenumbering_label = ttk.Label(self.Frame_pagenumbering, text="On/Off")
-        self.pagenumbering_checkbox = ttk.Checkbutton(self.Frame_pagenumbering, variable=self.pagenumbering_bool, command=self.__event_page_numbering_onoff)
+        self.pagenumbering_checkbox = ttk.Checkbutton(
+            self.Frame_pagenumbering,
+            variable=self.pagenumbering_bool,
+            command=self.__event_page_numbering_onoff,
+        )
         self.pagenumbering_checkbox_id = self.pagenumbering_checkbox.winfo_id()
 
-        self.notepagenumbering_pages_label = ttk.Label(self.Frame_pagenumbering, text="Numbering")
+        self.notepagenumbering_pages_label = ttk.Label(
+            self.Frame_pagenumbering, text="Numbering"
+        )
         self.notepagenumbering_pages_combobox = ttk.Combobox(
             self.Frame_pagenumbering, value=data.pagespec, state="readonly"
         )
         self.notepagenumbering_pages_combobox.current(0)
-        self.notepagenumbering_pages_combobox.bind("<<ComboboxSelected>>", self.__event_pagenumber_select)
+        self.notepagenumbering_pages_combobox.bind(
+            "<<ComboboxSelected>>", self.__event_pagenumber_select
+        )
 
-
-        self.notepagenumbering_location_label = ttk.Label(self.Frame_pagenumbering, text="Location")
+        self.notepagenumbering_location_label = ttk.Label(
+            self.Frame_pagenumbering, text="Location"
+        )
         self.notepagenumbering_location_combobox = ttk.Combobox(
             self.Frame_pagenumbering, value=data.pagehf, state="readonly"
         )
         self.notepagenumbering_location_combobox.current(0)
-        
-        self.notepagenumbering_align_label = ttk.Label(self.Frame_pagenumbering, text="Align")
+
+        self.notepagenumbering_align_label = ttk.Label(
+            self.Frame_pagenumbering, text="Align"
+        )
         self.notepagenumbering_align_combobox = ttk.Combobox(
-            self.Frame_pagenumbering, value = data.pagealign, state="readonly"
+            self.Frame_pagenumbering, value=data.pagealign, state="readonly"
         )
         self.notepagenumbering_align_combobox.current(0)
 
@@ -1079,44 +1098,57 @@ class Booklet:
             child.config(state="disable")
 
         # pagenumbering grid
-        self.pagenumbering_label.grid(row=0, column=0, pady=self.text_pady, ipadx=self.text_pady)
-        self.pagenumbering_checkbox.grid(row=0, column=1, pady=self.text_pady, ipadx=self.text_pady)
-        self.notepagenumbering_pages_label.grid(row=1, column=0, pady=self.text_pady, ipadx=self.text_pady)
-        self.notepagenumbering_pages_combobox.grid(row=1, column=1, pady=self.text_pady, ipadx=self.text_pady)
-        self.notepagenumbering_location_label.grid(row=2, column=0, pady=self.text_pady, ipadx=self.text_pady)
-        self.notepagenumbering_location_combobox.grid(row=2, column=1, pady=self.text_pady, ipadx=self.text_pady)
-        self.notepagenumbering_align_label.grid(row=3, column=0, pady=self.text_pady, ipadx=self.text_pady)
-        self.notepagenumbering_align_combobox.grid(row=3, column=1, pady=self.text_pady, ipadx=self.text_pady)
+        self.pagenumbering_label.grid(
+            row=0, column=0, pady=self.text_pady, ipadx=self.text_pady
+        )
+        self.pagenumbering_checkbox.grid(
+            row=0, column=1, pady=self.text_pady, ipadx=self.text_pady
+        )
+        self.notepagenumbering_pages_label.grid(
+            row=1, column=0, pady=self.text_pady, ipadx=self.text_pady
+        )
+        self.notepagenumbering_pages_combobox.grid(
+            row=1, column=1, pady=self.text_pady, ipadx=self.text_pady
+        )
+        self.notepagenumbering_location_label.grid(
+            row=2, column=0, pady=self.text_pady, ipadx=self.text_pady
+        )
+        self.notepagenumbering_location_combobox.grid(
+            row=2, column=1, pady=self.text_pady, ipadx=self.text_pady
+        )
+        self.notepagenumbering_align_label.grid(
+            row=3, column=0, pady=self.text_pady, ipadx=self.text_pady
+        )
+        self.notepagenumbering_align_combobox.grid(
+            row=3, column=1, pady=self.text_pady, ipadx=self.text_pady
+        )
         # main grid
-        self.notemode_label.grid(row= 0, column=0)
-        self.notemode_checkbox.grid(row= 0, column=1)
-        self.notepages_label.grid(row=1, column=0,pady=self.text_pady, ipadx=self.text_pady)
-        self.notepages_entry.grid(row=1, column=1,pady=self.text_pady, ipadx=self.text_pady)
+        self.notemode_label.grid(row=0, column=0)
+        self.notemode_checkbox.grid(row=0, column=1)
+        self.notepages_label.grid(
+            row=1, column=0, pady=self.text_pady, ipadx=self.text_pady
+        )
+        self.notepages_entry.grid(
+            row=1, column=1, pady=self.text_pady, ipadx=self.text_pady
+        )
         self.Frame_pagenumbering.grid(row=2, column=0, columnspan=4)
 
         self.Frame_utils_note.grid(
-            row= row,
-            column = column,
-            ipadx = 2*padx,
-            padx = (2*padx, 2*padx),
-            pady= pady,
-            sticky = "nsew"
+            row=row,
+            column=column,
+            ipadx=2 * padx,
+            padx=(2 * padx, 2 * padx),
+            pady=pady,
+            sticky="nsew",
         )
-    
-    def utils_misc(self,
-        row,
-        column,
-        padx,
-        pady,
-        width,
-        height,
-        relief,
-        padding,
-        entry_width = 41):
+
+    def utils_misc(
+        self, row, column, padx, pady, width, height, relief, padding, entry_width=41
+    ):
 
         int_validation = (self.window.register(self.__int_validation), "%P")
-        int_invalid = (self.window.register(self.__int_invaild), )
-        
+        int_invalid = (self.window.register(self.__int_invaild),)
+
         self.Frame_utils_misc = ttk.LabelFrame(
             master=self.tab_utils,
             text="Miscellaneous",
@@ -1130,119 +1162,193 @@ class Booklet:
         self.imageconvert_dpi_int = tk.IntVar(value=600)
 
         self.imageconvert_label = ttk.Label(
-            self.Frame_utils_misc, 
-            text="Convert to image"
-            )
+            self.Frame_utils_misc, text="Convert to image"
+        )
         self.imageconvert_checkbox = ttk.Checkbutton(
-            self.Frame_utils_misc, 
-            variable=self.imageconvert_bool
-            )
-        self.imageconvert_dpi_label = ttk.Label(
-            self.Frame_utils_misc, 
-            text="dpi"
-            )
+            self.Frame_utils_misc, variable=self.imageconvert_bool
+        )
+        self.imageconvert_dpi_label = ttk.Label(self.Frame_utils_misc, text="dpi")
         self.imageconvert_dpi_entry = ttk.Entry(
-            self.Frame_utils_misc, 
-            textvariable= self.imageconvert_dpi_int, 
-            validate="all", 
-            validatecommand= int_validation,
-            width = int(entry_width/8)
-            ) 
+            self.Frame_utils_misc,
+            textvariable=self.imageconvert_dpi_int,
+            validate="all",
+            validatecommand=int_validation,
+            width=int(entry_width / 8),
+        )
         self.imageconvertexplain_label = ttk.Label(
-            self.Frame_utils_misc, 
-            text="Prevent the broken \nin transformation."
-            )
-        
+            self.Frame_utils_misc, text="Prevent the broken \nin transformation."
+        )
 
         self.Frame_custom_imposition = ttk.LabelFrame(
-            master = self.Frame_utils_misc,
-            text = "Custom imposition",
-            width= width*0.7,
-            height=height*0.7,
+            master=self.Frame_utils_misc,
+            text="Custom imposition",
+            width=width * 0.7,
+            height=height * 0.7,
             relief=relief,
             padding=padding,
         )
 
         self.custom_imposition_bool = tk.BooleanVar(value=False)
-        self.custom_imposition_label= ttk.Label(self.Frame_custom_imposition, text="On/Off")
+        self.custom_imposition_label = ttk.Label(
+            self.Frame_custom_imposition, text="On/Off"
+        )
         self.custom_imposition_checkbox = ttk.Checkbutton(
-            self.Frame_custom_imposition, 
+            self.Frame_custom_imposition,
             variable=self.custom_imposition_bool,
-            command= self.__event_custom_imposition)
+            command=self.__event_custom_imposition,
+        )
         self.custom_imposition_label_id = self.custom_imposition_label.winfo_id()
         self.custom_imposition_checkbox_id = self.custom_imposition_checkbox.winfo_id()
-        
+
         self.custom_imposition_sig_int = tk.IntVar(value=1)
-        self.custom_imposition_sig_label = ttk.Label(self.Frame_custom_imposition, text="Leaves per sig")
-        self.custom_imposition_sig_entry = ttk.Entry(self.Frame_custom_imposition,
-            textvariable= self.custom_imposition_sig_int,
+        self.custom_imposition_sig_label = ttk.Label(
+            self.Frame_custom_imposition, text="Leaves per sig"
+        )
+        self.custom_imposition_sig_entry = ttk.Entry(
+            self.Frame_custom_imposition,
+            textvariable=self.custom_imposition_sig_int,
             validate="all",
             validatecommand=int_validation,
-            width =int(entry_width/7))
-        
-        self.custom_impostion_leaves_int = tk.IntVar(value = 1)
-        self.custom_imposition_leaves_label = ttk.Label(self.Frame_custom_imposition, text="Leaves")
-        self.custom_imposition_leaves_entry = ttk.Entry(self.Frame_custom_imposition, 
+            width=int(entry_width / 7),
+        )
+
+        self.custom_impostion_leaves_int = tk.IntVar(value=1)
+        self.custom_imposition_leaves_label = ttk.Label(
+            self.Frame_custom_imposition, text="Leaves"
+        )
+        self.custom_imposition_leaves_entry = ttk.Entry(
+            self.Frame_custom_imposition,
             textvariable=self.custom_impostion_leaves_int,
             validate="all",
-            validatecommand=int_validation)
+            validatecommand=int_validation,
+        )
 
         self.custom_sig_layout_row = tk.IntVar(value=1)
         self.custom_sig_layout_column = tk.IntVar(value=1)
 
-        self.custom_sig_layout_label = ttk.Label(self.Frame_custom_imposition, text= "Sig Layout")
-        self.custom_sig_layout_row_entry = ttk.Entry(self.Frame_custom_imposition, textvariable=self.custom_sig_layout_row, width =int(entry_width/5))
-        self.custom_sig_layout_column_label = ttk.Label(self.Frame_custom_imposition, textvariable=self.custom_sig_layout_column, width = int(entry_width/5))
-        self.custom_sig_layout_x_label = ttk.Label(self.Frame_custom_imposition, text="x")
-        
-        layout_validation = (self.window.register(self.__layout_validation), r"%P", r"%s",r"%V")
-        self.custom_sig_layout_row_entry.config(validate = "all", validatecommand=layout_validation)
+        self.custom_sig_layout_label = ttk.Label(
+            self.Frame_custom_imposition, text="Sig Layout"
+        )
+        self.custom_sig_layout_row_entry = ttk.Entry(
+            self.Frame_custom_imposition,
+            textvariable=self.custom_sig_layout_row,
+            width=int(entry_width / 5),
+        )
+        self.custom_sig_layout_column_label = ttk.Label(
+            self.Frame_custom_imposition,
+            textvariable=self.custom_sig_layout_column,
+            width=int(entry_width / 5),
+        )
+        self.custom_sig_layout_x_label = ttk.Label(
+            self.Frame_custom_imposition, text="x"
+        )
 
-        self.custom_sig_impostion_front_str= tk.StringVar(value="")
-        self.custom_sig_impostion_back_str= tk.StringVar(value="")
+        layout_validation = (
+            self.window.register(self.__layout_validation),
+            r"%P",
+            r"%s",
+            r"%V",
+        )
+        self.custom_sig_layout_row_entry.config(
+            validate="all", validatecommand=layout_validation
+        )
 
-        self.custom_sig_imposition_front_label = ttk.Label(self.Frame_custom_imposition, text="Front")
-        self.custom_sig_imposition_back_label = ttk.Label(self.Frame_custom_imposition, text="Back")
-        self.custom_sig_imposition_front_entry = ttk.Entry(self.Frame_custom_imposition, textvariable= self.custom_sig_impostion_front_str, width= int(entry_width))
-        self.custom_sig_imposition_back_entry = ttk.Entry(self.Frame_custom_imposition, textvariable=  self.custom_sig_impostion_back_str, width= int(entry_width))
-        
-        
+        self.custom_sig_impostion_front_str = tk.StringVar(value="")
+        self.custom_sig_impostion_back_str = tk.StringVar(value="")
+
+        self.custom_sig_imposition_front_label = ttk.Label(
+            self.Frame_custom_imposition, text="Front"
+        )
+        self.custom_sig_imposition_back_label = ttk.Label(
+            self.Frame_custom_imposition, text="Back"
+        )
+        self.custom_sig_imposition_front_entry = ttk.Entry(
+            self.Frame_custom_imposition,
+            textvariable=self.custom_sig_impostion_front_str,
+            width=int(entry_width),
+        )
+        self.custom_sig_imposition_back_entry = ttk.Entry(
+            self.Frame_custom_imposition,
+            textvariable=self.custom_sig_impostion_back_str,
+            width=int(entry_width),
+        )
+
         for child in self.Frame_custom_imposition.winfo_children():
-            if child.winfo_id() != self.custom_imposition_checkbox_id and child.winfo_id() != self.custom_imposition_label_id:
+            if (
+                child.winfo_id() != self.custom_imposition_checkbox_id
+                and child.winfo_id() != self.custom_imposition_label_id
+            ):
                 child.config(state="disable")
         # grid-----------------------------
-        self.imageconvert_label.grid(row=0, column=0, pady=self.text_pady, ipadx=self.text_pady)
-        self.imageconvert_checkbox.grid(row=0, column=1, pady=self.text_pady, ipadx=self.text_pady)
-        self.imageconvert_dpi_label.grid(row=0, column=2, pady=self.text_pady, ipadx=self.text_pady)
-        self.imageconvert_dpi_entry.grid(row=0, column=3, pady=self.text_pady, ipadx=self.text_pady)
-        self.imageconvertexplain_label.grid(row=0, column=4, pady=self.text_pady, ipadx=self.text_pady)
+        self.imageconvert_label.grid(
+            row=0, column=0, pady=self.text_pady, ipadx=self.text_pady
+        )
+        self.imageconvert_checkbox.grid(
+            row=0, column=1, pady=self.text_pady, ipadx=self.text_pady
+        )
+        self.imageconvert_dpi_label.grid(
+            row=0, column=2, pady=self.text_pady, ipadx=self.text_pady
+        )
+        self.imageconvert_dpi_entry.grid(
+            row=0, column=3, pady=self.text_pady, ipadx=self.text_pady
+        )
+        self.imageconvertexplain_label.grid(
+            row=0, column=4, pady=self.text_pady, ipadx=self.text_pady
+        )
 
-        self.custom_imposition_label.grid(row=0, column = 0, pady=self.text_pady, ipadx=self.text_pady)
-        self.custom_imposition_checkbox.grid(row=0, column = 1, columnspan=3, pady=self.text_pady, ipadx=self.text_pady)
-        
-        self.custom_imposition_sig_label.grid(row=1, column=0, pady=self.text_pady, ipadx=self.text_pady)
-        self.custom_imposition_sig_entry.grid(row=1, column=2, pady=self.text_pady, ipadx=self.text_pady)
-        
-        self.custom_sig_layout_label.grid(row= 2, column=0, pady=self.text_pady, ipadx=self.text_pady)
-        self.custom_sig_layout_row_entry.grid(row= 2, column=1, pady=self.text_pady, ipadx=self.text_pady)
-        self.custom_sig_layout_x_label.grid(row= 2, column=2, pady=self.text_pady, ipadx=self.text_pady)
-        self.custom_sig_layout_column_label.grid(row= 2, column=3, pady=self.text_pady, ipadx=self.text_pady)
+        self.custom_imposition_label.grid(
+            row=0, column=0, pady=self.text_pady, ipadx=self.text_pady
+        )
+        self.custom_imposition_checkbox.grid(
+            row=0, column=1, columnspan=3, pady=self.text_pady, ipadx=self.text_pady
+        )
 
-        self.custom_sig_imposition_front_label.grid(row=3, column=0, pady=self.text_pady, ipadx=self.text_pady)
-        self.custom_sig_imposition_back_label.grid(row=4, column=0, pady=self.text_pady, ipadx=self.text_pady)
-        self.custom_sig_imposition_front_entry.grid(row=3, column=1, columnspan=3, pady=self.text_pady, ipadx=self.text_pady)
-        self.custom_sig_imposition_back_entry.grid(row=4, column=1, columnspan=3, pady=self.text_pady, ipadx=self.text_pady)
+        self.custom_imposition_sig_label.grid(
+            row=1, column=0, pady=self.text_pady, ipadx=self.text_pady
+        )
+        self.custom_imposition_sig_entry.grid(
+            row=1, column=2, pady=self.text_pady, ipadx=self.text_pady
+        )
 
-        self.Frame_custom_imposition.grid(row=1, column=0, columnspan=5, pady=self.text_pady, ipadx=self.text_pady)
+        self.custom_sig_layout_label.grid(
+            row=2, column=0, pady=self.text_pady, ipadx=self.text_pady
+        )
+        self.custom_sig_layout_row_entry.grid(
+            row=2, column=1, pady=self.text_pady, ipadx=self.text_pady
+        )
+        self.custom_sig_layout_x_label.grid(
+            row=2, column=2, pady=self.text_pady, ipadx=self.text_pady
+        )
+        self.custom_sig_layout_column_label.grid(
+            row=2, column=3, pady=self.text_pady, ipadx=self.text_pady
+        )
+
+        self.custom_sig_imposition_front_label.grid(
+            row=3, column=0, pady=self.text_pady, ipadx=self.text_pady
+        )
+        self.custom_sig_imposition_back_label.grid(
+            row=4, column=0, pady=self.text_pady, ipadx=self.text_pady
+        )
+        self.custom_sig_imposition_front_entry.grid(
+            row=3, column=1, columnspan=3, pady=self.text_pady, ipadx=self.text_pady
+        )
+        self.custom_sig_imposition_back_entry.grid(
+            row=4, column=1, columnspan=3, pady=self.text_pady, ipadx=self.text_pady
+        )
+
+        self.Frame_custom_imposition.grid(
+            row=1, column=0, columnspan=5, pady=self.text_pady, ipadx=self.text_pady
+        )
 
         self.Frame_utils_misc.grid(
-            row= row,
-            column = column,
-            ipadx = 2*padx,
-            padx = (2*padx, 2*padx),
-            pady= pady,
-            sticky = "nsew"
+            row=row,
+            column=column,
+            ipadx=2 * padx,
+            padx=(2 * padx, 2 * padx),
+            pady=pady,
+            sticky="nsew",
         )
+
     # Internal routines---------------------------
     def __beep(self) -> NoReturn:
         """Generate bepp sound
@@ -1253,13 +1359,15 @@ class Booklet:
         wave_obj = simpleaudio.WaveObject.from_wave_file(self.beep_file)
         play_obj = wave_obj.play()
         play_obj.wait_done()
-    def __get_file_info(self, path_str:str
-        ) -> Tuple[
-            Union[bool, str],
-            Union[bool, str],
-            Union[bool, int],
-            Union[bool, list[float, float]]
-        ]:
+
+    def __get_file_info(
+        self, path_str: str
+    ) -> Tuple[
+        Union[bool, str],
+        Union[bool, str],
+        Union[bool, int],
+        Union[bool, list[float, float]],
+    ]:
 
         if type(path_str) != str:
             raise TypeError(
@@ -1350,8 +1458,8 @@ class Booklet:
 
     def __event_fold_enable(self, event):
         """Event function when use choose one item of the leaves list.
-           * Disable or enable fold checkbox below the leaves listbox.
-           * Calculate the additional blank pages of the each choosed leaves number.  
+        * Disable or enable fold checkbox below the leaves listbox.
+        * Calculate the additional blank pages of the each choosed leaves number.
 
         """
 
@@ -1412,7 +1520,7 @@ class Booklet:
 
         self.ns.set(int(nl / nn))
 
-    #__custom_format_entry_enable_f
+    # __custom_format_entry_enable_f
     def __event_custom_format_entry(self):
         if self.customformatbool.get():
             self.customformat_width_entry.config(state=tk.ACTIVE)
@@ -1452,7 +1560,7 @@ class Booklet:
                         vaild = False
                         print(f"{i}-{l}, pre:{pre}, max:{max}")
                     if i >= l:
-                        if event !="focusout" and len(i_s) >= len(l_s):
+                        if event != "focusout" and len(i_s) >= len(l_s):
                             return True
                         else:
                             self.pagerange_var.set(f"1-{max}")
@@ -1470,15 +1578,15 @@ class Booklet:
         if vaild:
             self.page_range_size.set(range)
             self.__event_fold_enable(True)
-        #    self.pagerange_example.config(bg="#ffffff")
-        #    if self.platform_mac:
-        #        self.pagerange_example.config(highlightbackground = "#ffffff")
+            #    self.pagerange_example.config(bg="#ffffff")
+            #    if self.platform_mac:
+            #        self.pagerange_example.config(highlightbackground = "#ffffff")
             self.Generate_button.config(state=tk.ACTIVE)
 
         else:
-        #    self.pagerange_example.config(bg="#d0342c")
-        #    if self.platform_mac:
-        #        self.pagerange_example.config(highlightbackground = "#d0342c")
+            #    self.pagerange_example.config(bg="#d0342c")
+            #    if self.platform_mac:
+            #        self.pagerange_example.config(highlightbackground = "#d0342c")
             self.Generate_button.config(state=tk.DISABLED)
             return False
 
@@ -1515,14 +1623,15 @@ class Booklet:
     def __event_pagenumber_select(self, event=None):
         pagetype = self.notepagenumbering_pages_combobox.get()
         if "Both" != pagetype:
-            self.notepagenumbering_location_combobox.config(value = data.pagehf_e)
-            self.notepagenumbering_align_combobox.config(value= data.pagealign_e) 
+            self.notepagenumbering_location_combobox.config(value=data.pagehf_e)
+            self.notepagenumbering_align_combobox.config(value=data.pagealign_e)
         else:
-            self.notepagenumbering_location_combobox.config(value = data.pagehf)
-            self.notepagenumbering_align_combobox.config(value= data.pagealign) 
-        
+            self.notepagenumbering_location_combobox.config(value=data.pagehf)
+            self.notepagenumbering_align_combobox.config(value=data.pagealign)
+
         self.notepagenumbering_location_combobox.current(0)
         self.notepagenumbering_align_combobox.current(0)
+
     def __event_notemode_onoff(self, event=None):
         onoff = self.notemode_bool.get()
         if onoff:
@@ -1531,13 +1640,14 @@ class Booklet:
         else:
             state = "disable"
             self.pagenumbering_bool.set(False)
-        
+
         self.notepages_entry.config(state=state)
         for child in self.Frame_pagenumbering.winfo_children():
             if "!combobox" in child.winfo_name() and state == "enable":
                 child.config(state="readonly")
             else:
                 child.config(state=state)
+
     def __event_page_numbering_onoff(self, event=None):
         onoff = self.pagenumbering_bool.get()
         if onoff:
@@ -1552,6 +1662,7 @@ class Booklet:
                     child.config(state="readonly")
                 else:
                     child.config(state=state)
+
     def __event_custom_imposition(self, event=None):
         onoff = self.custom_imposition_bool.get()
         if onoff:
@@ -1559,26 +1670,30 @@ class Booklet:
         else:
             state = "disable"
         for child in self.Frame_custom_imposition.winfo_children():
-            if child.winfo_id() == self.custom_imposition_checkbox_id and child.winfo_id() != self.custom_imposition_label_id:
+            if (
+                child.winfo_id() == self.custom_imposition_checkbox_id
+                and child.winfo_id() != self.custom_imposition_label_id
+            ):
                 pass
             else:
                 child.config(state=state)
-    
+
     def __int_validation(self, value):
         if value == "" or value == None:
             return True
         if "-" in value:
             return False
         try:
-            value=int(value) 
+            value = int(value)
         except:
-            return False 
+            return False
         return True
+
     def __int_invaild(self):
-        print('Please enter an integer value')
-    
-    def __layout_validation(self, value, stored_value, event): #focusing in
-        if value =="" or value ==None:
+        print("Please enter an integer value")
+
+    def __layout_validation(self, value, stored_value, event):  # focusing in
+        if value == "" or value == None:
             return True
         if "-" in value:
             return False
@@ -1587,28 +1702,28 @@ class Booklet:
             value = int(value)
         except:
             return False
-        
+
         sig_leaves = self.custom_imposition_sig_int.get()
 
-        if event=="focusout":
+        if event == "focusout":
             layout_row = int(stored_value)
-            if sig_leaves%layout_row:
+            if sig_leaves % layout_row:
                 self.custom_sig_layout_row.set(1)
                 self.custom_sig_layout_column.set(sig_leaves)
                 return False
             else:
                 return True
         else:
-            
+
             layout_row = value
 
-            if sig_leaves%layout_row:
+            if sig_leaves % layout_row:
                 if len(str(sig_leaves)) <= len(str(layout_row)):
                     return False
                 else:
                     return True
             else:
-                self.custom_sig_layout_column.set(int(sig_leaves/layout_row))
+                self.custom_sig_layout_column.set(int(sig_leaves / layout_row))
                 return True
 
     # Pass to parameters to PDF routine
@@ -1739,62 +1854,58 @@ class Booklet:
         ndbool = trimbool or registrationbool or cmykbool
         printbool = sigproofbool or ndbool
 
-        #page_range = get_exact_page_range(pagerange, [blankmode, blanknumber])
-
-        
+        # page_range = get_exact_page_range(pagerange, [blankmode, blanknumber])
 
         default_gap = 5
         manuscript = Manuscript(
-                          input = input_file,
-                          output = output_path,
-                          filename = filename,
-                          page_range = pagerange
-                      )
+            input=input_file,
+            output=output_path,
+            filename=filename,
+            page_range=pagerange,
+        )
         _sig_composition = SigComposition(nl, nn)
-        toimage = ToImage(
-                       toimage = False,
-                       dpi= 600
-                      )
-        
+        toimage = ToImage(toimage=False, dpi=600)
+
         signature = Signature(
-                          sig_composition = _sig_composition,
-                          blank_mode = blankmode,
-                          riffle = rifflebool,
-                          fold = foldbool,
-                          paper_format = [
-                            mm2pts(float(format_width), mode = False), 
-                            mm2pts(float(format_height), mode = False)]
-                      )
+            sig_composition=_sig_composition,
+            blank_mode=blankmode,
+            riffle=rifflebool,
+            fold=foldbool,
+            paper_format=[
+                mm2pts(float(format_width), mode=False),
+                mm2pts(float(format_height), mode=False),
+            ],
+        )
         imposition = Imposition(
-                          imposition = impositionbool,
-                          gap = default_gap,
-                          proof = sigproofbool ,
-                          proof_color = sig_color,
-                          proof_width = default_gap,
-                          imposition_layout = _sig_composition
-                      )
+            imposition=impositionbool,
+            gap=default_gap,
+            proof=sigproofbool,
+            proof_color=sig_color,
+            proof_width=default_gap,
+            imposition_layout=_sig_composition,
+        )
         printing_mark = PrintingMark(
-                          on = True if trimbool or registrationbool or cmykbool else False,
-                          margin = margin,
-                          crop = trimbool,
-                          reg = registrationbool,
-                          cmyk = cmykbool,
-                      )
+            on=True if trimbool or registrationbool or cmykbool else False,
+            margin=margin,
+            crop=trimbool,
+            reg=registrationbool,
+            cmyk=cmykbool,
+        )
         modifiers = [toimage, signature, imposition, printing_mark]
-        #(
+        # (
         #    sub_popup,
         #    sub_progress,
         #    progress_text,
         #    progress_length,
         #    destroybutton,
-        #) = self.pdf_progress_popup(pagerange, modifiers)
-        #self.window.wait_window(sub_popup)
+        # ) = self.pdf_progress_popup(pagerange, modifiers)
+        # self.window.wait_window(sub_popup)
         for modifier in modifiers:
-              manuscript.modifier_register(modifier)
+            manuscript.modifier_register(modifier)
         mode = "safe"
-        manuscript.update(file_mode = mode)
+        manuscript.update(file_mode=mode)
         manuscript.save_to_file(split=splitbool)
-        del(manuscript)
+        del manuscript
 
         # old code
         # generate_signature(
@@ -1815,37 +1926,35 @@ class Booklet:
         #     progress=[progress_length, sub_progress, progress_text, sub_popup],
         # )
 
-        #sub_progress["value"] = progress_length
-        #progress_text.set(f"Done")
-        #sub_popup.update()
-        #destroybutton.config(state=tk.ACTIVE)
+        # sub_progress["value"] = progress_length
+        # progress_text.set(f"Done")
+        # sub_popup.update()
+        # destroybutton.config(state=tk.ACTIVE)
 
         print("Done")
 
         self.__beep()
 
-        #sub_popup.transient(self.window)
-        #sub_popup.grab_set()
-        #self.window.wait_window(sub_popup)
+        # sub_popup.transient(self.window)
+        # sub_popup.grab_set()
+        # self.window.wait_window(sub_popup)
 
         return 0
 
 
 if __name__ == "__main__":
     from data import *
-    
+
     text_pady = 3
 
     hpbooklet = Booklet(
-            task_bar_icon,
-            homepage=homepage,
-            source=git_repository,
-            tutorial=tutorial,
-            textpady=text_pady,
-            beep_file=beep_file,
-            logo=logo,
-            icons= icons
-        )
+        task_bar_icon,
+        homepage=homepage,
+        source=git_repository,
+        tutorial=tutorial,
+        textpady=text_pady,
+        beep_file=beep_file,
+        logo=logo,
+        icons=icons,
+    )
     hpbooklet.window.mainloop()
-
-    

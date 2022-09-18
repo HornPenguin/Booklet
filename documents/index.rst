@@ -24,7 +24,7 @@ You can print your book signatures and a simple pamphlet with your home printer.
 You can see basic and advanced tutorials in `Usage <user/usage>`_.
 Please read a `License` if you want to use, contribute, or distribute to other place.
 
-If you want to contribute to this project see `Development Guide <develop/guide>`.
+If you want to contribute to this project see `Development Guide <develop/guide>`_.
 
 
 .. toctree::

@@ -18,7 +18,7 @@ re_check_permited_character = r"([^-,\d\s])+?"
 
 
 def resources_path(relative_path: str, directory: str) -> str:
-    """Get correct resource directory path to use temper directory. 
+    """Get correct resource directory path to use temper directory.
 
     :param relative_path: The relative directory or file path.
     :param directory: The prime directory name, prior to relative path.
@@ -60,7 +60,7 @@ def pts_mm(size: tuple, mode=True) -> tuple:  # mode: True(pts -> mm), False(mm 
 # Open webbrowser with a given url
 def open_url(url: str) -> NoReturn:
     """open given url site in default webbrowser
-    
+
     :param url: url of site
     :type url: str
 
@@ -186,7 +186,7 @@ def transpose(matrix: list) -> list:
 
     :param matrix: 2-dimension numerical list
     :type matrix: list
-    
+
     """
     row_length = len(matrix)
     column_length = len(matrix[0])
@@ -198,7 +198,7 @@ def transpose(matrix: list) -> list:
     for i in range(0, column_length):
         for j in range(0, row_length):
             t[i].append(matrix[j][i])
-            
+
     return t
 
 
