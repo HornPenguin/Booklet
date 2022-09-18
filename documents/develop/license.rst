@@ -1,6 +1,12 @@
-BSD 3-Clause License
+===========
+License
+===========
 
-Copyright (c) 2022, HornPenguin Co.
+.. _license:
+
+BSD 3-clause License
+
+Copyright (c) 2022, Hyunseong Kim <qwqwhsnote@gm.gist.ac.kr>.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,28 +34,10 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
---------------------------------------------------------------------------------------
-Opensource Projects get used in project and credits
---------------------------------------------------------------------------------------
 
-1. PyPDF2
+-------------------------------------------------------------------
+Credits for other open source projects used in this project
 
-Copyright (c) 2006-2008, Mathieu Fenniak
-Some contributions copyright (c) 2007, Ashish Kulkarni <kulkarni.ashish@gmail.com>
-Some contributions copyright (c) 2014, Steve Witham <switham_github@mac-guyver.com>
-
-License:BSD 3-Clause License, included above texts.
-
-2. reportlab
-
-3. simpleaudio
-
-4. pdf2image
-
-5. img2pdf 
-
-License: GNU Lesser General Public License.v3 (LGPL.v3), included LICENSE.ext file.
-
-6. fonttools
-
-
+- PyPDF2: BSD 3-clause
+- ReportLab: BSD 3-clause
+- simpleaudio: MIT

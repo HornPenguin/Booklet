@@ -16,31 +16,49 @@ and add printing markers for color printing.
 You can print your book signatures and a simple pamphlet with your home printer.
 
 * Support difference signature size from 4 to 64.
+* Imposition.
 * Change page size during generating a signature.
 * Left riffling direction is supported for old Asian, Hebrew, and Arabic bookbindings.
 * Printing markers: trim, CMYK, signature proofs are supported.
 
+You can see basic and advanced tutorials in `Usage <user/usage>`_.
+Please read a `License` if you want to use, contribute, or distribute to other place.
 
-
+If you want to contribute to this project see `Development Guide <develop/guide>`.
 
 
 .. toctree::
    :maxdepth: 1
    :caption: User Guide
 
+   user/about
    user/installation
    user/usage
    user/terms
-   user/license
-   user/about
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Features
 
-.. toctree:: 
-   :maxdepth: 2
-   :caption: Code Details
+   features/signature
+   features/imposition
+   features/toimage
+   features/printingmark
+   features/note
 
-   booklet
-   
+.. toctree::
+   :maxdepth: 1
+   :caption: Development Guide
+
+   develop/guide
+   develop/news
+   develop/license
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Api Reference
+
+   modules
 
 Indices and tables
 ==================

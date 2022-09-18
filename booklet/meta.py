@@ -1,0 +1,5 @@
+__author__ = "Hyunseong Kim"
+__company__ = "HornPenguin"
+__version__ = "0.0.2"
+__license__ = "BSD license"
+name = "Booklet"

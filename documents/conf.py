@@ -10,13 +10,30 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+# Add document
 import os
 import sys
-sys.path.insert(0, os.path.abspath('.'))
-sys.path.insert(0, os.path.join(os.path.abspath('..'), "booklet"))
+#sys.path.insert(0, os.path.abspath('.'))
+#sys.path.insert(0, os.path.join(os.path.abspath('..'), "booklet"))
 sys.path.insert(0, os.path.abspath('..'))
+from pathlib import Path
 
-from booklet.main import __version__ as release_str
+
+news_path = Path("../NEWS")
+news_document_path = Path("./develop/news.rst")
+
+with open(news_path, "r") as source:
+    source_string = source.readlines()
+with open(news_document_path, "w") as doc:
+    doc.writelines(["==========\n", "News\n","==========\n"])
+    for st in source_string:
+        doc.write(st)
+
+
+
+from booklet.meta import __version__ as release_str
+
+
 
 # -- Project information -----------------------------------------------------
 
@@ -26,6 +43,7 @@ author = 'Hyun Seong Kim'
 
 # The full version, including alpha/beta/rc tags
 release = release_str
+
 
 
 # -- General configuration ---------------------------------------------------
@@ -66,3 +84,5 @@ html_theme_options = {
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+

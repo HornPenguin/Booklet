@@ -1,0 +1,14 @@
+This directory is presented for additional libraries not being installed by python official repository and permitting distribution.
+
+Intended library was `img2pdf` module. This cannot be installed in local system with `pip` command even it is on official repository.
+However, it is distributed under GNU Lesser General Public License v3 which permits distribution and re-licensing in special case. 
+Luckly, this project is well fitted with them.
+
+Further sources will be presented if they are needed and the allowed conditions are satisfied.
+
+
+Lists -------------------------------------
+
+1. img2pdf
+   * img2pdf.py
+   * jp2.py

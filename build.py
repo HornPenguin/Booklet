@@ -1,13 +1,18 @@
+# Build script using Pyinstaller and Sphinx
+
 import PyInstaller.__main__
 import sys, os
 import platform
 
-from booklet.images import icon_name
+from booklet.utils.images import icon_name
 
 PLATFORM = platform.system()
 dir_sep = "\\" if PLATFORM == "Windows" else "/"
 
-name = "mainw.py"
+document_directory = "documents"
+project_name = "booklet"
+
+name = "main.py"
 
 WORK_PATH = "tem"
 ICON_NAME = os.path.join("resources", icon_name)
@@ -27,11 +32,6 @@ for arg in argv:
     if "--console" in arg:
         CONSOLE = True
         
-
-if CONSOLE:
-    name = "main.py"
-else:
-    PROGRAM_NAME += "w"
 
 FILE_NAME = os.path.join("booklet", name)
 
@@ -95,9 +95,18 @@ if __name__ == "__main__":
     # Sphinx-----------------------------------
     if len(sphinx_argv) > 0:
         print("Generate documents(Sphinx)")
+        os.system(f"sphinx-apidoc -o {document_directory} {project_name}")
         os.system("make " + " ".join(sphinx_argv))
 
-
-os.rmdir(WORK_PATH)
+import os, shutil
+for filename in os.listdir(WORK_PATH):
+    file_path = os.path.join(WORK_PATH, filename)
+    try:
+        if os.path.isfile(file_path) or os.path.islink(file_path):
+            os.unlink(file_path)
+        elif os.path.isdir(file_path):
+            shutil.rmtree(file_path)
+    except Exception as e:
+        print('Failed to delete %s. Reason: %s' % (file_path, e))
 
 print("Finished")

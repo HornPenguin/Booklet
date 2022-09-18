@@ -207,6 +207,55 @@ Click `Generation` button, progress popup windows will appear and *ping* sound w
 
 .. image:: ../_static/Progress.png
 
+
+Utils
+------------
+
+This tab supports miscellaneous utils; note mode, conversion to image, and custom imposition.
+
+Note mode
+~~~~~~~~~~~~~
+
+This routine is presented for note maker. 
+Unlikely the manuscripts for book, booklet and the others that contains its own contents,
+the note is designed for users to fill their own contents.
+Notes consist of very few template pages, even a single template.
+For single and very simple note template, symmetric to its center, the imposition process is not needed, but
+if you design a laboratory note or some complicate template, it is needed.
+However, :code:`basic, advanced` routines don't repeat the given pdf pages so you need to expand them using addtional program.
+
+This mode expands the given pdf to note type manuscript.
+For instance, below tutorial shows making process of laboratory note.
+The template is presented in template directory on project root directory. 
+
+Basic usage is just enable the note mode and enter a total number of pages of note.
+In this tutorial, HP Booklet will generate 200 pages note.
+
+.. 
+  .. image::
+
+Some notes need page numbering, expecially laboratory note.
+As like note mode, you can disable or enable the numbering routine.
+It allows you to set next options.
+
+* Location: Header/Footer
+* Align: Left/Center/right
+* Count: Even/Odd/Both/Even only/Odd only
+
+The count options may be confuse if you see at first. 
+This represent the counted pages and number indicated pages.
+
+Even: count full pages and indicate it only on even pages.
+Even(only): count only even pages and indicate it only on even pages.
+
+It will be enough to show an example.
+
+.. 
+  .. image:: 
+
+
+~~~~~~~~~~~~~~
+
 Command line
 -------------
 
@@ -226,3 +275,5 @@ For example, if we transform the given pdf `input.pdf` to `signature.pdf` with 1
 .. code-block::
 
     booklet input.pdf signature.pdf -sig-composition 4 4 --sigproof #964B00
+
+

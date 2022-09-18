@@ -1,0 +1,6 @@
+
+
+Clean `gui.py` module name add prefix 
+Move `get_file_info` module from `utils.py` to `gui.py`
+
+Implement progress bar routine to `Modifier` class

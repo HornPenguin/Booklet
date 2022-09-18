@@ -4,17 +4,45 @@ booklet package
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+booklet.data module
+-------------------
 
-   booklet.gui
-   booklet.images
-   booklet.main
-   booklet.mainw
-   booklet.permutation
-   booklet.signature
-   booklet.textdata
-   booklet.utils
+.. automodule:: booklet.data
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+booklet.gui module
+------------------
+
+.. automodule:: booklet.gui
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+booklet.main module
+-------------------
+
+.. automodule:: booklet.main
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+booklet.meta module
+-------------------
+
+.. automodule:: booklet.meta
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+booklet.parser module
+---------------------
+
+.. automodule:: booklet.parser
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Module contents
 ---------------

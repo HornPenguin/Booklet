@@ -1,0 +1,26 @@
+==========
+News
+==========
+Version: 0.0.3 - in working
+
+    See `tem_1_0_1` directory sources for preview in `booklet` directory.
+
+    * Note filter is in implemented.
+
+Version: 0.0.2 - current
+
+    * Codes are cleaned for maintainance and extensibility.
+    * Additional filters are available during execution state.
+    * Image conversion routines is added for preventing broken contents in transformation states.
+    * Custom imposition, signature composition routines are available.
+
+Version 0.0.1 (beta)
+
+    * Basic routines are presetend 
+      * imposition
+      * pages rearrange setting are presented by types of prefixed signature
+      * printing markers: registration mark, crop line, color check boxes
+    * Miscellaneous utils
+      * custom page range selection 
+
+
