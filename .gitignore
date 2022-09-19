@@ -4,7 +4,10 @@
 *.spec
 *.html
 *.pyc
-tem
-install_build
-sphinx_build
+
+tem/
+install_build/
+sphinx_build/
+dist/
+
 
