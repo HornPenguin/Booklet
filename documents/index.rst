@@ -51,6 +51,7 @@ If you want to contribute to this project see `Development Guide <develop/guide>
    :caption: Development Guide
 
    develop/guide
+   develop/structure
    develop/news
    develop/license
 

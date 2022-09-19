@@ -3,9 +3,7 @@ News
 ==========
 Version: 0.0.3 - in working
 
-    See `tem_1_0_1` directory sources for preview in `booklet` directory.
-
-    * Note filter is in implemented.
+    * Note Template is in developing.
 
 Version: 0.0.2 - current
 
@@ -13,6 +11,7 @@ Version: 0.0.2 - current
     * Additional filters are available during execution state.
     * Image conversion routines is added for preventing broken contents in transformation states.
     * Custom imposition, signature composition routines are available.
+    * CMYK marker is modified density gradation and mixed color markers are added.
 
 Version 0.0.1 (beta)
 

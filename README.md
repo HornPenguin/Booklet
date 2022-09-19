@@ -1,6 +1,6 @@
 # HornPenguin Booklet
 
-**Version** 0.0.1
+**Version** 0.0.2
 
 <p align="center">
   <img src="./documents/_static/main.png">
@@ -10,6 +10,7 @@
 You can print your own book signatures and simple pamplet with your home printer.
 
 * Support diffence signature size from 4 to 32.
+* Imposition layouts are supported for each type of signature.
 * Change page size during generating signature.
 * Left riffling direction is supported for old asian bookbinding.
 * Printing markers; trim, CMYK, signature proof, ... .
@@ -19,9 +20,10 @@ See further details and usage examples in project [documents](https://docs.hornp
 [![Download HornPenguin Booklet](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/hornpenguinbooklet/files/latest/download)
 
 
-## UI
 
 ## Quick Usage
+
+See detailed descriptions in [Documentation](https://docs.hornpenguin.com/projects/booklet/en/latest/) 
 
 ### Execution
 
@@ -79,18 +81,22 @@ If you are using Ubuntu you can install `build-essential` from repository.
 sudo apt install build-essential libasound2-dev
 ```
 
+## Contribution
+
+See guides and rules in [Developer guide document](https://docs.hornpenguin.com/projects/booklet/en/latest/develop/guide.html)
+
 ## Further routines
 
 Further routines for next version
 
 **Simple**
 
-* Add more color markers
-* Precious setting of rectangle object 
+* Add more color markers - Done
+* Precious setting of rectangle object -Done
 
 **Little troublesome**
 
-* Converting PDF with image before transformation.(some pdfs are broken in their fonts or positions of elements during transformation)
+* Converting PDF with image before transformation.(some pdfs are broken in their fonts or positions of elements during transformation) -Done
   Additional libraries are too heavy...
 
 **Annoying**
@@ -101,4 +107,4 @@ Further routines for next version
 ## License
 
 This program distributed under BSD 3-clause license
-See detail license text in "[LICENSE](LICENSE)" file in repository.
+See detail license text in [LICENSE](LICENSE) file in repository.

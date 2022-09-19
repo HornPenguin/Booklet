@@ -12,13 +12,6 @@ booklet.core.templates.imposition module
    :undoc-members:
    :show-inheritance:
 
-booklet.core.templates.note module
-----------------------------------
-
-.. automodule:: booklet.core.templates.note
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 booklet.core.templates.printingmark module
 ------------------------------------------

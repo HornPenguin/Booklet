@@ -1,15 +1,26 @@
 Developer Guide
 =====================
 
+Any contribution will be appreciated. You can participate in documentation, development of modifier, imporovement of UI.
+providing example pdf or template. 
+
+Language
+---------------------
+
+This project use `python <https://www.python.org/>`_
+
+Documentation
+---------------------
+
 Structure of software
 ------------------------------
 
+Basically, this project is a pipe-filter type structure. 
+
 .. image:: ../_static/structure.png
 
-The core routines are implemented with :class:`Manuscript` class and :class:`Modifier`.
-The :class:`Modifier` class acts as a filter of data it combine, rearrange, delete, add new features to the document.
+See details in :ref:`Structure <structure>` document about detailed implementation and examples. 
 
-See details in :ref:`API reference <api_reference>` and source `repository <https://github.com/HornPenguin/Booklet>`_.
 
 Contribution
 --------------------------------
@@ -88,4 +99,5 @@ Below documents will be helpful to get basic informations.
 * `The Open Source Way- GuideBook <https://www.theopensourceway.org/the_open_source_way-guidebook-2.0.html>`_
 * `GNU essays and articles <https://www.gnu.org/philosophy/essays-and-articles.html>`_ : It is considered little old in modern opensource community but thses are ground philosophy of inital era of open source world.
 
-These project is distributed with BSD License. See :ref:`License <license>` document.
+These project is distributed with BSD 3-clause license. See :ref:`License <license>` document.
+
