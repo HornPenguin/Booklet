@@ -4,18 +4,10 @@ License
 
 .. _license:
 
-HornPenguin Project License
+HornPenguin Booklet License
 --------------------------------
 
 :ref:`BSD 3-clause License <bsd3>`
-
-
-BSD 3-clause License
---------------------------------
-
-.. _bsd3:
-
-.. centered:: BSD 3-clause License
 
 Copyright (c) 2022, Hyunseong Kim <qwqwhsnote@gm.gist.ac.kr>.
 All rights reserved.
@@ -45,12 +37,30 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+
+
+BSD 3-clause License
+--------------------------------
+
+.. _bsd3:
+
+.. include:: licenses/bsd3
+   :literal:
+
+
+MIT License
+------------------
+
+.. _mit:
+
+.. include:: licenses/mit
+   :literal:
+
+
 GNU Lesser General Public License
 -----------------------------------
 
 .. _lgpl:
-
-.. centered:: GNU LESSER GENERAL PUBLIC LICENSE
    
 .. include:: licenses/lgpl
    :literal:
@@ -73,5 +83,5 @@ Apache License
 
 .. centered:: Apache License
 
-.. include:: licenses/apache_license
+.. include:: licenses/apache
    :literal:

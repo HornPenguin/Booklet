@@ -2,11 +2,15 @@
 Terms of Book and Printing
 ============================
 
-This document describes basic expressions of printing and press and their introductions.
-
+This document describes basic introduction to bookbinding and printing.
 
 Shape and Structure of Book
 ==================================
+
+Bookbinding is a work of binding materials to make a book. 
+Including historical approach, rolled scroll can be included, but in this chapter common style of book will be treated.
+It is called *Codex* style. Codex is 
+In a view of bookbinding, book, codex, is an object which is composed of multiple *signature*.
 
 Signature
 -----------
@@ -17,6 +21,14 @@ There are some synonyms, **section**, and **gathering**. This document will use 
 
 Pages compose a signature and the signatures compose a book, booklet, ..., et cetera.
 A single page can become a signature and a single singnature can compose a single book or booklet, (usually booklet).
+
+Why we need signature in bookbinding? 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you have made ring or stapler binding in home or local printing center, you might not think 
+it is not needed to prepare content block by prefixed number of leaves.  
+However, if pages exceeds more than hundreds, you cannot prepare all contents to bind at once.
+With some efforts, it might be possible but
 
 Signature composition
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -103,128 +115,6 @@ you must print the signature considering fold action.
 This is why the manuscript for a book should have a number of pages which is a multiple of 4.
 
 
-Imposition layout update
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-It will be worth to describe folding layout update process.
-
-* :math:`n` sheets signature contains :math:`n` number of pages.
-* Imposition of :math:`n` sheets signatures are divided into two sections, the front page and the back page.
-
-This process covers next signatures.
-
-.. math:: 
-
-    a_0 = 4 \\\\
-
-    a_n = 2 \cdot a_{n-1}
-
-
-Let's start from :math:`4` sheets signature, its page layout is a :math:`(1,2)`.
-
-Front page: :math:`[4, 1]`
-
-Back page: :math:`[2, 3]`
-
-from these two matrix, we will get page imposition of :math:`8` sheets signature.
-
-Imagine the folding process of :math:`4` sheets signature to make :math:`8` sheets signature.
-We rotate 90 degrees and split them into :math:`2` sub-sections.
-Interesting point is that, the :math:`k`-th page of :math:`2n` sheets signature always exists in :math:`k`-th page of :math:`n` sheets signature, :math:`1 \leq k \leq n`.
-In addition, the two pages, :math:`a, b`, seperated by the creasing line have next relationship, :math:`a+b = n+1`. 
-
-These are all we need. The remains are just following them.
-
-
-Rotating
-~~~~~~~~~
-
-Rotating elements of matrix can be divided into two steps, transpose and flip.
-See rotation of the elements of 90 degree in counter-clockwise direction,
-
-*Transpose*:
-
-.. math:: 
-
-    [4, 1] \rightarrow \begin{bmatrix} 4 \\ 1 \end{bmatrix}
-
-*Flip*:
-
-.. math:: 
-
-    \begin{bmatrix} 4 \\ 1 \end{bmatrix} \rightarrow \begin{bmatrix} 1 \\ 4 \end{bmatrix}
-
-Expanding
-~~~~~~~~~~~
-
-Now expand each line using :math:`a+b = n+1`.
-Basically, in a single number case, an additional number is left of the previous number. 
-
-.. math:: 
-
-    8 = 8 + 1 -1, [1] \rightarrow [8 ,1] \\\\
-
-    5 = 8 +1 -4,  [4] \rightarrow [5, 4]
-
-Then, we get a front layout matrix of the :math:`8` sheets signature.
-In the same way, let's get a front layout matrix of the :math:`16` sheets signature.
-
-*Rotating*:
-
-.. math:: 
-
-    \begin{bmatrix}
-        8& 1 \\
-        5& 4
-    \end{bmatrix} \rightarrow 
-    \begin{bmatrix}
-        1& 4 \\
-        8& 5
-    \end{bmatrix}
-
-
-*Expanding*:
-
-.. note:: 
-
-    There is a little different in :math:`n>4` case. 
-    In expanding steps, you must divide row numbers into sub-groups whose length is :math:`2`.
-    The prior number process is the same with :math:`n=4` case but the second number is remained at right in expanding progress.
-    For example, if we have :math:`[13, 12, 4, 5, 1, 8, ...]` row then, :math:`[[13, 12], [4, 5], [1, 8], ...]` and expand them.
-
-.. math:: 
-
-    [1, 4] \rightarrow 
-    [ [16 , 1 ], [4, 13] ] 
-
-.. math:: 
-
-    [8, 5] \rightarrow 
-    [ [ 9 , 8 ], [ 5 , 12 ] ]
-
-See update steps of front matrix:
-
-.. math:: 
-
-    \begin{bmatrix} 4& 1\end{bmatrix} \rightarrow 
-    \begin{bmatrix} 
-        8& 1 \\
-        5& 4
-    \end{bmatrix} \rightarrow 
-    \begin{bmatrix} 
-        16& 1& 4& 13 \\
-        9& 8& 5& 12
-    \end{bmatrix}
-
-Rotating Page
-------------------
-
-Imposition work includes folding work. 
-That is, pages must be rotated in the right direction to match the direction of each page after the fold. 
-In imposition layout, it is simple. Just rotating :math:`2, 4, 6, ..., 2k, ...` rows of 180 degrees.
-
-
-
 
 Printing markers
 ================================
@@ -254,3 +144,13 @@ Its color looks like the normal black color (CMYK(0, 0, 0, 100)) but actually, i
 
 
 
+
+
+
+Further reading
+--------------------
+
+
+* Matt T. Roberts and Don Etherington, Bookbinding and the Conservation of books: A Dictionary of Descriptive Terminology, Drawings by Margaret R. Brown
+
+`Online version <https://cool.culturalheritage.org/don/>`_ is available. 

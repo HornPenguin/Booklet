@@ -5,13 +5,19 @@ Structure
 .. _structure:
 
 
-The core routines are implemented with :class:`Manuscript` class and :class:`Modifier`.
-The :class:`Modifier` class acts as a filter of data. It combines, rearranges, deletes, adds new objects to pages.
-The features in this project, (Signature, Toimage, Imposition, PrintingMark, Note), are implemented with single class which are children of :class:`Modifier`.
-Those class are categorized two types, :class:`Converter` and :class:`Template`. These two class are children class of :class:`Modifier`.
+Overview
+------------
 
-* :class:`Converter`: This class is about the conversion of file and page. Rearrange, delete, transformation, change page type are example. Major difference with :class:`Template` is that this class does not contain *merge* and additional template pdfs.
-* :class:`Template`: This class is about the template imposition of manuscript. There are two direction of merging, imposing the manuscript on template or vice verse.
+The overall structure of HP Booklet program is setting a filter in pipe-filter progress. 
+
+The core routines are implemented with :class:`Manuscript <booklet.core.manuscript.Manuscript>` class and :class:`Modifier <booklet.core.manuscript.Modifier>`.
+The :class:`Modifier <booklet.core.manuscript.Modifier>` class acts as a filter of data. 
+It combines, rearranges, deletes, adds new objects to pages and return manuscript.
+The features in this project, (Signature, Toimage, Imposition, PrintingMark, Note), are implemented with single class which are children of :class:`Modifier <booklet.core.manuscript.Modifier>`.
+Those class are categorized two types, :class:`Converter <booklet.core.manuscript.Converter>` and :class:`Template <booklet.core.manuscript.Template>`.
+
+* :class:`Converter <booklet.core.manuscript.Converter>`: This class is about the conversion of file and page. Rearrange, delete, transformation, change page type are example. Major difference with :class:`Template` is that this class does not contain *merge* and additional template pdfs.
+* :class:`Template <booklet.core.manuscript.Template>`: This class is about the template imposition of manuscript. There are two direction of merging, imposing the manuscript on template or vice verse.
 
 Core structure
 ----------------
@@ -47,7 +53,12 @@ Implemented modifiers are
 * Printing Mark(Template)
 
 
-Template class
+Converter Class
+------------------
+
+There is nothing to describe about this class. It is just an warrper of :class:`Modifier <booklet.core.manuscript.Modifier>` to match a children layer with :class:`Template <booklet.core.manuscript.Template>`.
+
+Template Class
 -------------------
 
 It was intended to load external pdf file in inital stage of class object.

@@ -92,8 +92,6 @@ Riffling direction
 The default: `right`. `left` is for old Asian, Arabic, and Hebrew manuscripts.
 
 
-
-
  
 Advanced options
 --------------------
