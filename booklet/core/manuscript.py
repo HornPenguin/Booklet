@@ -26,6 +26,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 # Python standard
 import io, tempfile
 from datetime import datetime
@@ -50,133 +52,6 @@ from booklet.utils.misc import *
 from booklet.utils import validation
 
 
-class Modifier:
-    __type__ = "modifier"  # 0
-    __external_file__: bool = False  # 1
-    __job__ = ""  # 2nd
-    __name__ = ""  # name and description are for 2nd deep class
-    __desciprtion__ = ""
-
-    def __init__(self, *args, **kwargs):
-        """:code:`kwargs` are additional arguments for the inside 'do' function.
-        Example:
-        Next function can be converted to `Modifier` class
-         `example(cls, a, b, c)`
-        as
-         example = Modifier(a, b, c)
-         example.do()
-        """
-        self.args = args
-        self.kwargs = kwargs
-
-    def file_requirement(self, on: bool = False):
-        self.__external_file__ = on if type(on) == bool else False
-
-    def get_new_pdf(self, index, manuscript, filemode="safe"):
-        if filemode == "safe":
-            new_file = NamedTempFile.from_temp_setting(
-                mode="wb+",
-                prefix=f"{index}_{self.__name__}_",
-                suffix=".pdf",
-                dir=manuscript.tem_directory.name,
-                delete=False,
-            )
-        else:
-            new_file = io.BytesIO()
-        new_pdf = pypdf.PdfFileWriter()
-        return new_pdf, new_file
-
-    def kwargs_check(self):
-        pass
-
-    def do(self, index, cls):
-        pass
-
-
-class Converter(Modifier):
-    __type__ = "converter"
-    # Using internal routines only
-    __external_file__ = False
-
-    @property
-    def type(self):
-        return Converter.__type__
-
-
-class Template(Modifier):
-    __type__ = "template"
-    __external_file__ = True
-
-    @property
-    def type(self):
-        return Template.__type__
-
-    # Requiring additional file
-    def __init__(
-        self,
-        file: Union[None, str, io.BytesIO, io.FileIO, TempFile] = None,
-        direction: bool = True,  # True: manuscript to template e.g: Imposition, False: Template to Manuscript
-        rule: Union[None, Callable] = None,
-        position: Union[None, Callable] = None,
-    ):
-        if file != None:
-            self.file = file if type(file) != str else self.__get_path(file, mode="f")
-            self.pdf = pypdf.PdfFileReader(file)
-            page = self.pdf.getPage(0)
-            self.paper_format = (
-                float(page.mediaBox.width),
-                float(page.mediaBox.height),
-            )
-            self.pdf_origin = (page.mediabox[0], page.mediabox[1])
-        self.direction = direction
-        self.custom_rule = rule
-        self.custom_position = position
-
-    @classmethod
-    def from_generator(cls, direction, generator: Callable, *args, **kwargs):
-        file, rule, position = generator(*args, **kwargs)
-        return cls(file, direction, rule, position)
-
-    # Internal routines
-    def __validate_page_num(self, cls, page_num, range=None):
-        if not validation.check_integer(page_num):
-            # print(page_num)
-            # print(type(page_num))
-            raise ValueError("Invalid value it must be integer")
-        if self.direction:  # manuscript to template
-            ran = len(self.pdf.pages) if range == None else range
-            if page_num > ran:
-                raise ValueError(
-                    f"Exceed total page range. {page_num}>{len(self.pdf.pages)}"
-                )
-        if page_num > cls.file_pages:  # template to manuscript
-            raise ValueError(
-                f"Exceed total page range. {page_num}>{len(cls.page_range)}"
-            )
-
-    # Define below two method in child class
-    # def rule(self, x):
-    #     pass
-    # def position(self, x):
-    #     pass
-    # Basic routines
-    def index_mapping(
-        self, cls, pagenum: int, range=None
-    ) -> list:  # number of page in manuscript
-        self.__validate_page_num(cls, pagenum, range)
-        return (
-            self.rule(pagenum)
-            if self.custom_rule == None
-            else self.custom_rule(pagenum)
-        )
-
-    def position_mapping(self, cls, pagenum: int, range=None) -> Tuple[float, float]:
-        self.__validate_page_num(cls, pagenum, range)
-        return (
-            self.position(pagenum)
-            if self.custom_position == None
-            else self.custom_position(pagenum)
-        )
 
 
 # --------------------------------------------------
@@ -342,7 +217,7 @@ class Manuscript:
         self.__vaildate_index(i, self.modifiers)
         del self.modifiers[i]
 
-    def modifier_register(self, modifier: Modifier, to: bool = False) -> NoReturn:
+    def modifier_register(self, modifier:Modifier, to: bool = False) -> NoReturn:
         if not hasattr(modifier, "__type__"):
             raise ValueError("Invaild modifier")
         if type(to) == bool:
@@ -488,6 +363,185 @@ class Manuscript:
                 pdf.write(f)
 
         return 0
+
+class Modifier:
+    """
+    This class acts as a filter in pdf manipulation process.
+    Get manuscript file and additional arguments as input and update manuscript with applying filter. 
+    
+    For example, next function :func:`modification` can be converted to `Modifier` class
+    
+    .. code::
+        
+        new_pdf = modification(manuscript, a, b, c)`
+    as
+
+    .. code::
+
+        manuscript = Manuscript(...)
+        modification = Modifier(a, b, c)
+        manuscript.register_modifier(modification)
+        manuscript.update()
+    """
+
+    __type__ = "modifier"  # 0
+    __external_file__: bool = False  # 1
+    __job__ = ""  # 2nd
+    __name__ = ""  # name and description are for 2nd deep class
+    __desciprtion__ = ""
+
+    def __init__(self, *args, **kwargs):
+        self.args = args
+        self.kwargs = kwargs
+
+    @property
+    def file_requirement(self):
+        return self.__external_file__
+
+    def get_new_pdf(self, index:int, manuscript:Manuscript, filemode:str="safe") -> Tuple[pypdf.PdfFileWriter, Union[NamedTempFile, io.BytesIO]]:
+        """
+        Return new :class:`PdfFileWriter` object in PyPDF2 and new file, file-like object.
+
+        :param index: index, indicating the order of modifer in execution in :class:`Manuscript object.` 
+        :type index: int
+        :param manuscript: :class:`Manuscript object calls the modifier
+        :type manuscript: Manuscript
+        :param filemode: New file mode. If it is "safe" :class`NamedTempFile` object is returend else :class:`io.BytesIO` is returned, defaults to "safe"
+        :type filemode: str, optional
+        :return: :class:`PdfFileWriter` object and new file, file-like object.
+        :rtype: Tuple[pypdf.PdfFileWriter, Union[NamedTempFile, io.BytesIO]]
+        """
+        if filemode == "safe":
+            new_file = NamedTempFile.from_temp_setting(
+                mode="wb+",
+                prefix=f"{index}_{self.__name__}_",
+                suffix=".pdf",
+                dir=manuscript.tem_directory.name,
+                delete=False,
+            )
+        else:
+            new_file = io.BytesIO()
+        new_pdf = pypdf.PdfFileWriter()
+        return new_pdf, new_file
+
+    def kwargs_check(self, **kwargs):
+        """
+        Keyword argument parsing method.
+        Implemention is needed in child class.
+        """
+        pass
+
+    def do(self, index:int, manuscript:Manuscript, *args, **kwargs) -> NoReturn:
+        """
+        Body of each modifier object. Using internal variables and methods generate new manuscript file
+        and update end of the function :code:`cls.pdf_update()` method is called 
+
+        :param index: index, indicating the order of modifer in execution in :class:`Manuscript object.` 
+        :type index: int
+        :param manuscript: :class:`Manuscript`
+        :type manuscript: :class:`Manuscript`
+        :return: None
+        :rtype: NoReturn
+        """
+        file_mode = kwargs["filemode"]
+        new_pdf, new_file = self.get_new_pdf(index, manuscript, file_mode)
+        #Body - 
+
+        #-----
+        manuscript.pdf_update(new_pdf, new_file)
+class Converter(Modifier):
+    """
+    This class 
+    All its methods are depending on PDF libraries, since it does not provides any additional internal methods.
+    It is just a wrapper of :class:`Modifier: class for categorizing features.
+    """
+    __type__ = "converter"
+    # Using internal routines only
+    __external_file__ = False
+
+    @property
+    def type(self):
+        return Converter.__type__
+class Template(Modifier):
+    """
+    This class 
+
+    * page number validation
+
+    """
+    __type__ = "template"
+    __external_file__ = True
+
+    @property
+    def type(self):
+        return Template.__type__
+
+    # Requiring additional file
+    def __init__(
+        self,
+        file: Union[None, str, io.BytesIO, io.FileIO, TempFile] = None,
+        direction: bool = True,  # True: manuscript to template e.g: Imposition, False: Template to Manuscript
+        rule: Union[None, Callable] = None,
+        position: Union[None, Callable] = None,
+    ):
+        if file != None:
+            self.file = file if type(file) != str else self.__get_path(file, mode="f")
+            self.pdf = pypdf.PdfFileReader(file)
+            page = self.pdf.getPage(0)
+            self.paper_format = (
+                float(page.mediaBox.width),
+                float(page.mediaBox.height),
+            )
+            self.pdf_origin = (page.mediabox[0], page.mediabox[1])
+        self.direction = direction
+        self.custom_rule = rule
+        self.custom_position = position
+
+    @classmethod
+    def from_generator(cls, direction, generator: Callable, *args, **kwargs):
+        file, rule, position = generator(*args, **kwargs)
+        return cls(file, direction, rule, position)
+
+    # Internal routines
+    def __validate_page_num(self, cls, page_num, range=None):
+        if not validation.check_integer(page_num):
+            # print(page_num)
+            # print(type(page_num))
+            raise ValueError("Invalid value it must be integer")
+        if self.direction:  # manuscript to template
+            ran = len(self.pdf.pages) if range == None else range
+            if page_num > ran:
+                raise ValueError(
+                    f"Exceed total page range. {page_num}>{len(self.pdf.pages)}"
+                )
+        if page_num > cls.file_pages:  # template to manuscript
+            raise ValueError(
+                f"Exceed total page range. {page_num}>{len(cls.page_range)}"
+            )
+
+    # Define below two method in child class
+    # def rule(self, x):
+    #     pass
+    # def position(self, x):
+    #     pass
+    # Basic routines
+    def index_mapping(
+        self, cls, pagenum: int, range=None
+    ) -> list:  # number of page in manuscript
+        self.__validate_page_num(cls, pagenum, range)
+        return (
+            self.rule(pagenum)
+            if self.custom_rule == None
+            else self.custom_rule(pagenum)
+        )
+
+    def position_mapping(self, cls, pagenum: int, range=None) -> Tuple[float, float]:
+        self.__validate_page_num(cls, pagenum, range)
+        return (
+            self.position(pagenum)
+            if self.custom_position == None
+            else self.custom_position(pagenum)
+        )
 
 
 if __name__ == "__main__":
