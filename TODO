@@ -1,4 +1,4 @@
-Version 1.0.1 - in working
+Version 0.0.3 - in working
 
   * Note routine implementation - in working
     * Add header, footter: font, size, color, margin, align
@@ -21,9 +21,13 @@ Version 1.0.1 - in working
 
 
 
-Version 1.0.0
+Version 0.0.2 - current
 
 * Unifying Graphic-Console. - Done
 * Image convert routine implementation. - Done
 * Custom Imposition and rearrange option. - Done
 * Extensible and maintainable code clean up. - in working
+
+Version 0.0.1
+
+Project start
