@@ -4,6 +4,7 @@ Version: 0.0.3 - in working
 
 Version: 0.0.2 - current
 
+    * GUI/CUI are integrated. Defaults to GUI. To use console mode add `--console` option in execution.
     * Codes are cleaned for maintainance and extensibility.
     * Additional filters are available during execution state.
     * Image conversion routines is added for preventing broken contents in transformation states.
