@@ -67,7 +67,6 @@ prefix
 * :code:`__validate` : Check the given variable(s) and raise error if the given values are not fit with condition.
 
 
-
 License
 --------------
 

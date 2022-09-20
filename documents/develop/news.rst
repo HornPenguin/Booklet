@@ -1,6 +1,6 @@
-==========
 News
-==========
+========
+
 Version: 0.0.3 - in working
 
     * Note Template is in developing.

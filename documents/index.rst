@@ -53,6 +53,7 @@ If you want to contribute to this project see `Development Guide <develop/guide>
    develop/guide
    develop/structure
    develop/news
+   develop/plan
    develop/license
    develop/credit
 
