@@ -1,9 +1,9 @@
-
-.. _structure:
-
 =============
 Structure 
 =============
+
+.. _structure:
+
 
 The core routines are implemented with :class:`Manuscript` class and :class:`Modifier`.
 The :class:`Modifier` class acts as a filter of data. It combines, rearranges, deletes, adds new objects to pages.

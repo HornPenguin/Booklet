@@ -2,7 +2,7 @@
 Note Class
 =============
 
+.. note::
 
-.. 
-    .. autoclass:: booklet.core.templates.note.Note
-   
+    In working
+
