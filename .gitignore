@@ -5,9 +5,9 @@
 *.html
 *.pyc
 
-tem/
-install_build/
-sphinx_build/
-dist/
+tem/*
+install_build/*
+sphinx_build/*
+dist/*
 
 
