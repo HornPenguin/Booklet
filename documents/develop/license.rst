@@ -4,7 +4,18 @@ License
 
 .. _license:
 
+HornPenguin Project License
+--------------------------------
+
+:ref:`BSD 3-clause License <bsd3>`
+
+
 BSD 3-clause License
+--------------------------------
+
+.. _bsd3:
+
+.. centered:: BSD 3-clause License
 
 Copyright (c) 2022, Hyunseong Kim <qwqwhsnote@gm.gist.ac.kr>.
 All rights reserved.
@@ -34,10 +45,33 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+GNU Lesser General Public License
+-----------------------------------
 
--------------------------------------------------------------------
-Credits for other open source projects used in this project
+.. _lgpl:
 
-- PyPDF2: BSD 3-clause
-- ReportLab: BSD 3-clause
-- simpleaudio: MIT
+.. centered:: GNU LESSER GENERAL PUBLIC LICENSE
+   
+.. include:: licenses/lgpl
+   :literal:
+
+GNU General Public License
+------------------------------
+
+.. _gpl:
+
+.. centered:: GNU GENERAL PUBLIC LICENSE
+
+.. include:: licenses/gpl
+   :literal:
+
+
+Apache License
+----------------
+
+.. _apache:
+
+.. centered:: Apache License
+
+.. include:: licenses/apache_license
+   :literal:
