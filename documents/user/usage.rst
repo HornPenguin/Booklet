@@ -1,8 +1,7 @@
-.. _usage_label:
-
 Usage
 ===============
 
+.. _usage_label:
 
 Basic
 ------------
@@ -10,6 +9,7 @@ Basic
 UI
 
 .. image:: ../_static/basic_ui.png
+
 
 Select PDF file to modulate
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -215,11 +215,6 @@ Note mode
 ~~~~~~~~~~~~~
 
 This routine is presented for note maker. 
-Unlikely the manuscripts for book, booklet and the others that contains its own contents,
-the note is designed for users to fill their own contents.
-Notes consist of very few template pages, even a single template.
-For single and very simple note template, symmetric to its center, the imposition process is not needed, but
-if you design a laboratory note or some complicate template, it is needed.
 However, :code:`basic, advanced` routines don't repeat the given pdf pages so you need to expand them using addtional program.
 
 This mode expands the given pdf to note type manuscript.
@@ -257,11 +252,12 @@ It will be enough to show an example.
 Command line
 -------------
 
-Same with gui method, but all those options are passed by argument.
+Same with gui method, but all those options are passed by argument and it needs :code:`--console` option for console mode.
+Without :code:`--console` option, it will start gui mode.
 
 .. code-block::
 
-    usage: booklet [-h] [--version] [--format-help] [-i INPUT] [-o OUTPUT] [-n NAME] [--page-range [PAGE_RANGE ...]]
+    usage: booklet [-h] [--version] [--format-help] [--console] [-i INPUT] [-o OUTPUT] [-n NAME] [--page-range [PAGE_RANGE ...]]
                [--blank-mode {back,front,both}] [--sig-composition SIG_COMPOSITION SIG_COMPOSITION]
                [--riffle-direction {right,left}] [--fold]
                [--format {The default,A3,A4,A5,B3,B4,B5,B6,JIS B3,JIS B4,JIS B5,JIS B6,Letter,Legal,Tabloid,GOV Letter,GOV Legal,ANSI A,ANSI B,ARCH A,ARCH B} | --custom-format CUSTOM_FORMAT CUSTOM_FORMAT]
@@ -272,6 +268,6 @@ For example, if we transform the given pdf `input.pdf` to `signature.pdf` with 1
 
 .. code-block::
 
-    booklet input.pdf signature.pdf -sig-composition 4 4 --sigproof #964B00
+    booklet --console input.pdf signature.pdf -sig-composition 4 4 --sigproof #964B00
 
 

@@ -1,4 +1,3 @@
-=================
 ToImage
 =================
 
@@ -10,11 +9,16 @@ However, it increases file size and makes converting speed slow more than 10 tim
 
 
 
-**Converter**
+Example
+-----------
 
 
-Class
-==========
+Implementation
+-----------------
+
+
+Further readings
+--------------------
 
 .. 
     .. autoclass:: booklet.core.converters.toimage.ToImage

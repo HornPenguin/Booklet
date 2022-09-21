@@ -1,4 +1,3 @@
-=========================
 Printing Marker
 =========================
 
@@ -49,7 +48,7 @@ Therefore, if we want to check the quality of color and identify the error, we m
 Various types exist in color bar for printing marker, but matrix of color square is a common type.
 
 Color bar
------------
+^^^^^^^^^^^^^
 
 HornPenguin Booklet provides two types of color bars. One is for checking basis color dense and the other is for mixed coloe representation.
 Primary type is composed of 20%, 40%, 60%, 80%, 100% dense of each color, total 20 square.
@@ -68,7 +67,7 @@ Its shape is 2x10, or 1x20 matrix. In the given area, the program find a dimensi
 
 
 Registration Black and Marker
---------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 It will be weird that Key color is in CMYK color, because we can make black color by mixing C, M, Y inks.
 However, such black does not dark as much we expected and it is a waste of inks, since the most frequently used color in printing is a black.
@@ -87,8 +86,17 @@ If they are not registered properly, there will be some color edges on symbol.
 .. image:: ../_static/registration.png
 
 
-Class
-==================
+Example
+-----------
+
+
+Implementation
+-----------------
+
+
+Further readings
+--------------------
+
 
 .. 
     .. autoclass:: booklet.core.templates.printingmark.PrintingMark

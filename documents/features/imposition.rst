@@ -1,4 +1,3 @@
-==================
 Imposition
 ==================
 
@@ -204,6 +203,13 @@ right ordered page signature.
 
 Composition of multiple Signature
 ------------------------------------
+
+Example
+-----------
+
+
+Implementation
+-----------------
 
 
 Further readings

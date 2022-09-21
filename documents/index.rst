@@ -21,33 +21,27 @@ You can print your book signatures and a simple pamphlet with your home printer.
 * Left riffling direction is supported for old Asian, Hebrew, and Arabic bookbindings.
 * Printing markers: trim, CMYK, signature proofs are supported.
 
-You can see basic and advanced tutorials in `Usage <user/usage>`_.
-Please read a `License` if you want to use, contribute, or distribute to other place.
+You can see basic and advanced tutorials in :ref:`Usage <usage_label>`.
+Please read a :ref:`License <license>` if you want to use, contribute, or distribute to other place.
 
-If you want to contribute to this project see `Development Guide <develop/guide>`_.
+If you want to contribute to this project see :ref:`Development Guide <develop_guide>`.
 
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: User Guide
 
    user/about
-   user/installation
-   user/usage
    user/terms
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Features
 
-   features/signature
-   features/imposition
-   features/toimage
-   features/printingmark
-   features/note
+   features/features
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Development Guide
 
    develop/guide
@@ -58,7 +52,7 @@ If you want to contribute to this project see `Development Guide <develop/guide>
    develop/credit
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Api Reference
 
    modules

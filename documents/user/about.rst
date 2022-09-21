@@ -2,9 +2,16 @@
 About
 ========
 
+HornPenguin Booklet is a pdf modulation program to rearrange, add various markers for printing.
+Prefixed signature and imposition settings, and paper dimensions are presented. 
+
+.. include:: installation.rst
+
+.. include:: usage.rst
+
 
 Other programs
-------------------
+=================
 
 Alternatives of HornPenguin Booklet
 
@@ -20,7 +27,5 @@ Useful programs with HornPenguin Booklet
 * `PDFBooklet <https://pdfbooklet.sourceforge.io/wordpress/>`_: It is an alternative of HornPenguin Booklet, but also it can make up for some abcent part of HPBooklet. 
 * `Scribus <https://www.scribus.net/>`: Scribus is an open source desktop publishing software. There was a discussion about imposition routine in Scribus community and those records influenced to this project.
 
-Dependencies
---------------------
 
 .. seealso:: :ref:`Credits <credit>`

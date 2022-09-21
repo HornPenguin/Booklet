@@ -3,6 +3,7 @@ Terms of Book and Printing
 ============================
 
 This document describes basic introduction to bookbinding and printing.
+See detailed descriptions, algorithms and implementations in each document of :ref:`Features`.
 
 Shape and Structure of Book
 ==================================
@@ -129,28 +130,25 @@ and check missing signatures.
 
 
 
-Trim marker
+Crop marker
 -----------------
 
-Trim location indicator.
+Trim line indicator.
 
 
 Registration marker
 -----------------------
 
 **Registration marker** is added to check the registration of color printing of printing machine. 
-Its color looks like the normal black color (CMYK(0, 0, 0, 100)) but actually, it is a special color called
-*registration black*, CMYK code is (100, 100, 100, 0). If they are perfectly fitted, it will look like normal black color.
-
-
-
-
+Its color looks like the normal black color (CMYK(0, 0, 0, 1)) but actually, it is a special color called
+*registration black*, CMYK code is (1, 1, 1, 0). If they are perfectly fitted, it will look like normal black color.
 
 
 Further reading
 --------------------
 
+General and advanced informations of bookbinding can be found on dictionary written by Matt T. Roberts and Don Etherington.
+`Online version <https://cool.culturalheritage.org/don/>`_ is available. 
 
 * Matt T. Roberts and Don Etherington, Bookbinding and the Conservation of books: A Dictionary of Descriptive Terminology, Drawings by Margaret R. Brown
 
-`Online version <https://cool.culturalheritage.org/don/>`_ is available. 
