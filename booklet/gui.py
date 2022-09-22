@@ -554,8 +554,8 @@ class Booklet:
             self.Frame_output, textvariable=self.filename, width=int(entry_width / 2)
         )
 
-        self.text_leaves = ttk.Label(
-            self.Frame_output, text="Leaves", justify=tk.LEFT, anchor="w"
+        self.text_pages = ttk.Label(
+            self.Frame_output, text="Pages", justify=tk.LEFT, anchor="w"
         )
         self.lvalues = [
             f"{4*(i+1)}" if (i + 1) % 2 and i != 2 else f"{4*(i+1)}f"
@@ -564,10 +564,10 @@ class Booklet:
         self.lvalues.remove("28")
         self.lvalues.append("64f")
         self.lvalues.append("2")
-        self.leaves = ttk.Combobox(
+        self.pages = ttk.Combobox(
             self.Frame_output, value=self.lvalues, state="readonly"
         )
-        self.leaves.current(0)
+        self.pages.current(0)
         self.addblankpages_label = ttk.Label(
             self.Frame_output, textvariable=self.addBlankpages, width=3
         )
@@ -588,7 +588,7 @@ class Booklet:
         self.fold = ttk.Checkbutton(
             self.Frame_output, variable=self.foldvalue, state=tk.DISABLED
         )
-        self.leaves.bind("<<ComboboxSelected>>", self.__event_fold_enable)
+        self.pages.bind("<<ComboboxSelected>>", self.__event_fold_enable)
 
         self.text_riffle = ttk.Label(
             self.Frame_output, text="Riffling direction", justify=tk.LEFT, anchor="w"
@@ -601,8 +601,8 @@ class Booklet:
         self.filename_label.grid(row=2, column=0, pady=self.text_pady)
         self.filename_entry.grid(row=2, column=1, pady=self.text_pady)
 
-        self.text_leaves.grid(row=3, column=0, pady=self.text_pady)
-        self.leaves.grid(row=3, column=1, pady=self.text_pady)
+        self.text_pages.grid(row=3, column=0, pady=self.text_pady)
+        self.pages.grid(row=3, column=1, pady=self.text_pady)
         self.addblankpages_label.grid(row=3, column=2, pady=self.text_pady)
 
         self.text_format.grid(row=4, column=0, pady=self.text_pady)
@@ -1212,13 +1212,13 @@ class Booklet:
             width=int(entry_width / 7),
         )
 
-        self.custom_impostion_leaves_int = tk.IntVar(value=1)
-        self.custom_imposition_leaves_label = ttk.Label(
+        self.custom_impostion_pages_int = tk.IntVar(value=1)
+        self.custom_imposition_pages_label = ttk.Label(
             self.Frame_custom_imposition, text="Leaves"
         )
-        self.custom_imposition_leaves_entry = ttk.Entry(
+        self.custom_imposition_pages_entry = ttk.Entry(
             self.Frame_custom_imposition,
-            textvariable=self.custom_impostion_leaves_int,
+            textvariable=self.custom_impostion_pages_int,
             validate="all",
             validatecommand=int_validation,
         )
@@ -1463,16 +1463,16 @@ class Booklet:
 
         """
 
-        leaves = self.leaves.get()
+        pages = self.pages.get()
         fcheck = False
-        if "f" in leaves:
+        if "f" in pages:
             self.fold.config(state=tk.NORMAL)
-            n_l = int(leaves.split("f")[0])
+            n_l = int(pages.split("f")[0])
             fcheck = True
         else:
             self.foldvalue.set(False)
             self.fold.config(state=tk.DISABLED)
-            n_l = int(leaves)
+            n_l = int(pages)
 
         pagenumber = self.page_range_size.get()
 
@@ -1703,13 +1703,13 @@ class Booklet:
         except:
             return False
 
-        sig_leaves = self.custom_imposition_sig_int.get()
+        sig_pages = self.custom_imposition_sig_int.get()
 
         if event == "focusout":
             layout_row = int(stored_value)
-            if sig_leaves % layout_row:
+            if sig_pages % layout_row:
                 self.custom_sig_layout_row.set(1)
-                self.custom_sig_layout_column.set(sig_leaves)
+                self.custom_sig_layout_column.set(sig_pages)
                 return False
             else:
                 return True
@@ -1717,13 +1717,13 @@ class Booklet:
 
             layout_row = value
 
-            if sig_leaves % layout_row:
-                if len(str(sig_leaves)) <= len(str(layout_row)):
+            if sig_pages % layout_row:
+                if len(str(sig_pages)) <= len(str(layout_row)):
                     return False
                 else:
                     return True
             else:
-                self.custom_sig_layout_column.set(int(sig_leaves / layout_row))
+                self.custom_sig_layout_column.set(int(sig_pages / layout_row))
                 return True
 
     # Pass to parameters to PDF routine
@@ -1770,8 +1770,8 @@ class Booklet:
         # pagerange--------------------------------------------------------
         pagerange: str = self.pagerange.get()
         # Leaves and sub signature---------------------------------------------------------------
-        leaves = (self.leaves.get()).split("f")
-        nl = int(leaves[0])
+        pages = (self.pages.get()).split("f")
+        nl = int(pages[0])
         nn = int(self.sigcomposition_nn_combo.get())
         ns = int(self.ns.get())
         # Fold----------------------------------------------------------------------------------
