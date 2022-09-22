@@ -26,7 +26,7 @@ Windows
 .. code-block:: 
 
     booklet.exe # one file version
-    booklet_dir_version_Windows.zip # one directory bundle
+    booklet_Windows.zip # one directory bundle
 
 Linux
 ^^^^^^^^^^^^^^^^
@@ -34,7 +34,7 @@ Linux
 .. code-block:: 
 
     booklet # one file version
-    booklet_dir_version_Linux.tgz # one directory bundle
+    booklet_Linux.tgz # one directory bundle
 
 OSX
 ^^^^^
@@ -45,8 +45,8 @@ See the below section.
 .. warning:: 
 
     Python is compatible for major three OSs, however, the implementations of tkinter in those OSs are different in details.
-    For example, there is a :code`iconbitmap` issue in Linux environment and basic tkiner Label and Button are not work properly in OSX of color routines.
-    The developer tested and saw those bugs and fixed them with best efforts (`tkmacosx` module was useful), but there can be some bugs in Linux and Mac environments.
+    For example, there is a :code:`iconbitmap` issue in Linux environment and basic tkiner Label and Button are not work properly in OSX of color routines.
+    The developer tested and saw those bugs and fixed them with best efforts (`tkmacosx <https://github.com/Saadmairaj/tkmacosx>`_ module was useful), but there can be some bugs in Linux and Mac environments.
     Please notice the developer those bugs to fix.
 
 Older version
