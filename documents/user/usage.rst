@@ -30,7 +30,7 @@ Basic Settings
 ^^^^^^^^^^^^^^^^
 
 Output path and File name
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""""""""""""""""""""""""""""
 
 .. image:: ../_static/output_setting001.png
 
@@ -45,7 +45,7 @@ If there is a same file in the output path, it will be overwritten by the new fi
 
 
 Leaves
-~~~~~~~~~
+""""""""""""""""""
 
 .. image:: ../_static/output_setting002.png
 
@@ -57,7 +57,7 @@ In the list of sheet numbers, you can see some numbers have a subfix :code:`f`.
 
 
 Book format
-~~~~~~~~~~~~~~
+""""""""""""""""""""""""""""
 
 .. image:: ../_static/output_setting003.png
 
@@ -76,7 +76,7 @@ See dimension(mm) in above `Help` -> `Paper Format` reference.
 
 
 Fold
-~~~~~~~~~~
+""""""""""""""""""""
 
 .. image:: ../_static/output_setting004.png
 
@@ -86,7 +86,7 @@ Check this option, if you want to get a direct result file to fold.
 It is automatically checked when you check *imposition* option in the advanced tab. 
 
 Riffling direction
-~~~~~~~~~~~~~~~~~~~~
+""""""""""""""""""""""""""""""""""""""""
 
 *Riffling direction* is a riffling direction of the output file. 
 The default: `right`. `left` is for old Asian, Arabic, and Hebrew manuscripts.
@@ -106,7 +106,7 @@ Sheet works
 ^^^^^^^^^^^^^
 
 Blank page(s)
-~~~~~~~~~~~~~~~
+""""""""""""""""""""""""""""""
 
 .. image:: ../_static/Blank.png
 
@@ -118,7 +118,7 @@ If the additional pages are odd, then the back pages will be prior to the front.
 The default is `back`.
 
 Page range
-~~~~~~~~~~~~
+""""""""""""""""""""""""
 
 .. image:: ../_static/Page_range001.png
 
@@ -145,7 +145,7 @@ If the range is not valid, you can see next, that the example box changes its ba
       - .. image:: ../_static/Page_range004.png
 
 Custom format
-~~~~~~~~~~~~~~~
+""""""""""""""""""""""""""""""
 
 .. image:: ../_static/custom_format.png
 
@@ -156,7 +156,7 @@ See paper format reference in :code:`Help -> Paper Format` popup.
 
 
 Signature composition
-~~~~~~~~~~~~~~~~~~~~~~~~~
+""""""""""""""""""""""""""""""""""""""""""""""""""
 
 .. image:: ../_static/sig_compose001.png
 
@@ -171,14 +171,14 @@ In above case, 32 sheets, if you choose 4, then,
  
 
 Imposition
-~~~~~~~~~~~~~~~
+""""""""""""""""""""""""""""""
 
 Pages located in same pages in printing are merged to single page. 
 Single signatures will be composed of two sequential pages in output file.
 This option activate *fold* option in basic tab.
 
 Split
-~~~~~~~
+""""""""""""""
 
 Save the output file with separation by each signature.
 
@@ -212,7 +212,7 @@ Utils
 This tab supports miscellaneous utils; note mode, conversion to image, and custom imposition.
 
 Note mode
-~~~~~~~~~~~~~
+""""""""""""""""""""""""""
 
 This routine is presented for note maker. 
 However, :code:`basic, advanced` routines don't repeat the given pdf pages so you need to expand them using addtional program.
@@ -246,8 +246,6 @@ It will be enough to show an example.
 .. 
   .. image:: 
 
-
-~~~~~~~~~~~~~~
 
 Command line
 -------------

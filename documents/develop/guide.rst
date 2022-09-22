@@ -14,14 +14,18 @@ This project use `python <https://www.python.org/>`_
 Documentation
 ---------------------
 
+Sphinx + RST(reStructuredText) format.
+See official `Sphinx document <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_.
+
 Structure of software
 ------------------------------
 
 Basically, this project is a pipe-filter type structure. 
 
 .. image:: ../_static/structure.png
+        :width: 550
 
-See details in :ref:`Structure <structure>` document about detailed implementation and examples. 
+See details in :ref:`Structure <structure>` document about implementation and examples. 
 
 
 Contribution
@@ -49,25 +53,58 @@ Black is an uncompromising code formatter, developed by PSF (Python Software Fou
 Naming convention
 ~~~~~~~~~~~~~~~~~~~~~~~
 
+You can choose two ways for naming objects.
+with hypen :code:`_` or upper letters.
+
+.. code-block::
+
+        ThisIsUsingUpperLetter 
+        This_is_using_hypen
+
+In this project, we will follow next convention.
+
 * class name: Upper Letter 
-* class object name : with hypen `_`
+* class object, variable, function: with hypen `_`
     
 Example:
-    
+
+.. code-block::
+
         printing_mark = PrintingMark()
 
-* Internal methods:
+* Internal methods of class(prefix):
    * :code:`__get` : Get a specific type data
+   * :code:`__check` : Check the given variable(s) and return boolean value :code:`True/False`.
+   * :code:`__validate` : Check the given variable(s) and raise error if the given values are not fit with condition.
+   * :code:`__do`: None of above things
+* property and method:
+   * property: with hypen
+   * method: same way with internal methods but except prefixed double hypens :code:`__`.
+  
+Example:
 
-inside routine
-~~~~~~~~~~~~~~~~
+.. code-block::
 
-prefix
+        class SampleClass:
+                def __int__(self, *args, **kwargs):
+                        # do something
+                @property
+                def sample_variable(self):
+                        return somethings
+                @setter.sample_variable:
+                def sample_variable(self):
+                        # set sample_variable
+                # Method
+                def do_things(self, *args, **kwargs):
+                        # do something
+                # Internal method
+                def __get_formatted_data(self, *args, **kwargs):
+                        # do something
+                        return formatted_data
 
-* :code:`__get` : Get a specific type data
-* :code:`__check` : Check the given variable(s) and return boolean value :code:`True/False`.
-* :code:`__validate` : Check the given variable(s) and raise error if the given values are not fit with condition.
-
+        sample_class = SampleClass(args, kwargs)
+        var_1 = sample_class.sample_variable
+        sample_class.do_things(args1, kwargs1)
 
 License
 --------------

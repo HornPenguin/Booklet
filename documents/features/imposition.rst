@@ -1,6 +1,13 @@
 Imposition
 ==================
 
+.. _imposition:
+
+Calculating layout and case of signature is not an easy task. 
+It is a research topic in computational geometric field.
+However, for standard page numbers, 4, 8, 16, ... 32, 64,
+their layouts have been well known in printing area.
+
 
 The imposition is locating works of pages to paper and the result of them.
 Unless you bining book in old Asia style (their method can use single paper as a basic signature), 
@@ -9,11 +16,17 @@ This is why the manuscript for a book should have page range which is a divisor 
 
 Since, imposition is implicitly considering fold action in post stage.
 Calculating its layout on single page is not an easy task. 
-However, for standard page numbers, 4, 8, 16, ... 32, 64,
-their layouts have been well known in printing area.
+
+Folding 
+--------------------
+
+
 
 Standard Type
 --------------------
+
+This type signature alternately changes folding direction in each step. 
+:math:`2, 4, 8, \dots, 2^n` leaves signatures are included in.  
 
 Algorithm
 ^^^^^^^^^^^^^
@@ -49,7 +62,7 @@ These are all we need. The remains are just following them.
 
 
 Rotating
-~~~~~~~~~
+"""""""""""
 
 Rotating elements of matrix can be divided into two steps, transpose and flip.
 See rotation of the elements of 90 degree in counter-clockwise direction,
@@ -67,7 +80,7 @@ See rotation of the elements of 90 degree in counter-clockwise direction,
     \begin{bmatrix} 4 \\ 1 \end{bmatrix} \rightarrow \begin{bmatrix} 1 \\ 4 \end{bmatrix}
 
 Expanding
-~~~~~~~~~~~~
+"""""""""""
 
 Now expand each line using :math:`a+b = n+1`.
 Basically, in a single number case, an additional number is left of the previous number. 
@@ -129,7 +142,7 @@ See update steps of front matrix:
     \end{bmatrix}
 
 Rotating Page
-~~~~~~~~~~~~~~~~
+""""""""""""""""""""""
 
 Imposition work includes folding work. 
 That is, pages must be rotated in the right direction to match the direction of each page after the fold. 
@@ -215,7 +228,5 @@ Implementation
 Further readings
 --------------------
 
-
-* T.B. Wiliams, Hints on imposition. An illustrated guide for printer and pressman in the construction of book-forms, 1895
 
 
