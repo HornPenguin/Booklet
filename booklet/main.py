@@ -31,12 +31,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import annotations
+import sys, os
+sys.path.insert(0, os.path.abspath("."))
+
 from booklet.meta import __version__ as __version__
 from booklet.meta import name
 
-import sys, os
-
-sys.path.insert(0, os.path.abspath("."))
 import PyPDF2 as pypdf
 from PIL import Image
 

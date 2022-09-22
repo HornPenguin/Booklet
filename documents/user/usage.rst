@@ -44,12 +44,12 @@ You can modify it, but be aware that it does not check the existence of the give
 If there is a same file in the output path, it will be overwritten by the new file. 
 
 
-Leaves
+Pages
 """"""""""""""""""
 
 .. image:: ../_static/output_setting002.png
 
-*Leaves* is a number of sheets per each signatures. 
+*Pages* is a number of pages per each signatures. 
 When you choose specific number of sheets, additional blank pages will be shown right to selection box.
 In this case, manuscript file has 32 pages, so it will be 0 for 4, 8, 16, 32 number of sheets.
 In the list of sheet numbers, you can see some numbers have a subfix :code:`f`.
@@ -215,6 +215,9 @@ Click `Generation` button, progress will be run in behind and program will be de
 Utils
 ------------
 
+.. image:: ../_static/utils_ui.png
+
+
 This tab supports miscellaneous utils; note mode, conversion to image, and custom imposition.
 Note mode is in developing state, it will not work in 0.0.2 version.
 
@@ -222,39 +225,39 @@ Note mode is in developing state, it will not work in 0.0.2 version.
 
   Note mode
   """"""""""""""""""""""""""
-  
+
   This routine is presented for note maker. 
   However, :code:`basic, advanced` routines don't repeat the given pdf pages so you need to expand them using addtional program.
-  
+
   This mode expands the given pdf to note type manuscript.
   For instance, below tutorial shows making process of laboratory note.
   The template is presented in template directory on project root directory. 
-  
+
   Basic usage is just enable the note mode and enter a total number of pages of note.
   In this tutorial, HP Booklet will generate 200 pages note.
-  
+
   .. 
     .. image::
-    
+
   Some notes need page numbering, expecially laboratory note.
   As like note mode, you can disable or enable the numbering routine.
   It allows you to set next options.
-  
+
   * Location: Header/Footer
   * Align: Left/Center/right
   * Count: Even/Odd/Both/Even only/Odd only
-  
+
   The count options may be confuse if you see at first. 
   This represent the counted pages and number indicated pages.
-  
+
   Even: count full pages and indicate it only on even pages.
   Even(only): count only even pages and indicate it only on even pages.
-  
+
   It will be enough to show an example.
-  
+
   .. 
     .. image:: 
-    
+
 
 Command line
 -------------
