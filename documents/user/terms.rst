@@ -3,7 +3,7 @@ Terms of Book and Printing
 ============================
 
 This document describes basic introduction to bookbinding and printing.
-See detailed descriptions, algorithms and implementations in each document of :ref:`Features`.
+See detailed descriptions, algorithms and implementations in each document of :ref:`Features <features>`.
 
 Shape and Structure of Book
 ==================================
@@ -29,10 +29,98 @@ Why we need signature in bookbinding?
 If you have made ring or stapler binding in home or local printing center, you might not think 
 it is not needed to prepare content block by prefixed number of leaves.  
 However, if pages exceeds more than hundreds, you cannot prepare all contents to bind at once.
-With some efforts, it might be possible but
+With some efforts, it might be possible but it is a waste of time and finance resources not only for manufacturers but also for hobbists.
+
+Therefore, people make small sections first and bind them at final stage for large number of pages. 
+In addition, there is a manufacturing reason. Cutting and folding are always easier than combining and gluing materials in manufacture process.
+Consequently, printing with raw paper roll and cutting them is more effciency than gathering small printed papers.
+Even you are printing manuscripts with home printer, folio type printing can reduce significant efforts than single leaf printing in bookbinding. 
+That is why using a **signature** in bookbinding. 
+
+Types of signature
+^^^^^^^^^^^^^^^^^^^^^^
+
+By the number of leaves
+""""""""""""""""""""""""""""
+Commonly used types are next,
+
++-------------------+---------+
+|Name               |Leaves   |
++===================+=========+
+|folio              |2        |
++-------------------+---------+
+|quartos            |4        |
++-------------------+---------+
+|octavo             |8        |
++-------------------+---------+
+|duodecimo(12mo)    |24       |
++-------------------+---------+
+|16mo               |32       |
++-------------------+---------+
+|18mo               |36       |
++-------------------+---------+
+|32mo               |64       |
++-------------------+---------+
+|64mo               |128      |
++-------------------+---------+
+
+
+Above names just indicate leaves of each signature but they have a meaning of booksize.
+They are determined with their country's standard the raw paper size, if there is no prior name, or forehead paper name.
+For example, Crown quartos size, 195 x 254 (mm), is a quarter of Crown paper size, 508 x 381 (mm).
+
+Imposition
+-------------
+
+The imposition is a locating work of pages to paper and the result of the work.
+Unless you binding book in old Asia style (their method can use single paper as a basic signature), 
+you must print the signature considering fold action.
+This is why the manuscript for a book should have a number of pages which is a multiple of 4.
+
+By the folding direction and order, its imposition layout on larger paper is vary. 
+If you have an experience of map folding subject in origami geometry, it will be friendly. 
+However, it is not as complex as them, because of the characteristic of signature folding.
+All types of signature after folding must be its one side covers all centers of connected two leaves.
+This makes permitted folding to be restricted next.
+
+**Signature folding**
+
+* Every creases must be perpendicular or parallel to each other.
+* Each fold must be in next two cases.
+   1. (\*) Perpendicular to the previous fold line and fold all layer at once.
+   2. (\**), Parallel to the previous fold line and fold all layer at once.
+   3. (\*\*\*), Parallel to the previous fold line. If fold partial layers than the other must be folded in same stage. 
+      Sequential parallel foldings can include half folding of all layer, in this case, there must be other parallel folding steps.
+* The last fold must be (\*) or (\*\*) type.
+
+| (\*), (\**) : Doubling previous grids.
+| (\*\*\*) : :math:`k` number of parallel partial folding makes :math:`{} \times (k+1)` grids.
+
+
+Standard type
+^^^^^^^^^^^^^^^^^
+Repetation of 1st type folding only.
+Leaves = :math:`2^n`, 2, 4, 8, 16, 32, 64, 128, ... .
+
+
+Extended type
+^^^^^^^^^^^^^^^^^
+
+At least one step is 2nd type folding, this allows us to compose addtional prime numbers for divisor of leaves number.
+
+Example: 6, 12 
+
+6 leaves:
+
+* Fold :math:`x`-direction - start
+* Parallel fold :math:`x`-direction - end :math:`{} \times 3`
+* Perpendicular fold :math:`y`-direction - start -end :math:`{} \times 2`
+
+:math:`6 = 1 \times 3 \times 2`
+
 
 Signature composition
-^^^^^^^^^^^^^^^^^^^^^^^^^
+--------------------------
 
 As written above, a signature is governed by its number of sheets. 
 Single paper signature is :math:`2` sheets signature with dual side printing.
@@ -53,15 +141,26 @@ The :math:`n` sheets signature is composed of :math:`i` time inserted :math:`f` 
 .. math:: 
     n = i \times f.
 
-If :math:`i = 1`, the signautre is an uninserted fold signature. 
+If :math:`i = 1`, the signautre is complete itself. 
 
-For example, :math:`16` sheets signature has next variation.
+For example, :math:`16` sheets signature has next variation for same types.
 
 * :math:`1 \times 16`
 * :math:`2 \times 8`
 * :math:`4 \times 4`
 
+If we permit combination of difference types.
 
+* :math:`[4, 4, 8]`
+* :math:`[4, 8, 4]`
+* :math:`[8, 4, 4]`
+
+Ordering of combination in :math:`[,]` is important. The latter cases are called **deep type** signature in book of T.B. Wiliams (1895).
+With deep type, we can make every even number signature for example,
+
+.. math::
+    
+    40 = 32 + 8 = 4 + 4+ 4+ ... +4 = 16 + 16 + 8, ...
 
 
 Riffle direction
@@ -107,16 +206,6 @@ The default setting of HornPenguin Booklet is a LR direction and supports *RL*.
 Supporting *RL* is not complicated. Just reverse order the pages before applying to rearrange transformation to the pages.
 
 
-Imposition
--------------
-
-The imposition means locating works of pages to paper and the result of those works.
-Unless you binding book in old Asia style (their method can use single paper as a basic signature), 
-you must print the signature considering fold action.
-This is why the manuscript for a book should have a number of pages which is a multiple of 4.
-
-
-
 Printing markers
 ================================
 
@@ -147,8 +236,13 @@ Its color looks like the normal black color (CMYK(0, 0, 0, 1)) but actually, it 
 Further reading
 --------------------
 
+
+* Matt T. Roberts and Don Etherington, Bookbinding and the Conservation of books: A Dictionary of Descriptive Terminology, Drawings by Margaret R. Brown
+
 General and advanced informations of bookbinding can be found on dictionary written by Matt T. Roberts and Don Etherington.
 `Online version <https://cool.culturalheritage.org/don/>`_ is available. 
 
-* Matt T. Roberts and Don Etherington, Bookbinding and the Conservation of books: A Dictionary of Descriptive Terminology, Drawings by Margaret R. Brown
+* T.B. Wiliams, Hints on imposition. An illustrated guide for printer and pressman in the construction of book-forms, 1895
+
+
 
