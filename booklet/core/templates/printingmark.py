@@ -74,6 +74,8 @@ class PrintingMark(Template):
         crop: bool = True,
         reg: bool = True,
         cmyk: bool = True,
+        fold: bool = True,
+        direction: bool = True
     ):
 
         self.on = on if type(on) == bool else False
