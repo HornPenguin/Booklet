@@ -19,6 +19,18 @@ Version 0.0.3 - in working
     * Sub todo: font routines
       * Measure text width of decimal string by font. - in working
 
+  * Support General fold sequences: Very hard job maybe cannot finish it in time.
+    Papers and books:
+      * Y Jia, J Mitani, R Uehara, 2020, Valid orderings of layers when simple-folding a map, Journal of Inofrmation Processing.
+      *  Erik D. Demaine, Joseph O'Rourke, Geometric Folding Algorthms: Linkages, Origami, Polyhedra, Cambridge University Press, 2007.
+      * Lang, Robert J, Twists, tilings, and tessellations : mathematical methods for geometric origami
+  
+  * Additional printing markers: Angle mark, Trim line, Bleed Line, Fold line, Direction(top, bottom) indicator
+  * Duplex Printing offset: Flip back side and offset(translation), add template for measuring offset at test printing stage.
+  * Merge Multiple files at once
+  * Progress bar routine update
+
+
 
 
 Version 0.0.2 - current
