@@ -45,7 +45,7 @@ from reportlab.pdfgen.canvas import Canvas
 
 # Project modules
 from booklet.core.manuscript import Template, Manuscript
-from booklet.core.converters.signature import SigComposition
+from booklet.core.converters.section import SecComposition
 from booklet.utils import validation
 from booklet.utils.misc import *
 from booklet.utils.color import hex2cmyk, rgb2cmyk
@@ -70,7 +70,7 @@ class Imposition(Template):
         proof: bool = False,
         proof_color: Tuple[float, float, float, float] = (0, 0, 0, 0),
         proof_width: Union[None, int] = None,
-        imposition_layout: Union[Tuple[int, int], SigComposition] = (4, 1),
+        imposition_layout: Union[Tuple[int, int], SecComposition] = (4, 1),
     ):
 
         super().__init__(direction=True)
@@ -82,7 +82,7 @@ class Imposition(Template):
         self.proof_width = self.gap if proof_width == None else proof_width
         self.layout = (
             imposition_layout.layout
-            if isinstance(imposition_layout, SigComposition)
+            if isinstance(imposition_layout, SecComposition)
             else imposition_layout
         )
         self.pages_per_template = (

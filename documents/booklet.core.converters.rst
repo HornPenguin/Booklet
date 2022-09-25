@@ -4,10 +4,10 @@ booklet.core.converters package
 Submodules
 ----------
 
-booklet.core.converters.signature module
+booklet.core.converters.section module
 ----------------------------------------
 
-.. automodule:: booklet.core.converters.signature
+.. automodule:: booklet.core.converters.section
    :members:
    :undoc-members:
    :show-inheritance:

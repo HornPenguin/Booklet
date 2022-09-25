@@ -1,4 +1,4 @@
-from booklet.core.converters.signature import Signature, SigComposition
+from booklet.core.converters.section import Section, SecComposition
 from booklet.core.converters.toimage import ToImage
 
 from booklet.core.templates.imposition import Imposition
