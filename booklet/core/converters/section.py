@@ -374,8 +374,8 @@ class SecComposition:  # Fix all the permutation routines. Currnet is not vaild 
 
 
 class Section(Converter):
-    __name__ = "booklet"
-    __description__ = "basic routine for signature generation"
+    __name__ = "section"
+    __description__ = "basic routine for section generation"
 
     @property
     def name(self):
@@ -387,6 +387,7 @@ class Section(Converter):
 
     def __init__(
         self,
+        mode:bool = False,
         sec_composition: Union[Tuple[int, int], SecComposition] = (1, 1),
         blank_mode: str = "back",
         riffle: bool = True,
