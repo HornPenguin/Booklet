@@ -27,10 +27,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from booklet.core.manuscript import Manuscript, Converter
+from booklet.utils.matrix import rotate_2dim
+
+from PyPDF2 import Transformation
 
 class Duplex(Converter):
     __name__ = "duplex"
-    __description = "supporting for duplex printers"
+    __description__ = "supporting for duplex printers"
 
     @property
     def name(self):
@@ -45,14 +48,56 @@ class Duplex(Converter):
         mode : bool = False,
         tx : int = 0,
         ty : int = 0,
-        file_mode = None
+        rotate: float = 0.,
+        rotate_mode = "c"
         ):
         self.mode = mode if type(mode) == bool else bool(mode)
         self.tx = tx
         self.ty = ty
-        self.file_mode = file_mode
+        self.rotate = rotate
+        self.page_transformation = Transformation().translate(self.tx, self.ty).rotate(self.rotate)
+        self.rotate_mode = rotate_mode
     
     def do(self, index:int, manuscript:Manuscript, file_mode):
-        pass
+        new_pdf, new_file = self.get_new_pdf(index, manuscript.tem_directory.name, file_mode)
+
+        for i, page in enumerate(manuscript.pages):
+            if i%2 == 1:
+                l, b, r, t = page.mediaBox
+                width = r-l
+                height = t-b
+
+                new_r = r
+                new_t = t
+
+                if self.rotate_mode == "c":
+                    vec = [width/2, height/2]
+                    vec_rotated = rotate_2dim(vec, self.rotate)
+                    dx = vec[0] - vec_rotated[0]
+                    dy = vec[1] - vec_rotated[1]
+
+                elif self.rotate_mode == "b":
+                    left_top = [0, height]
+                    right_top = [width, height]
+                    right_bottom = [width, 0]
+                    left_top_rotated = rotate_2dim(left_top, self.rotate)
+                    right_top_rotated = rotate_2dim(right_top, self.rotate)
+                    right_bottom_rotated = rotate_2dim(right_bottom, self.rotate)
+
+                    new_r = right_bottom_rotated[0] - left_top_rotated[0]
+                    new_t = right_top_rotated[1]
+
+                    dx = - left_top_rotated[0]
+                    dy = 0
+
+                self.page_transformation = self.page_transformation.translate(tx = dx, ty=dy)
+                page.add_transformation(self.page_transformation)
+                page.mediaBox.setUpperRight((new_r, new_t))
+
+            new_pdf.add_page(page)
+
+        manuscript.pdf_update(None, new_file.name)
+
+                
 
 

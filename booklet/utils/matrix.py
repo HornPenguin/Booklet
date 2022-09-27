@@ -31,8 +31,16 @@
 # 1, 2 dimension matrix operation based on default list type
 
 import collections
+from math import sin, cos
 
 # Utils
+
+def rotate_2dim(vec, angle):
+    co = cos(angle)
+    si = sin(angle)
+    x_new = co* vec[0] -si * vec[1]
+    y_new = si * vec[0] + si *vec[1]
+    return [x_new, y_new]
 
 def split_list(list1d: list, n: int, mode="l") -> list:
     if not isinstance(list1d, collections.Iterable):
