@@ -526,6 +526,13 @@ class PrintingMark(Template):
 
         return template_pdf, tem_byte
 
+    def rule(
+        self, i:int
+    ) -> list:
+        return [i]
+    def position(self, i:int) -> tuple[float, float]:
+        return (self.margin, self.margin)
+
     def do(
         self, index: int, manuscript: Manuscript, file_mode: str = "safe"
     ) -> NoReturn:
@@ -535,18 +542,21 @@ class PrintingMark(Template):
         else:
             new_pdf, new_file = self.get_new_pdf(index, manuscript.tem_directory.name, file_mode)
             template_pdf, tem_byte = self.generate_template(manuscript)
-            template = template_pdf.pages[0]
-            for i, page in enumerate(manuscript.pages):
-                temp_page = copy(template)
-                page.addTransformation(
-                    pypdf.Transformation().translate(tx=self.margin, ty=self.margin)
-                )
-                upper = float(page.mediaBox[2])
-                right = float(page.mediaBox[3])
-                page.mediaBox.setUpperRight((upper + self.margin, right + self.margin))
+            templates = [template_pdf.pages[0]]*len(manuscript.pages)
+            for i, template in enumerate(templates):
+                manu_pages = self.index_mapping(manuscript, i, len(templates))
+                for j in manu_pages:
+                    page = manuscript.pages[j]
+                    x, y = self.position_mapping(manuscript, j, manuscript.file_pages)
+                    page.addTransformation(
+                        pypdf.Transformation().translate(tx=x, ty=y)
+                    )
+                    upper = float(page.mediaBox[2])
+                    right = float(page.mediaBox[3])
+                    page.mediaBox.setUpperRight((upper + x, right + y))
 
-                temp_page.merge_page(page)
-                new_pdf.add_page(temp_page)
+                    template.merge_page(page)
+                    new_pdf.add_page(template)
 
             new_pdf.write(new_file)
 

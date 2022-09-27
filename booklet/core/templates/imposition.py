@@ -51,6 +51,7 @@ from booklet.utils.misc import *
 from booklet.utils.color import hex2cmyk, rgb2cmyk
 
 
+# For bookmaking
 class Imposition(Template):
     __name__ = "Imposition"
     __description__ = "Imposition work"
@@ -121,6 +122,7 @@ class Imposition(Template):
         elif len(color) == 4:
             return color
 
+    # Not for whole template but collection mark <-- need to be modified 
     def generate_template(self, paper_width, paper_height, template_pages):
         tem_pdf_byte = io.BytesIO()
         template_proof = Canvas(tem_pdf_byte, pagesize=(paper_width, paper_height))
@@ -171,8 +173,9 @@ class Imposition(Template):
         if not self.imposition:
             return 0
 
-        new_pdf, new_file = self.get_new_pdf(index, manuscript, file_mode)
+        new_pdf, new_file = self.get_new_pdf(index, manuscript.tem_directory.name, file_mode)
 
+        # template_pdf <- modification needed
         self.manuscript_format = manuscript.file_paper_format
         paper_width = (self.manuscript_format[0] + self.gap) * self.layout[1] - (
             self.gap
@@ -191,6 +194,7 @@ class Imposition(Template):
 
         for i in range(0, template_pages):
             new_pdf.add_blank_page(format[0], format[1])
+        #------------------------------------------
 
         for i in range(0, template_pages):
             manu_pages = self.index_mapping(manuscript, i, template_pages)
@@ -211,6 +215,7 @@ class Imposition(Template):
 
                 tem_page.merge_page(page)
 
+        # Banned -------
         if self.proof:
             proof_templates, temp_file = self.generate_template(
                 paper_width, paper_height, template_pages
@@ -218,7 +223,58 @@ class Imposition(Template):
             for i in range(0, template_pages):
                 page = new_pdf.pages[i]
                 page.merge_page(proof_templates.pages[i])
+        # Banned -------
 
         new_pdf.write(new_file)
         manuscript.meta["/Imposition"] = f"{self.layout[0]}x{self.layout[1]}"
         manuscript.pdf_update(new_pdf, new_file)
+
+
+# For repeating printing
+class Repeating(Template):
+    __name__ = "Repeating"
+    __description__ = "Imposition of repeated contents"
+
+    @property
+    def name(self):
+        return Repeating.__name__
+    @property
+    def description(self):
+        return Repeating.__description__
+    
+    def __init__(
+        self, 
+        layout,
+        format, 
+        page_format, 
+        rotating,
+        gap,
+        fill_mode:Literal["setted", "max"] = "setted"
+        ):
+        self.format = format
+        self.page_format = page_format
+        if fill_mode != "max":
+            self.layout = layout
+            self.rotating = rotating
+        else:
+            self.layout, self.rotation = self.__get_max_layout()
+        self.fill_mode = fill_mode
+        self.gap = gap
+    
+    def __get_max_layout(self):
+        self.format 
+        # x-direction
+
+        # y-direction
+
+        # Select max
+
+        return layout, rotation
+    
+    def rule(self, i):
+        pass
+    def position(self, i):
+        pass
+    def generate_template(self, manuscript):
+        return super().generate_template(manuscript) 
+
