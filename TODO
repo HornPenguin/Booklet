@@ -26,9 +26,14 @@ Version 0.0.3 - in working
       * Lang, Robert J, Twists, tilings, and tessellations : mathematical methods for geometric origami
   
   * Additional printing markers: Angle mark, Trim line, Bleed Line, Fold line, Direction(top, bottom) indicator
+     - Partially done, interface modification is needed for gui and cui 
+  
   * Duplex Printing offset: Flip back side and offset(translation), add template for measuring offset at test printing stage.
+     - Partially done, Duplex converting module is implemented and Mark is added on PrintingMark module
+
   * Merge Multiple files at once
   * Progress bar routine update
+  * Repeating routine add
 
 Version 0.0.2 - current
 
