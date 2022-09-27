@@ -398,7 +398,7 @@ class Modifier:
     def file_requirement(self):
         return self.__external_file__
 
-    def get_new_pdf(self, index:int, manuscript:Manuscript, filemode:str="safe") -> Tuple[pypdf.PdfFileWriter, Union[NamedTempFile, io.BytesIO]]:
+    def get_new_pdf(self, index:int, tem_dir:Union[str, Path], filemode:str="safe") -> Tuple[pypdf.PdfFileWriter, Union[NamedTempFile, io.BytesIO]]:
         """
         Return new :class:`PdfFileWriter` object in PyPDF2 and new file, file-like object.
 
@@ -416,7 +416,7 @@ class Modifier:
                 mode="wb+",
                 prefix=f"{index}_{self.__name__}_",
                 suffix=".pdf",
-                dir=manuscript.tem_directory.name,
+                dir=tem_dir,
                 delete=False,
             )
         else:
@@ -444,7 +444,7 @@ class Modifier:
         :rtype: NoReturn
         """
         file_mode = kwargs["filemode"]
-        new_pdf, new_file = self.get_new_pdf(index, manuscript, file_mode)
+        new_pdf, new_file = self.get_new_pdf(index, manuscript.tem_directory.name, file_mode)
         #Body - 
 
         #-----

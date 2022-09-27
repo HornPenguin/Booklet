@@ -71,7 +71,7 @@ class Sample(Template):
         pass
 
     def do(self, index: int, manuscript: Manuscript, file_mode):
-        new_pdf, new_file = self.get_new_pdf(index, manuscript, file_mode)
+        new_pdf, new_file = self.get_new_pdf(index, manuscript.tem_directory.name, file_mode)
 
         # generation process
 
@@ -199,7 +199,7 @@ class Imposition(Template):
         if not self.imposition:
             return 0
 
-        new_pdf, new_file = self.get_new_pdf(index, manuscript, file_mode)
+        new_pdf, new_file = self.get_new_pdf(index, manuscript.tem_directory.name, file_mode)
 
         self.manuscript_format = manuscript.file_paper_format
         paper_width = (self.manuscript_format[0] + self.gap) * self.layout[1] - (
@@ -615,7 +615,7 @@ class PrintingMark(Template):
         if not self.on:
             pass
         else:
-            new_pdf, new_file = self.get_new_pdf(index, manuscript, file_mode)
+            new_pdf, new_file = self.get_new_pdf(index, manuscript.tem_directory.name, file_mode)
             template_pdf, tem_byte = self.generate_template(manuscript)
             template = template_pdf.pages[0]
             for i, page in enumerate(manuscript.pages):
@@ -689,7 +689,7 @@ class Note(Template):
         if not self.on:
             pass
         else:
-            new_pdf, new_file = self.get_new_pdf(index, manuscript, file_mode)
+            new_pdf, new_file = self.get_new_pdf(index, manuscript.tem_directory.name, file_mode)
 
             # Expand pages
 
