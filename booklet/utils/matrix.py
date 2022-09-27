@@ -1,4 +1,5 @@
 # Copyright (c) 2022, Hyunseong Kim <qwqwhsnote@gm.gist.ac.kr>
+#
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,6 +32,7 @@
 
 import collections
 
+# Utils
 
 def split_list(list1d: list, n: int, mode="l") -> list:
     if not isinstance(list1d, collections.Iterable):
@@ -59,7 +61,6 @@ def split_list(list1d: list, n: int, mode="l") -> list:
             rlist.append([list1d[ni : ni + num]][0])
     return rlist
 
-
 def transpose(list2d: list) -> list:
     row_length = len(list2d)
     column_length = len(list2d[0])
@@ -71,14 +72,12 @@ def transpose(list2d: list) -> list:
             t[i].append(list2d[j][i])
     return t
 
-
-def filp(matrix: list) -> list:
+def flip(matrix: list) -> list:
     size = len(matrix)
     f = list()
     for i in range(0, size):
         f.append(matrix[size - i - 1])
     return f
-
 
 def concatenate(matrix: list[list]) -> list:
     length = len(matrix)
@@ -88,9 +87,10 @@ def concatenate(matrix: list[list]) -> list:
             rlist.append(element)
     return rlist
 
-
 def reshape(list1d: list, shape) -> list[list]:
     size1d = len(list1d)
     if size1d != shape[0] * shape[1]:
         raise ValueError("The list length and shape are not matched each other.")
     return split_list(list1d, shape[0], mode="n")
+
+
