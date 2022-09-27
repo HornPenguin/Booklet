@@ -231,16 +231,16 @@ class Imposition(Template):
 
 
 # For repeating printing
-class Repeating(Template):
-    __name__ = "Repeating"
-    __description__ = "Imposition of repeated contents"
+class Repetition(Template):
+    __name__ = "Repetition"
+    __description__ = "Imposition of repeted contents"
 
     @property
     def name(self):
-        return Repeating.__name__
+        return Repetition.__name__
     @property
     def description(self):
-        return Repeating.__description__
+        return Repetition.__description__
     
     def __init__(
         self, 
