@@ -520,14 +520,23 @@ class Template(Modifier):
             )
 
     # Define below two method in child class
-    # def rule(self, x):
-    #     pass
-    # def position(self, x):
-    #     pass
+    def rule(self, i:int) -> list:
+        if self.custom_rule != None:
+            return self.custom_rule(i)
+        else:
+            raise NotImplementedError("Must override in child class")
+    def position(self, i:int) -> tuple[float, float]:
+        if self.custom_position != None:
+            return self.custom_position(i)
+        else:
+            raise NotImplementedError("Must override in child class")
+    def generate_template(self, manuscript):
+        raise NotImplementedError("Must override in child class")
+
     # Basic routines
     def index_mapping(
         self, cls, pagenum: int, range=None
-    ) -> list:  # number of page in manuscript
+    ) -> list:  # Return a number of page in manuscript
         self.__validate_page_num(cls, pagenum, range)
         return (
             self.rule(pagenum)
@@ -542,6 +551,36 @@ class Template(Modifier):
             if self.custom_position == None
             else self.custom_position(pagenum)
         )
+    
+    def do(
+        self, index:int, manuscript: Manuscript, file_mode:str = "safe"
+    ):
+        if not self.on:
+            pass
+        else:
+            new_pdf, new_file = self.get_new_pdf(index, manuscript.tem_directory.name, file_mode)
+            try:
+                getattr(self, "pdf")
+                template_pdf = self.pdf
+            except:
+                template_pdf, tem_byte = self.generate_template(manuscript)
+            for i, template in enumerate(template_pdf.pages):
+                manu_pages = self.index_mapping(manuscript, i, len(template_pdf.pages))
+                for j in manu_pages:
+                    page = manuscript.pages[j]
+                    x, y = self.position_mapping(manuscript, j, manuscript.file_pages)
+                    page.addTransformation(
+                        pypdf.Transformation().translate(tx=x, ty=y)
+                    )
+                    upper = float(page.mediaBox[2])
+                    right = float(page.mediaBox[3])
+                    page.mediaBox.setUpperRight((upper + x, right + y))
+
+                    template.merge_page(page)
+                    new_pdf.add_page(template)
+            
+            new_pdf.write(new_file)
+            manuscript.pdf_update(new_pdf, new_file)
 
 
 if __name__ == "__main__":
