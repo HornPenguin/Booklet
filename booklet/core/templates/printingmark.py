@@ -32,7 +32,7 @@ from __future__ import annotations
 
 from copy import copy
 import io
-from math import floor
+from math import floor, tan, pi
 
 # Type hint
 from typing import Union, Callable, List, Tuple, Dict, Literal
@@ -70,19 +70,23 @@ class PrintingMark(Template):
     def __init__(
         self,
         on: bool = False,
-        margin: int = 43,  # pts
+        margin: float = 43.,  # pts
         crop: bool = True,
         reg: bool = True,
         cmyk: bool = True,
-        fold: bool = True,
-        direction: bool = True
+        direction: bool = True,
+        angle:bool =True,
+        duplex_measure:bool = True
     ):
 
         self.on = on if type(on) == bool else False
-        self.margin = margin if margin != None else 43
+        self.margin = float(margin) if margin != None else 43
         self.crop = bool(crop)
         self.reg = bool(reg)
         self.cmyk = bool(cmyk)
+        self.duplex_measure = bool(duplex_measure)
+        self.direction = bool(direction)
+        self.angle = bool(angle)
 
         super().__init__(direction=True)
 
@@ -102,39 +106,13 @@ class PrintingMark(Template):
         y4 = y1 + y3
 
         return [[x1, x2, x3, x4], [y1, y2, y3, y4]]
-
     def __get_paper_dim(self, pagesize: Tuple[float, float]) -> Tuple[float, float]:
         width, height = pagesize
         x = 2 * self.margin + width
         y = 2 * self.margin + height
         return x, y
-
-    def __draw_crop_lines(self, canvas: Canvas, positions: list = []) -> bool:
-        if self.crop:
-            if len(positions) == 0:
-                positions = self.___get_crop_line_positions(self.manu_paper_format)
-            canvas.setLineWidth(0.5 * mm)
-            canvas.lines(positions)
-            return True
-        return False
-
-    def __draw_registration(
-        self, canvas: Canvas, ratio: float = 0.8, positions: list = []
-    ) -> bool:
-        self.reg_l = 0
-        pagesize = self.manu_paper_format
-        if self.reg:
-            self.reg_l = l = ratio * self.margin
-            center = self.margin / 2
-            if len(positions) == 0:
-                positions = self.___get_registeration_positions(l, center, pagesize)
-            for position in positions:
-                self.___draw_registration_mark(
-                    canvas=canvas, x=position[0], y=position[1], l=l
-                )
-            return True
-        return False
-
+    
+    # Color marker
     def __draw_color_marker(self, canvas: Canvas) -> bool:
         if self.cmyk:
             cyan = [(0.2 * (1 + i), 0, 0, 0) for i in range(0, 5)]
@@ -217,61 +195,14 @@ class PrintingMark(Template):
 
             return True
         return False
-
-    def ___get_crop_line_positions(
-        self, pagesize: Tuple[float, float]
-    ) -> list[
-        Tuple[float, float, float, float],
-        Tuple[float, float, float, float],
-        Tuple[float, float, float, float],
-        Tuple[float, float, float, float],
-    ]:
-        trim_l = self.margin * 0.5
-        x, y = self.____basic_position(pagesize)
-        return [
-            (x[0], y[0], x[0] + trim_l, y[0]),  # h, u l
-            (x[0], y[1], x[0] + trim_l, y[1]),  # h, d l
-            (x[1], y[0], x[1] + trim_l, y[0]),  # h, u r
-            (x[1], y[1], x[1] + trim_l, y[1]),  # h, d r
-            (x[2], y[3], x[2], y[3] + trim_l),  # v, u l
-            (x[2], y[2], x[2], y[2] + trim_l),  # v, d l
-            (x[3], y[3], x[3], y[3] + trim_l),  # v, u r
-            (x[3], y[2], x[3], y[2] + trim_l),  # v, d r
-        ]
-
-    def ___get_registeration_positions(
-        self, l: float, center: float, pagesize: Tuple[float, float]
-    ) -> list[
-        Tuple[float, float],
-        Tuple[float, float],
-        Tuple[float, float],
-        Tuple[float, float],
-        Tuple[float, float],
-        Tuple[float, float],
-        Tuple[float, float],
-        Tuple[float, float],
-    ]:
-        x, y = self.____basic_position(pagesize)
-        trim_l = self.margin / 2
-        return [
-            (center - l / 2, y[0] - center - l),
-            (center - l / 2, y[1] + center),
-            (x[1] + trim_l / 2 - l / 2, y[0] - center - l),
-            (x[1] + trim_l / 2 - l / 2, y[1] + center),
-            (x[2] + center, y[3] + trim_l / 2 - l / 2),
-            (x[2] + center, center - l / 2),
-            (x[3] - center - l, y[3] + trim_l / 2 - l / 2),
-            (x[3] - center - l, center - l / 2),
-        ]
-
     def ___get_color_marker_position_and_length(
         self, pagesize: Tuple[float, float], padding_ratio: float
     ) -> Tuple[list, Literal["2x10", "1x20"], list, list, float]:
 
         # Calculate side and head size and choose bigger one.
         pa = padding_ratio * self.margin
-        hor = pagesize[0] - 2 * self.reg_l - self.margin
-        ver = pagesize[1] - 2 * self.reg_l - self.margin
+        hor = 0.5*(pagesize[0] - 2 * self.reg_l - self.margin)
+        ver = 0.5*(pagesize[1] - 2 * self.reg_l - self.margin)
 
         if 2 * pa > hor or 2 * pa > ver:
             pa_t = padding_ratio * min(hor, ver)
@@ -326,7 +257,52 @@ class PrintingMark(Template):
             origin_mixed[0] = self.margin * 1.5 + pagesize[0] - square_length * 0.5
 
         return vertical, case, origin, origin_mixed, square_length
-
+    # Crop lines
+    def __draw_crop_lines(self, canvas: Canvas, positions: list = []) -> bool:
+        if self.crop:
+            if len(positions) == 0:
+                positions = self.___get_crop_line_positions(self.manu_paper_format)
+            canvas.setLineWidth(0.5 * mm)
+            canvas.lines(positions)
+            return True
+        return False
+    def ___get_crop_line_positions(
+        self, pagesize: Tuple[float, float]
+    ) -> list[
+        Tuple[float, float, float, float],
+        Tuple[float, float, float, float],
+        Tuple[float, float, float, float],
+        Tuple[float, float, float, float],
+    ]:
+        trim_l = self.margin * 0.5
+        x, y = self.____basic_position(pagesize)
+        return [
+            (x[0], y[0], x[0] + trim_l, y[0]),  # h, u l
+            (x[0], y[1], x[0] + trim_l, y[1]),  # h, d l
+            (x[1], y[0], x[1] + trim_l, y[0]),  # h, u r
+            (x[1], y[1], x[1] + trim_l, y[1]),  # h, d r
+            (x[2], y[3], x[2], y[3] + trim_l),  # v, u l
+            (x[2], y[2], x[2], y[2] + trim_l),  # v, d l
+            (x[3], y[3], x[3], y[3] + trim_l),  # v, u r
+            (x[3], y[2], x[3], y[2] + trim_l),  # v, d r
+        ]
+    # Registration
+    def __draw_registration(
+        self, canvas: Canvas, ratio: float = 0.8, positions: list = []
+    ) -> bool:
+        self.reg_l = 0
+        pagesize = self.manu_paper_format
+        if self.reg:
+            self.reg_l = l = ratio * self.margin
+            center = self.margin / 2
+            if len(positions) == 0:
+                positions = self.___get_registeration_positions(l, center, pagesize)
+            for position in positions:
+                self.___draw_registration_mark(
+                    canvas=canvas, x=position[0], y=position[1], l=l
+                )
+            return True
+        return False
     def ___draw_registration_mark(
         self, canvas: Canvas, x: float, y: float, l: float
     ) -> NoReturn:
@@ -389,6 +365,136 @@ class PrintingMark(Template):
         arcs_inner.arcTo(x1, y1 + line_t, x2, y2 + line_t, startAng=90, extent=90)
 
         canvas.drawPath(arcs_inner, fill=1, stroke=0)
+    def ___get_registeration_positions(
+        self, l: float, center: float, pagesize: Tuple[float, float]
+    ) -> list[
+        Tuple[float, float],
+        Tuple[float, float],
+        Tuple[float, float],
+        Tuple[float, float],
+        Tuple[float, float],
+        Tuple[float, float],
+        Tuple[float, float],
+        Tuple[float, float],
+    ]:
+        x, y = self.____basic_position(pagesize)
+        trim_l = self.margin / 2
+        return [
+            (center - l / 2, y[0] - center - l),
+            (center - l / 2, y[1] + center),
+            (x[1] + trim_l / 2 - l / 2, y[0] - center - l),
+            (x[1] + trim_l / 2 - l / 2, y[1] + center),
+            (x[2] + center, y[3] + trim_l / 2 - l / 2),
+            (x[2] + center, center - l / 2),
+            (x[3] - center - l, y[3] + trim_l / 2 - l / 2),
+            (x[3] - center - l, center - l / 2),
+        ]
+    # Duplex Measure
+    def __draw_duplex_measure(
+        self, canvas: Canvas, pagesize, dash:Tuple[float, int]
+        ):
+        positions = self.___get_duplex_position(pagesize)
+        length, number = dash
+        canvas.setDash(length, number)
+        for position in positions:
+            x_pos, y_pos = position
+            self.___draw_duplex(canvas, x_pos, y_pos, self.margin*0.9)
+        return True
+    def ___get_duplex_position(self, pagesize):
+        x_left = self.margin*0.5
+        x_right = self.margin + pagesize[0] + x_left
+        y_bottom = x_left
+        y_top = self.margin + pagesize[1] + y_bottom
+
+        return [(x_left, y_bottom), (x_left, y_top), (x_right,y_bottom), (x_right, y_top)]
+    def ___draw_duplex(self, canvas:Canvas, x, y, l =None, line_width = 0.1417323):
+        if l == None: l = self.margin*0.9
+        unit_length = 0.1*mm
+        if l < 4*unit_length: raise ValueError("Too small area")
+
+        grid_num = int(l / unit_length)
+        if grid_num%2 : grid_num -= 1
+
+        xi = x - grid_num/2 * unit_length
+        yi = y - grid_num/2 * unit_length
+
+        xlist = [xi + i* unit_length for i in range(0, grid_num)]
+        ylist = [yi + i* unit_length for i in range(0, grid_num)]
+
+        canvas.setLineWidth(line_width)
+        canvas.setFillColor(Basis_Colors["reg"])
+        canvas.setStrokeColor(Basis_Colors["reg"])
+        canvas.grid(xlist, ylist)
+        canvas.setFillColor(Basis_Colors["reg"])
+        canvas.setStrokeColor(Basis_Colors["reg"])
+        canvas.circle(x, y, r = 0.5*unit_length, stroke=1, fill=1)
+    # Direction marks
+    def __draw_direction(
+        self, canvas: Canvas, pagesize, height=None, color=None
+        ):
+        positions = self.___get_direction_position(pagesize)
+        if height == None: height = self.margin/4
+        if color == None: color = Basis_Colors["reg"]
+        for position in positions:
+            x_pos, y_pos = position
+            self.___draw_direction_mark(canvas, x_pos, y_pos, height)
+    def ___get_direction_position(self, pagesize):
+        x1, x2 = self.margin, self.margin + pagesize[0]
+        y = 2 * self.margin + pagesize[1]
+        return [(x1, y), (x2, y)]
+    def ___draw_direction_mark(self, canvas:Canvas, x, y, height, color):
+        x1, y1 = x - tan(pi/12)*height , y - height
+        x2, y2 = x, y
+        x3, y3 = x + tan(pi/12)*height, y1
+        
+        canvas.setFillColor(color)
+        canvas.setStrokeColor(color)
+        p = canvas.beginPath()
+        p.moveTo(x1, y1)
+        p.lineTo(x2, y2)
+        p.lineTo(x3, y3)
+        p.lineTo(x1, y1)
+        p.close()
+        canvas.drawPath(p, stroke=1, fill=1)
+    # Angle marks
+    def __draw_angle(
+        self, canvas: Canvas, pagesize, line_legnth, line_width=None, color=None, dash=None
+        ):
+        positions = self.___get_angle_position(pagesize)
+        
+        if line_width == None: line_width = 0.2*mm
+        if color == None: color = Basis_Colors["reg"]
+        
+        for position in positions:
+            x_pos, y_pos = position
+            self.___draw_angle_mark(canvas, x_pos, y_pos, line_legnth, line_width, color, dash)
+    def ___get_angle_position(self, pagesize):
+        return [(0, pagesize[0]+2*self.margin)]
+    def ___draw_angle_mark(self, canvas:Canvas, x, y, line_length, line_width, color, dash=None, corner="rt"):
+        if corner == "rt":
+            dx1, dx2, dy1, dy2 = 0, line_length, -line_length, 0
+        elif corner == "rb":
+            dx1, dx2, dy1, dy2 = 0, line_length, line_length, 0
+        elif corner == "lt":
+            dx1, dx2, dy1, dy2 = -line_length, 0, 0, -line_length
+        elif corner == "lb":
+            dx1, dx2, dy1, dy2 = -line_length, 0, 0, line_length
+
+        x1, y1 = x + dx1, y+dy1
+        x2, y2 = x, y
+        x3, y3 = x + dx2, y+dy2
+
+        if dash != None:
+            canvas.setDash(dash)
+        canvas.setLineWidth(line_width)
+        canvas.setStrokeColor(color)
+
+        p = canvas.beginPath()
+        p.moveTo(x1, y1)
+        p.lineTo(x2, y2)      
+        p.lineTo(x3, y3)
+        p.close()
+        canvas.drawPath(p, stroke=1)
 
     def generate_template(
         self, manuscript: Manuscript
@@ -405,6 +511,13 @@ class PrintingMark(Template):
             self.__draw_registration(printing_template)
         if self.cmyk:
             self.__draw_color_marker(printing_template)
+        if self.duplex_measure:
+            self.__draw_duplex_measure(printing_template)
+        if self.direction:
+            self.__draw_direction(printing_template)
+        if self.angle:
+            self.__draw_angle(printing_template)
+        
         printing_template.showPage()
         printing_template.save()
 
@@ -420,7 +533,7 @@ class PrintingMark(Template):
         if not self.on:
             pass
         else:
-            new_pdf, new_file = self.get_new_pdf(index, manuscript, file_mode)
+            new_pdf, new_file = self.get_new_pdf(index, manuscript.tem_directory.name, file_mode)
             template_pdf, tem_byte = self.generate_template(manuscript)
             template = template_pdf.pages[0]
             for i, page in enumerate(manuscript.pages):
