@@ -32,6 +32,8 @@ import platform, os, sys
 from functools import partial
 import re
 from math import log2
+from typing import Literal
+from itertools import izip
 
 # tkinter----------------------------------
 import tkinter as tk
@@ -47,6 +49,7 @@ from tkinter.colorchooser import askcolor
 from PIL import Image, ImageTk
 import simpleaudio
 import PyPDF2 as pypdf
+import yaml
 
 
 # Project modules-----------------------------------------------
@@ -54,15 +57,14 @@ import PyPDF2 as pypdf
 from booklet.core.manuscript import Manuscript
 from booklet.core.modifiers import *
 import booklet.data as data
+from booklet.meta import APP_NAME
 from booklet.utils.misc import *
 from booklet.utils.conversion import mm2pts, pts2mm
 from booklet.utils.color import hex2cmyk, cmyk2rgb, rgb2hex
 
-
 # UI--------------------------------------------------------------------------------------------
 class Booklet:
     """Main GUI module"""
-
     def __init__(
         self,
         icon_path,
@@ -75,94 +77,75 @@ class Booklet:
         beep_file,
         re_range_validation=data.re_get_ranges,
         re_character_validation=data.re_check_permited_character,
+        language = "en",
         fix=False,
         width=390,
         height=780,
     ):
-        """init
 
-        :param icon_path: Program app icon path.
-        :type icon_path: _type_
-        :param homepage: Company url.
-        :type homepage: _type_
-        :param source: _description_
-        :type source: _type_
-        :param tutorial:tutorial page url.
-        :type tutorial: _type_
-        :param textpady: Gui setting, padding value. `y` direction.
-        :type textpady: _type_
-        :param logo: Gui setting, ui logo image path.
-        :type logo: _type_
-        :param icons: _description_
-        :type icons: _type_
-        :param beep_file: _description_
-        :type beep_file: _type_
-        :param re_range_validation: Regular expression to validate the range of pages., defaults to data.re_get_ranges
-        :type re_range_validation: _type_, optional
-        :param re_character_validation: Regular expression to confirm vaild characters in page ragne input., defaults to data.re_check_permited_character
-        :type re_character_validation: _type_, optional
-        :param fix: ui setting, tkinter gui window size modulation permission setting., defaults to False
-        :type fix: bool, optional
-        :param width: Width of main window. It is not absolute setting, defaults to 390
-        :type width: int, optional
-        :param height: Height of main window. It is not absolute setting, defaults to 780
-        :type height: int, optional
-        """
-
+        # save the given arguments
         self.url_homepage = homepage
         self.url_source = source
         self.url_tutorial = tutorial
+        self.language = language
+        self.ui_strings = self.__get_ui_strings()
 
+        # Window parameters
         self.fix = fix
         self.window_width = width
         self.window_height = height
+        self.text_pady = textpady
+
+        self.icons = icons
+
+        # misc utils variables
+        self.range_validation_re = re.compile(re_range_validation)
+        self.character_validation_re = re.compile(re_character_validation)
 
         self.beep_file = beep_file
 
+        # Tktiner main window
         self.window = tk.Tk()
         self.window.call("source", resources_path("azure.tcl", "resources"))
         self.window.call("set_theme", "light")
         self.window.title("HornPenguin Booklet")
 
-        self.range_validation_re = re.compile(re_range_validation)
-        self.character_validation_re = re.compile(re_character_validation)
+        # Menu bar setting
+        self.menu_bar = tk.Menu(self.window)
+        self.menus = {}
+        self.__set_menu_bar()
+        self.window.configure(menu=self.menu_bar)
 
-        # Tab: basic, Advanced
-        self.Tabwindow = ttk.Notebook(self.window)
-        self.Tabwindow.grid(row=1, column=0)
+        # Tab setting: 
+        self.tab_notebook = ttk.Notebook(self.window)
+        self.tabs = {}
+        self.frame_objects = {}
+        self.frame_strings = {}
+        self.__set_tabs()
+        self.tab_notebook.grid(row=1, column=0)
+        self.__set_each_tab_layout()
 
-        self.tab_basic = ttk.Frame(self.Tabwindow)
-        self.tab_advance = ttk.Frame(self.Tabwindow)
-        self.tab_utils = ttk.Frame(self.Tabwindow)
-
-        self.Tabwindow.add(self.tab_basic, text="basic")
-        self.Tabwindow.add(self.tab_advance, text="advanced")
-        self.Tabwindow.add(self.tab_utils, text="utils")
+        #self.Tabwindow = ttk.Notebook(self.window)
+        #self.Tabwindow.grid(row=1, column=0)
+        #self.tab_basic = ttk.Frame(self.Tabwindow)
+        #self.tab_advance = ttk.Frame(self.Tabwindow)
+        #self.tab_utils = ttk.Frame(self.Tabwindow)
+        #self.Tabwindow.add(self.tab_basic, text="basic")
+        #self.Tabwindow.add(self.tab_advance, text="advanced")
+        #self.Tabwindow.add(self.tab_utils, text="utils")
 
         self.initiate_window()
 
         platform_name = platform.system()
         self.platform_linux = True if platform_name == "Linux" else False
         self.platform_mac = True if platform_name == "Darwin" else False
+        self.platform_windows = True if platform_name == "Windows" else False
 
         self.logo = ImageTk.PhotoImage(logo, master=self.window)
         if self.platform_linux:
             self.window.tk.call("wm", "iconphoto", self.window._w, self.logo)
         self.icon_path = icon_path
-        self.icon_setting(self.window)
-
-        self.icons = icons
-
-        # Menu setting
-        # Help: About, Format, Tutorial, License, Contact, Source, homepage, support
-
-        self.menu = tk.Menu(self.window)
-        self.menu_help = tk.Menu(self.menu, tearoff=0)
-        self.initiate_menu()
-        self.window.configure(menu=self.menu)
-
-        # Text pad
-        self.text_pady = textpady
+        self.__icon_setting(self.window)
 
         # input_file info
 
@@ -273,11 +256,180 @@ class Booklet:
             row=2, column=0, columnspan=2, width=370, height=50, padding="2 2 2 2"
         )
 
-    def icon_setting(self, window):
+    # Internal routines
+    def __get_ui_strings(self):
+        filename = self.language + ".yaml"
+        lang_path = resources_path(filename, data.PATH_LANGUAGE)
+        with open(lang_path, "r", encoding="utf-8") as lang:
+            lang_string = yaml.load(lang, Loader= yaml.FullLoader)
+        # string -> tk.StringVar()
+
+        pass
+    def __update_ui_strings(self):
+        self.ui_strings
+        pass
+    def __icon_setting(self, window):
         try:  # Linux environment tkinter does not support and makes an error
             window.iconbitmap(self.icon_path)
         except:
             pass
+    def __set_menu_bar(self):
+        for menu in self.ui_strings["menubar"]:
+            menu_object = tk.Menu(self.menu_bar, tearoff=0)
+            self.menu_bar.add_cascade(label = menu["name"], menu = menu_object)
+            for submenu in menu["submenu"].items():
+                key, value = submenu
+                menu_object.add_command(label=value, command=partial(self.__menu_command, key, value))
+            self.menus[menu["name"]] = menu_object 
+    def __menu_command(self, key:str, value:str):
+        if key == "about":
+            self.popup_window(
+                text= data.about_text, 
+                title=value, 
+                tpadx=10,
+                tpady=2.5,
+                fix=False
+                )
+        elif key == "license":
+            self.popup_window(
+                text=data.license,
+                title=value,
+                tpadx=10,
+                tpady=0,
+                fix=False,
+                scroll=True
+                ) 
+        elif key == "source":
+            open_url(self.url_source)
+        elif key == "tutorial":
+            open_url(self.url_tutorial)
+        elif key == "paper-format":
+            self.popup_window_table(
+                width = 320,
+                height = 480,
+                column_names= data.format_head,
+                data = data.format_table,
+                title = value,
+                tpadx =30,
+                tpady = 2.5,
+                fix = False
+                )
+        elif key == "paper-fold":
+            self.popup_window(
+                width = 200,
+                height = 400,
+                title = value
+            )
+        elif key == "load":
+            self.__load_setting()
+        elif key == "save":
+            self.__save_setting()
+        else: # language
+            self.__update_language(key) 
+    def __set_tabs(self):
+        for tab in self.ui_strings["tabs"]:
+            tab_object = ttk.Frame(self.tab_notebook)
+            subframes = {}
+            for frame in tab_object["frames"]:
+                frame_object = ttk.LabelFrame(master = tab_object, text=frame["name"])
+                strings = frame["strings"]
+                subframes = {frame["name"]: (frame_object, strings)}
+            self.tab_notebook.add(tab_object, text=tab["name"])
+            self.tabs[tab["name"]] = subframes
+    def __set_each_tab_layout(self):
+        for tab in self.tabs.items():
+            name, frames = tab
+            self.__set_frames(name, frames, mode="set")
+    def __set_frames(self, tabname, Frames, mode:Literal["set", "update"]="set"):
+        if tabname == "File":
+            self.__tab_File(Frames, mode=mode)
+        elif tabname =="Section":
+            self.__tab_Section(Frames, mode=mode)
+        elif tabname == "Imposition":
+            self.__tab_Imposition(Frames, mode=mode)
+        elif tabname == "Printing Marks":
+            self.__tab_PrintingMarks(Frames, mode=mode)
+        elif tabname == "Utils":
+            self.__tab_Utils(Frames, mode=mode)
+
+    def __tab_File(self, Frames, mode:Literal["set", "update"] = "set"):
+        # Manuscript frame
+        f_name0, frame0 = Frames[0]
+        frame_manuscirpt, strings_manuscript = frame0
+        tk_strings_manuscirpt = [tk.StringVar()] * len(strings_manuscript)
+        for i, tkstring in enumerate(tk_strings_manuscirpt):
+            tkstring.set(strings_manuscript[i])
+         
+        entry_file_path = ttk.Entry()
+        button_file_search = ttk.Button(text ="...", command=)
+
+        #File list frame
+        frame_file_list = ttk.Frame(frame_manuscirpt)
+        files_scroll_y = ttk.Scrollbar(frame_file_list)
+        files_scroll_x = ttk.Scrollbar(frame_file_list) 
+        tree_column = [tk_strings_manuscirpt[0], tk_strings_manuscirpt[1]] # index, name
+        treeview_files_list = ttk.Treeview(frame_file_list, columns=tree_column, display_columns=tree_column)
+        # pakcing in subframe "frame_file_list"
+        treeview_files_list.pack(side=tk.LEFT, expand=tk.YES, fill=tk.BOTH, anchor=tk.W)
+        files_scroll_y.pack(side=tk.RIGHT , expand=tk.YES, fill=tk.Y, anchor=tk.E )
+        files_scroll_x.pack(side=tk.BOTTOM , expand=tk.YES, fill=tk.x, anchor=tk.S )
+
+
+        button_file_up = ttk.Button(image = , command = )
+        button_file_down = ttk.Button(image = , command = )
+        button_file_delete = ttk.Button(image = , command = )
+        button_file_sort = ttk.Button(image = , command = )
+        button_file_clear = ttk.Button(image = , command = )
+
+        self.frame_objects[f_name0]["Label"] = []
+        self.frame_objects[f_name0]["Entry"] = [entry_file_path]
+        self.frame_objects[f_name0]["Button"] = [
+                                                    button_file_search, 
+                                                    button_file_up,
+                                                    button_file_down,
+                                                    button_file_delete,
+                                                    button_file_sort,
+                                                    button_file_clear
+                                                ]
+        self.frame_objects[f_name0]["Treeview"] = [treeview_files_list]
+        self.frame_strings[f_name0] = tk_strings_manuscirpt
+
+        # File info
+        f_name1, frame1 = Frames[1]
+        frame_info, strings_info = frame1
+        
+        # Output frame
+        f_name2, frame2 = Frames[2]
+        frame_output, strings_output = frame2
+
+
+    def __tab_Section(self, Frames, mode:Literal["set", "update"] = "set"):
+        for Frame in Frames:
+            name, frame_ob = Frame
+            Frame_tk, strings = frame_ob
+        pass
+    def __tab_Imposition(self, Frames, mode:Literal["set", "update"] = "set"):
+        for Frame in Frames:
+            name, frame_ob = Frame
+            Frame_tk, strings = frame_ob
+        pass
+    def __tab_PrintingMarks(self, Frames, mode:Literal["set", "update"] = "set"):
+        for Frame in Frames:
+            name, frame_ob = Frame
+            Frame_tk, strings = frame_ob
+        pass
+    def __tab_Utils(self, Frames, mode:Literal["set", "update"] = "set"):
+        for Frame in Frames:
+            name, frame_ob = Frame
+            Frame_tk, strings = frame_ob
+        pass
+
+    def __load_setting(self):
+        pass
+    def __save_setting(self):
+        pass
+    def __update_language(self, language:str):
+        pass
 
     def initiate_window(self):
         self.window.winfo_height
@@ -309,7 +461,7 @@ class Booklet:
         sub_window.title(title)
         sub_window.resizable(False, True)
 
-        self.icon_setting(sub_window)
+        self.__icon_setting(sub_window)
 
         if not hasattr(text, "__iter__"):
             text = [text]
@@ -367,7 +519,7 @@ class Booklet:
         else:
             sub_window.resizable(False, False)
 
-        self.icon_setting(sub_window)
+        self.__icon_setting(sub_window)
 
         table = ttk.Treeview(sub_window, selectmode="browse", height=36)
         table.pack(fill="both")
@@ -385,50 +537,6 @@ class Booklet:
         for i, d in enumerate(data):
             table.insert(parent="", index="end", iid=i, values=d)
 
-    def initiate_menu(self):
-        # Help: About, Format, Tutorial, License, support
-        self.menu.add_cascade(label="Help", menu=self.menu_help)
-
-        about_window = partial(
-            self.popup_window,
-            text=data.about_text,
-            title="About",
-            tpadx=10,
-            tpady=2.5,
-            fix=False,
-        )
-        self.menu_help.add_command(label="About", command=about_window)
-
-        format_window = partial(
-            self.popup_window_table,
-            320,
-            480,
-            data.format_head,
-            data.format_table,
-            "Paper Format",
-            30,
-            2.5,
-            False,
-        )
-        self.menu_help.add_command(label="Paper Format", command=format_window)
-        self.menu_help.add_command(
-            label="Tutorial", command=partial(open_url, self.url_tutorial)
-        )
-        self.menu_help.add_command(
-            label="Source", command=partial(open_url, self.url_source)
-        )
-
-        license = partial(
-            self.popup_window,
-            text=data.license,
-            title="License",
-            tpadx=10,
-            tpady=0,
-            fix=False,
-            scroll=True,
-        )
-
-        self.menu_help.add_command(label="License", command=license)
 
     def genbutton(self, row, column, width, height, padding, columnspan=1):
         self.Frame_button = ttk.Frame(
@@ -450,8 +558,57 @@ class Booklet:
 
         self.Frame_button.grid(row=row, column=column, columnspan=columnspan)
 
-    # UI
-    # -- Tab Basic
+    # UI: NEW
+    # -- toolbox
+    def initiate_toobox(self):
+        pass
+
+    # -- Tab
+    def fileio_tab(self):
+        tab_string = self.language_pack["tab"]["fileio"]
+        title = tab_string["title"]
+        self.file_input_frame()
+        self.file_output_frame()
+        pass
+    def section_tab(self):
+        pass
+    def imposition_tab(self):
+        pass
+    def printingMark_tab(self):
+        pass
+    def utils_tab(self):
+        pass
+    
+    # ---- Frame
+    # fileio_tab: subframes
+    def file_input_frame(self, strings):
+        pass
+    def file_output_frame(self, strings):
+        pass
+    # section_tab: subframes
+
+    # imposition_tab: subframes
+    def book_imposition_frame(self, strings): # Imposition Template feature
+        pass
+    def repeat_imposition_frame(self, strings): # Repetition Template feature
+        pass
+    # printingMark_tab: subframes
+    def printing_marks_frame(self, strings):
+        pass
+
+    # utils_tab: subframes
+    def to_image_frame(self):
+         pass
+    def duplex_frame(self):
+        pass
+    def note_frame(self):
+        pass
+    
+    # Event handlers
+    def event_(self):
+        pass
+    
+    # Below: old codes
     def basic_inputbox(
         self, row, column, padx, pady, width, height, relief, padding, entry_width=41
     ):
@@ -465,8 +622,6 @@ class Booklet:
             padding=padding,
         )
 
-        # self.input_text = ttk.Label(self.Frame_input, text="Manuscript", justify=tk.LEFT, anchor='w')
-        # self.input_text.grid(row=0, column=0, sticky = tk.W, padx =3)
         self.input_entry = ttk.Entry(self.Frame_input, width=entry_width)
         self.input_button = ttk.Button(
             self.Frame_input,
@@ -1535,7 +1690,7 @@ class Booklet:
         # self.pagerange_var.set(text)
         vaild = True
 
-        if text == "" or text == None:
+        if text == "" or text is not None:
             return True
 
         initial_value = text[0]
@@ -1679,7 +1834,7 @@ class Booklet:
                 child.config(state=state)
 
     def __int_validation(self, value):
-        if value == "" or value == None:
+        if value == "" or value is not None:
             return True
         if "-" in value:
             return False
@@ -1693,7 +1848,7 @@ class Booklet:
         print("Please enter an integer value")
 
     def __layout_validation(self, value, stored_value, event):  # focusing in
-        if value == "" or value == None:
+        if value == "" or value is not None:
             return True
         if "-" in value:
             return False
@@ -1733,7 +1888,7 @@ class Booklet:
         sub_window = tk.Toplevel(self.window)
         sub_window.title(f"{self.filename.get()}")
 
-        self.icon_setting(sub_window)
+        self.__icon_setting(sub_window)
 
         progress_length = 2 * len(page_range) if impositionbool else len(page_range)
         print("Pro_length:", progress_length)
@@ -1940,6 +2095,150 @@ class Booklet:
         # self.window.wait_window(sub_popup)
 
         return 0
+
+
+# Application
+
+
+#    booklet_ui = UI()
+#    booklet_ui.set_language()
+#    booklet_ui.set_layout()
+#    booklet_ui.execute()
+
+class UI(tk.Tk):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.call("source", resources_path(data.TK_THEME, data.PATH_RESOURCE))
+        self.call("set_theme", "light")
+        self.title(APP_NAME)
+
+        self.settings = self.__load_settings()
+        self.ui_texts = self.__load_ui_texts()
+
+        self.tool_bar = ToolBar(self)
+        self.configure(menu=self.tool_bar)
+        # Tabs
+        self.tab_notebook = ttk.Notebook(self)
+        self.tabs = [
+            Files(self.tab_notebook).set_ui_texts(self.ui_texts["Files"]),
+            Section(self.tab_notebook).set_ui_texts(self.ui_texts["Section"]),
+            Imposition(self.tab_notebook).set_ui_texts(self.ui_texts["Imposition"]),
+            PrintingMark(self.tab_notebook).set_ui_texts(self.ui_texts["Printing Marks"]),
+            Utils(self.tab_notebook).set_ui_texts(self.language_code)
+        ]
+        for tab in self.tabs:
+            self.tab_notebook.add(tab , tab.ui_texts["name"])
+    def set_language(self, code:str='en'): # lanuage code
+        self.language_code = code
+    def set_resources_datas(self, urls:dict, images:dict, mics:dict, language_code:str="en"):
+
+        self.language_code = language_code
+        pass
+    def locating_layout(self):
+        pass
+    def execute(self):
+        self.mainloop()
+    def __load_ui_texts(self):
+        lang_code = self.settings["language"]
+    def __load_settings(self):
+        pass
+
+# ToolBar
+class ToolBar(tk.Menu):
+    def __init__(self, parent, *args, **kwargs):
+        pass
+
+# Frame in Tabs
+# essential routine: localization
+#   All frame must provide 'set' and 'update' routine of its ui texts with the given lanugage arguments.
+class Files(tk.Frame):
+    name = "File"
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.parent = parent
+        self.ui_texts = parent.ui_texts[self.name]
+        # all the strings in this stage will be temporary value
+        # real value will be set in `set_ui_texts` method.
+        self.strings=[]
+
+        # Layout elements
+        self.search_file = ttk.Entry(self)
+        self.search_button = ttk.Button(self)
+        
+        self.files = ttk.Frame(self)
+        self.selected_files = ttk.Treeview(self.files)
+        self.selected_files_scroll_y = ttk.Scrollbar(self.files)
+        self.selected_files_scroll_x = ttk.Scrollbar(self.files)
+
+        self.modulate_files_up = ttk.Button(self)
+        self.modulate_files_down = ttk.Button(self)
+        self.modulate_files_delete = ttk.Button(self)
+        self.modulate_files_delete_all = ttk.Button(self)
+        self.modulate_files_sort = ttk.Button(self)
+
+
+        # Locate layout elements
+        self.search_file.grid(row=0, column=0)
+        self.search_button.grid(row=0, column=1, columnspan=2)
+        self.files.grid(row=1, column=0, rowspan=3)
+
+        self.modulate_files_up.grid(row = 1, column=1)
+        self.modulate_files_down.grid(row = 2, column=1)
+        self.modulate_files_delete.grid(row = 3, column=1)
+        self.modulate_files_delete_all.grid(row= 3 , column=2)
+        self.modulate_files_sort.grid(row=1, column=2, rowspace=2)
+
+
+    def set_ui_texts(self, string_pack):
+        strings = string_pack["strings"].values()
+        for value, st in izip(self.strings, strings):
+            if isinstance(value, tk.StringVar):
+                value.set(st)
+        # Additional set for non-StringVar() texts.
+
+    def update_ui_language(self, string_pack):
+        self.set_ui_texts(string_pack)
+
+class Section(tk.Frame):
+    name = "Section"
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.parent = parent
+
+    def update_ui_language(**kwargs):
+        pass
+class Imposition(tk.Frame):
+    name = "Imposition"
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.parent = parent
+
+    def update_ui_language(**kwargs):
+        pass
+
+class PrintingMark(tk.Frame):
+    name = "Printing Marks"
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.parent = parent
+
+    def update_ui_language(**kwargs):
+        pass
+
+class Utils(tk.Frame):
+    name = "Utils"
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.parent = parent
+
+    def update_ui_language(**kwargs):
+        pass
+
+# Independent Frame
+class ProgressBar(tk.Frame):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.parent = parent
 
 
 if __name__ == "__main__":

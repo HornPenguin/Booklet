@@ -1,0 +1,122 @@
+language: ko
+
+toolbar:
+  menu1 : 
+    text: "도움말"
+    submenu:
+      - about: "정보"
+      - license: "이용허락"
+      - source: "소스코드"
+  menu2 :
+    text: "참고"
+    submenu:
+      - tutorial : "이용 안내"
+      - paper-format: "종이 크기"
+      - paper-fold: "종이 접선"
+  menu3 :
+    text: "설정"
+    submenu:
+      - load: "불러오기"
+      - export: "저장"
+  menu4 :
+    text: "언어"
+
+# Tab
+tabs:
+  - name: "파일"
+    frames:
+      - name: "원고"
+        strings:
+          - path: "경로"
+          - title: "제목"
+          - author: "저자(들)"
+          - pages: "쪽수"
+          - format: "크기"
+      - name: "출력"
+        strings:
+          - file-name: "파일 이름"
+          - merge: "병합"
+          - total-page: "총 쪽수"
+          - split-per: "쪽수 별 분할" 
+  - name: "대수"
+    frames:
+      - name: "표준"
+        strings:
+          - onoff: "활성/비활성"
+          - pages_per: "대수별 쪽수"
+          - paper-format: "종이 크기"
+          - custom-format: "사용자 정의 크기"
+          - page-range: "쪽수 범위"
+          - blank-pages: "빈 쪽"
+      - name: "사용자 정의"
+        strings:
+          - onoff: "활성/비활성"
+          - pages-per: "대수별 쪽수"
+          - layout: "배열"
+          - page-order-front: "쪽 순서, 앞쪽"
+          - fold-sequence: "접-순서"
+          - axis: "축"
+          - split: "분할"
+          - order: "순서"
+          - mv: "M/V"
+          - validate: "검증"
+  - name: "터잡기"
+    frames:
+      - name: "책"
+        strings:
+          - onoff: "활성/비활성"
+          - layout: "배열"
+          - collection-mark: "대수 순서"
+          - gap: "간격"
+          - fold-line: "접선"
+          - fold-gap: "접 간격"
+          - paper-thickness: "종이 두께"
+      - name: "반복 인쇄"
+        strings:
+          - onoff: "활성/비활성"
+          - layout: "배열"
+          - fit: "맞춤"
+          - gap: "간격"
+          - gap-line: "사잇줄"
+          - paper-format: "종이 크기"
+          - page-format: "원고 크기"
+          - maximum-fill: "최빈 출력"
+  - name: "인쇄 표시자"
+    frames:
+      - name: 
+        strings:
+          - margin: "여백"
+          - crop: "재단선"
+          - trim: "도련선"
+          - registration: "Registration"
+          - cmyk: "CMYK"
+          - direction: "종이 방향"
+          - angle: "각"
+          - duplex: "양면 불균형 측정"
+  - name: "기타"
+    frames:
+      - name: "쪽을 그림으로"
+        stirngs:
+          - onoff: "활성/비활성"
+      - name: "양면 인쇄"
+        strings:
+          - onoff: "활성/비활성"
+          - translation: "평행 이동"
+          - rotation: "회전"
+          - preserve-dimension:  "종이 크기 유지"
+      - name: "공책"
+        strings:
+          - onoff: "활성/비활성"
+          - pages: "총 쪽수"
+          - numbering: "쪽 번호 표기"
+          - onoff: "활성/비활성"
+          - counts: "번호 대상"
+          - marks: "표시 쪽"
+          - locations: "표시 위치"
+          - align: "정렬"
+          - font: "폰트"
+          - size: "크기"
+
+# Misc UI
+
+Generate: "Generate"

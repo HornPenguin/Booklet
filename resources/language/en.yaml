@@ -1,0 +1,122 @@
+language: en
+
+toolbar:
+  menu1 : 
+    text: "Help"
+    submenu:
+      - about: "About"
+      - license: "License"
+      - source: "Source"
+  menu2 :
+    text: "Reference"
+    submenu:
+      - tutorial : "Tutorial"
+      - paper-format: "Paper format"
+      - paper-fold: "Paper fold"
+  menu3 :
+    text: "Settings"
+    submenu:
+      - load: "Load"
+      - export: "Save"
+  menu4 :
+    text: "Language"
+
+# Tab
+tabs:
+  - name: "File"
+    frames:
+      - name: "Manuscript"
+            strings:
+              - path: "Path"
+              - title: "Title"
+              - author: "Author(s)"
+              - pages: "Pages"
+              - format: "Format"
+      - name: "Output"
+        strings:
+          - file-name: "File name"
+          - merge: "Merge"
+          - total-page: "Total pages"
+          - split-per: "Split per" 
+  - name: "Section"
+    frames:
+      - name: "Standard"
+        strings:
+          - onoff: "On/Off"
+          - pages_per: "Pages per"
+          - paper-format: "Paper format"
+          - custom-format: "Custom format"
+          - page-range: "Page range"
+          - blank-pages: "Blank pages"
+      - name: "Custom"
+        strings:
+          - onoff: "On/Off"
+          - pages-per: "Pages per"
+          - layout: "Layout"
+          - page-order-front: "Page order front"
+          - fold-sequence: "Fold-sequence"
+          - axis: "Axis"
+          - split: "Split"
+          - order: "Order"
+          - mv: "M/V"
+          - validate: "Validate"
+  - name: "Imposition"
+    frames:
+      - name: "Book",
+        strings:
+          - onoff: "On/Off"
+          - layout: "Layout"
+          - collection-mark: "Collection mark"
+          - gap: "Gap"
+          - fold-line: "Fold line"
+          - fold-gap: "Fold gap"
+          - paper-thickness: "Paper thickness"
+      - name: "Repetition",
+        strings:
+          - onoff: "On/Off"
+          - layout: "Layout"
+          - fit: "Fit"
+          - gap: "Gap"
+          - gap-line: "Gap Line"
+          - paper-format: "Paper format"
+          - page-format: "Page format"
+          - maximum-fill: "Maximum fill"
+  - name: "Printing Marks"
+    frames:
+      - name: ,
+        strings:
+          - margin: "Margin"
+          - crop: "Crop"
+          - trim: "Trim"
+          - registration: "Registration"
+          - cmyk: "CMYK"
+          - direction: "Direction"
+          - angle: "Angle"
+          - duplex: "Duplex meausre"
+  - name: "Utils"
+    frames:
+      - name: "To image"
+        stirngs:
+          - onoff: "On/Off"
+      - name: "Duplex"
+        strings:
+          - onoff: "On/Off"
+          - translation: "Translation"
+          - rotation: "Rotation"
+          - preserve-dimension:  "Preserve dim"
+      - name: "Note"
+        strings:
+          - onoff: "On/Off"
+          - pages: "Pages"
+          - numbering: "Numbering"
+          - onoff: "On/Off"
+          - counts: "Counts"
+          - marks: "Marks"
+          - locations: "Location"
+          - align: "Align"
+          - font: "Font"
+          - size: "Size"
+
+# Misc UI
+
+Generate: "Generate"

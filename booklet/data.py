@@ -39,29 +39,37 @@ epi = (
     "github: https://github.com/HornPenguin/Booklet \nsupport: support@hornpenguin.com"
 )
 
+# File path
+PATH_RESOURCE = "resources"
+PATH_TEXT = PATH_RESOURCE+"\\text"
+PATH_SOUND = PATH_RESOURCE+"\\sound"
+PATH_LANGUAGE = PATH_RESOURCE+"\\language"
+PATH_IMAGE = PATH_RESOURCE+"\\image"
+
 
 # Resources
+TK_THEME = "azure.tcl" 
 # -Audio file
 beep_file_name = "beep_ping.wav"
-beep_file = resources_path(beep_file_name, "resouce\\sound")
+beep_file = resources_path(beep_file_name, PATH_SOUND)
 
 # -Images
 task_bar_icon = icon_path
 logo_width = logo_height = 70
-logo = Image.open(resources_path("logo.png", "resources")).resize(
+logo = Image.open(resources_path("logo.png", PATH_IMAGE)).resize(
     (logo_width, logo_height), Image.Resampling(1)
 )
 
 imposition_icon_names = ["imposition", "split"]
 imposition_iconpaths = {
-    name: resources_path(f"{name}.png", "resources") for name in imposition_icon_names
+    name: resources_path(f"{name}.png", PATH_IMAGE) for name in imposition_icon_names
 }
 imposition_icons = {
     name: Image.open(imposition_iconpaths[name]) for name in imposition_icon_names
 }
 printing_icon_names = ["proof", "cmyk", "registration", "trim"]
 printing_iconpaths = {
-    name: resources_path(f"{name}.png", "resources") for name in printing_icon_names
+    name: resources_path(f"{name}.png", PATH_IMAGE) for name in printing_icon_names
 }
 printing_icons = {
     name: Image.open(printing_iconpaths[name]) for name in printing_icon_names
@@ -69,10 +77,11 @@ printing_icons = {
 
 icons = {**imposition_icons, **printing_icons}
 
-# - Text
+# Regular expression
 re_get_ranges = r"([ ]{0,}\d+[ ]{0,}-{1,1}[ ]{0,}\d+[ ]{0,}|[ ]{0,}\d+[ ]{0,}[^,-])"
 re_check_permited_character = r"([^-,\d\s])+?"
 
+# Text
 about_text_path = resources_path("about", "resources\\text")
 license_text_path = resources_path("license", "resources\\text")
 url_text_path = resources_path("urls", "resources\\text")
@@ -89,7 +98,6 @@ with open(about_text_path, "r") as f:
     about_text += rlist
 
 license = []
-
 with open(license_text_path, "r") as f:
     license_list = f.readlines()
     rlist = list(filter(lambda x: x != "" and x != "\n", license_list))
