@@ -1,121 +1,145 @@
 language: en
 
-toolbar:
-  menu1 : 
-    text: "Help"
+# menubar
+menubar:
+  help:
+    name: "Help"
     submenu:
-      - about: "About"
-      - license: "License"
-      - source: "Source"
-  menu2 :
-    text: "Reference"
+      about: "About"
+      license: "License"
+      source: "Source"
+  reference:
+    name: "Reference"
     submenu:
-      - tutorial : "Tutorial"
-      - paper-format: "Paper format"
-      - paper-fold: "Paper fold"
-  menu3 :
-    text: "Settings"
+      tutorial : "Tutorial"
+      paper-format: "Paper format"
+      paper-fold: "Paper fold"
+  settings: 
+    name: "Settings"
     submenu:
-      - load: "Load"
-      - export: "Save"
-  menu4 :
-    text: "Language"
+      load: "Load"
+      save: "Save"
+  lanugage:
+    name: "Language"
+    submenu:
+      - "en"
+      - "ko"
 
 # Tab
 tabs:
-  - name: "File"
+  files:
+    name: "Files"
     frames:
-      - name: "Manuscript"
-            strings:
-              - path: "Path"
-              - title: "Title"
-              - author: "Author(s)"
-              - pages: "Pages"
-              - format: "Format"
-      - name: "Output"
+      manuscript:
+        name: "Manuscript"
         strings:
-          - file-name: "File name"
-          - merge: "Merge"
-          - total-page: "Total pages"
-          - split-per: "Split per" 
-  - name: "Section"
+          index: "index"
+          file-name: "file-name"
+      file_info:
+        name: "File Info"
+        strings:
+          path: "Path"
+          title: "Title"
+          author: "Author(s)"
+          pages: "Pages"
+          format: "Format"
+      output:
+        name: "Output"
+        strings:
+          file-name: "File name"
+           merge: "Merge"
+          total-page: "Total pages"
+          split-per: "Split per" 
+  section:
+    name: "Section"
     frames:
-      - name: "Standard"
+      standard:
+        name: "Standard"
         strings:
-          - onoff: "On/Off"
-          - pages_per: "Pages per"
-          - paper-format: "Paper format"
-          - custom-format: "Custom format"
-          - page-range: "Page range"
-          - blank-pages: "Blank pages"
-      - name: "Custom"
+          onoff: "On/Off"
+          pages_per: "Pages per"
+          paper-format: "Paper format"
+          custom-format: "Custom format"
+          page-range: "Page range"
+          blank-pages: "Blank pages"
+      custom:
+        name: "Custom"
         strings:
-          - onoff: "On/Off"
-          - pages-per: "Pages per"
-          - layout: "Layout"
-          - page-order-front: "Page order front"
-          - fold-sequence: "Fold-sequence"
-          - axis: "Axis"
-          - split: "Split"
-          - order: "Order"
-          - mv: "M/V"
-          - validate: "Validate"
-  - name: "Imposition"
+          onoff: "On/Off"
+          pages-per: "Pages per"
+          layout: "Layout"
+          page-order-front: "Page order front"
+          fold-sequence: "Fold-sequence"
+          axis: "Axis"
+          split: "Split"
+          order: "Order"
+          mv: "M/V"
+          validate: "Validate"
+  imposition:
+    name: "Imposition"
     frames:
-      - name: "Book",
+      book:
+        name: "Book&booklet"
         strings:
-          - onoff: "On/Off"
-          - layout: "Layout"
-          - collection-mark: "Collection mark"
-          - gap: "Gap"
-          - fold-line: "Fold line"
-          - fold-gap: "Fold gap"
-          - paper-thickness: "Paper thickness"
-      - name: "Repetition",
+          onoff: "On/Off"
+          layout: "Layout"
+          collection-mark: "Collection mark"
+          gap: "Gap"
+          fold-line: "Fold line"
+          fold-gap: "Fold gap"
+          paper-thickness: "Paper thickness"
+      repetition:
+        name: "Repetition"
         strings:
-          - onoff: "On/Off"
-          - layout: "Layout"
-          - fit: "Fit"
-          - gap: "Gap"
-          - gap-line: "Gap Line"
-          - paper-format: "Paper format"
-          - page-format: "Page format"
-          - maximum-fill: "Maximum fill"
-  - name: "Printing Marks"
-    frames:
-      - name: ,
-        strings:
-          - margin: "Margin"
-          - crop: "Crop"
-          - trim: "Trim"
-          - registration: "Registration"
-          - cmyk: "CMYK"
-          - direction: "Direction"
-          - angle: "Angle"
-          - duplex: "Duplex meausre"
-  - name: "Utils"
-    frames:
-      - name: "To image"
-        stirngs:
-          - onoff: "On/Off"
-      - name: "Duplex"
-        strings:
-          - onoff: "On/Off"
-          - translation: "Translation"
-          - rotation: "Rotation"
-          - preserve-dimension:  "Preserve dim"
-      - name: "Note"
-        strings:
-          - onoff: "On/Off"
-          - pages: "Pages"
-          - numbering: "Numbering"
-          - onoff: "On/Off"
-          - counts: "Counts"
-          - marks: "Marks"
-          - locations: "Location"
-          - align: "Align"
-          - font: "Font"
-          - size: "Size"
+          onoff: "On/Off"
+          layout: "Layout"
+          fit: "Fit"
+          gap: "Gap"
+          gap-line: "Gap Line"
+          paper-format: "Paper format"
+          page-format: "Page format"
+          maximum-fill: "Maximum fill"
+  printigmarks:
+      name: "Printing Marks"
+      frames:
+        printingmarks:
+          name: 
+          strings:
+            margin: "Margin"
+            crop: "Crop"
+            trim: "Trim"
+            registration: "Registration"
+            cmyk: "CMYK"
+            direction: "Direction"
+            angle: "Angle"
+            duplex: "Duplex meausre"
+  utils:
+      name: "Utils"
+      frames:
+        toimage:
+          name: "To image"
+          stirngs:
+            onoff: "On/Off"
+        duplex:
+          name: "Duplex"
+          strings:
+            onoff: "On/Off"
+            translation: "Translation"
+            rotation: "Rotation"
+            preserve-dimension:  "Preserve dim"
+        note:
+          name: "Note"
+          strings:
+            onoff: "On/Off"
+            pages: "Pages"
+            numbering: "Numbering"
+            onoff: "On/Off"
+            counts: "Counts"
+            marks: "Marks"
+            locations: "Location"
+            align: "Align"
+            font: "Font"
+            size: "Size"
 
 # Misc UI
 
