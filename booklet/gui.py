@@ -2156,26 +2156,36 @@ class Files(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.parent = parent
+        self.width = 0
+        if "width" in kwargs.keys():
+            self.width = kwargs["width"]
         self.ui_texts = parent.ui_texts[self.name]
         # all the strings in this stage will be temporary value
         # real value will be set in `set_ui_texts` method.
         self.strings=[]
 
         # Layout elements
-        self.search_file = ttk.Entry(self)
+        self.selected_file_name = tk.StringVar(value="")
+
+        self.search_file = ttk.Entry(self, textvariable= self.selected_file_name)
         self.search_button = ttk.Button(self)
         
         self.files = ttk.Frame(self)
-        self.selected_files = ttk.Treeview(self.files)
-        self.selected_files_scroll_y = ttk.Scrollbar(self.files)
-        self.selected_files_scroll_x = ttk.Scrollbar(self.files)
+        self.__set_files_treeview(
+            height =12, 
+            padding=2, 
+            columns=["index", "name"], 
+            selectmode="extended"
+            )
+        
 
         self.modulate_files_up = ttk.Button(self)
         self.modulate_files_down = ttk.Button(self)
-        self.modulate_files_delete = ttk.Button(self)
-        self.modulate_files_delete_all = ttk.Button(self)
+        self.modulate_files_delete = ttk.Button(self, command=self.__event_remove_selected_ones)
+        self.modulate_files_delete_all = ttk.Button(self, command=self.__event_remove_all)
         self.modulate_files_sort = ttk.Button(self)
-
+        self.__set_modulate_buttons()
+        # Event 
 
         # Locate layout elements
         self.search_file.grid(row=0, column=0)
@@ -2188,6 +2198,42 @@ class Files(tk.Frame):
         self.modulate_files_delete_all.grid(row= 3 , column=2)
         self.modulate_files_sort.grid(row=1, column=2, rowspace=2)
 
+    # subframe set
+    def __set_files_treeview(self, *args, **kwargs):
+        self.selected_files = ttk.Treeview(self.files, *args, **kwargs)
+        self.selected_files_scroll_y = ttk.Scrollbar(self.files)
+        self.selected_files_scroll_x = ttk.Scrollbar(self.files)
+
+        # locate
+        self.selected_files.pack(side = tk.LEFT, fill = tk.BOTH, anchor = tk.W)
+        self.selected_files_scroll_y.pack(side = tk.RIGHT, fill = tk.Y, anchor = tk.E)
+        self.selected_files_scroll_x.pack(side = tk.BOTTOM, fill = tk.X, anchor = tk.BOTTOM)
+
+        # Bind events
+        self.selected_files.config(
+            xscrollcommand = self.selected_files_scroll_x.set,
+            yscrollcommand = self.selected_files_scroll_y.set
+            )
+        self.selected_files_scroll_x.config(command= self.selected_files.xview)
+        self.selected_files_scroll_y.config(command= self.selected_files.yview)
+    def __set_modulate_buttons_event(self):
+        self.selected_files.bind("<<TreeviewSelect>>", )
+        self.selected_files.bind("<ButtonRelease-1>", self.__event_file_selection)
+
+
+    def __add_new_file(self, event=None):
+        
+
+    def __event_file_selection(self, event=None):
+        self.selected_file_name.set()
+        self.search_file.delete(0, tk.END)
+        self.search_file.
+    def __event_remove_all(self, event=None):
+        for file in self.selected_files.get_children():
+            self.selected_files.delete(file)
+    def __event_remove_selected_ones(self, event=None):
+        for file in self.selected_files.selection():
+            self.selected_files.delete(file)
 
     def set_ui_texts(self, string_pack):
         strings = string_pack["strings"].values()
