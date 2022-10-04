@@ -28,6 +28,8 @@
 
 from __future__ import annotations
 
+import os
+
 from PIL import Image
 
 from booklet.utils.misc import resources_path
@@ -40,11 +42,12 @@ epi = (
 )
 
 # File path
+
 PATH_RESOURCE = "resources"
-PATH_TEXT = PATH_RESOURCE+"\\text"
-PATH_SOUND = PATH_RESOURCE+"\\sound"
-PATH_LANGUAGE = PATH_RESOURCE+"\\language"
-PATH_IMAGE = PATH_RESOURCE+"\\image"
+PATH_TEXT = os.path.join(PATH_RESOURCE,"text")
+PATH_SOUND = os.path.join(PATH_RESOURCE,"sound")
+PATH_LANGUAGE = os.path.join(PATH_RESOURCE,"language")
+PATH_IMAGE = os.path.join(PATH_RESOURCE,"image")
 
 
 # Resources
@@ -82,9 +85,9 @@ re_get_ranges = r"([ ]{0,}\d+[ ]{0,}-{1,1}[ ]{0,}\d+[ ]{0,}|[ ]{0,}\d+[ ]{0,}[^,
 re_check_permited_character = r"([^-,\d\s])+?"
 
 # Text
-about_text_path = resources_path("about", "resources\\text")
-license_text_path = resources_path("license", "resources\\text")
-url_text_path = resources_path("urls", "resources\\text")
+about_text_path = resources_path("about", PATH_TEXT)
+license_text_path = resources_path("license", PATH_TEXT)
+url_text_path = resources_path("urls", PATH_TEXT)
 
 with open(url_text_path, mode="r") as f:
     git_repository = f.readline()

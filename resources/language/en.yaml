@@ -19,10 +19,10 @@ menubar:
     submenu:
       load: "Load"
       save: "Save"
-  lanugage:
+  language:
     name: "Language"
-    submenu:
-      - "en"
+    submenu: # It must be a list
+      - "en" 
       - "ko"
 
 # Tab
@@ -47,7 +47,7 @@ tabs:
         name: "Output"
         strings:
           file-name: "File name"
-           merge: "Merge"
+          merge: "Merge"
           total-page: "Total pages"
           split-per: "Split per" 
   section:
