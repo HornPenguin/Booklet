@@ -71,23 +71,31 @@ from booklet.utils.color import hex2cmyk, cmyk2rgb, rgb2hex
 #    booklet_ui.execute()
 
 class UI(tk.Tk):
-    def __init__(self, *args, language_code="en", font=None, **kwargs):
+    def __init__(self, *args, language_code="en", font=None, width=650, height=500, **kwargs):
         super().__init__(*args, **kwargs)
+        self.width = width
+        self.height = height
         self.call("source", resources_path(data.TK_THEME, data.PATH_RESOURCE))
         self.call("set_theme", "light")
         self.title(APP_NAME)
         self.language_code = language_code
         self.ui_texts = self.__load_ui_texts()
-        
+
         self.font = font if font != None else None 
 
         self.tool_bar = ToolBar(self, self.ui_texts["menubar"], "")
         super().configure(menu=self.tool_bar)
         
         # Tabs
-        self.tab_notebook = ttk.Notebook(self)
+        self.tab_notebook = ttk.Notebook(
+            self, 
+            width=self.width, 
+            height=int(self.height*0.8)
+            )
+        print(self.tab_notebook.winfo_width())
+        print(int(self.width))
         self.tabs = [
-            Files(self.tab_notebook, self.ui_texts["tabs"]["files"]), 
+            Files(self.tab_notebook, self.ui_texts["tabs"]["files"], {}, width=self.width, height=int(self.height*0.8)), 
             #Section(self.tab_notebook).set_ui_texts(self.ui_texts["Section"]),
             #Imposition(self.tab_notebook).set_ui_texts(self.ui_texts["Imposition"]),
             #PrintingMark(self.tab_notebook).set_ui_texts(self.ui_texts["Printing Marks"]),
@@ -100,6 +108,9 @@ class UI(tk.Tk):
 
         # Button
         self.button_generate = ttk.Button(self, command= self.execute_generation)
+
+        self.locating_layout()
+        self.geometry(f"{self.width}x{self.height}")
 
     def set_language(self, code:str='en'): # lanuage code
         self.language_code = code
@@ -141,7 +152,7 @@ class UI(tk.Tk):
 # ToolBar
 class ToolBar(tk.Menu):
     def __init__(self, parent, language_pack, resources, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(parent, *args, **kwargs)
         self.parent = parent
         self.ui_texts = language_pack
         self.resources = resources
@@ -216,26 +227,44 @@ class ToolBar(tk.Menu):
 
 class Manuscript(tk.LabelFrame):
     def __init__(self, parent, language_pack, resources, *args, **kwargs):
-        super().__init__(self, *args, **kwargs)
+        super().__init__(parent, *args, **kwargs)
         self.parent = parent
+        self.width = 0
+        self.height = 0
+        if "width" in kwargs.keys():
+            self.width = kwargs["width"]
+        if "height" in kwargs.keys():
+            self.height= kwargs["height"]
+        self.font= {"size":12}
+        print("Manuscript")
+        print("width:",self.width, "height:", self.height)
+
         self.ui_texts = language_pack
         self.resources = resources
         # UI strings
         super().config(text=self.ui_texts["name"])
         # Value variables
         self.selected_file_name = tk.StringVar(value="")
+        
 
         self.texts = []
         self.variables ={}
         self.frame= {
-            "search_file": ttk.Frame(self),
+            "search_file": ttk.Frame(self, width = self.width),
             "files": ttk.Frame(self),
             "buttons": ttk.Frame(self)
             }
 
         # Frame 1 search bar
-        self.selected_file = ttk.Entry(self.frame["search_file"], textvariable= self.selected_file_name)
-        self.search_button = ttk.Button(self.frame["search_file"])
+        self.selected_file = ttk.Entry(
+            self.frame["search_file"], 
+            textvariable= self.selected_file_name,
+            state="disabled")
+        button_width = int(self.width*0.1)
+        print("button:", button_width )
+        self.search_button = ttk.Button(
+            self.frame["search_file"], 
+            width=5  )
         self.__set_search_file_frame()
         
         # Frame 2 files list
@@ -256,7 +285,7 @@ class Manuscript(tk.LabelFrame):
 
         # Locate layout elements
 
-        self.frame["search_file"].grid(row = 0, column= 0, columnspan =2)
+        self.frame["search_file"].grid(row = 0, column= 0, columnspan =2, padx=10, pady=5)
         self.frame["files"].grid(row = 1, column=0 )
         self.frame["buttons"].grid(row = 1, column=1 )
 
@@ -264,13 +293,28 @@ class Manuscript(tk.LabelFrame):
     # Frame set
     def __set_search_file_frame(self):
         self.variables["selected_file"] = tk.StringVar(value="")
-        self.selected_file.configure(textvariable=self.variables["selected_file"])
-        self.search_button.configure(text="...")
+        characters_number = self.__get_character_width()
+        self.selected_file.configure(
+            textvariable=self.variables["selected_file"],
+            width = characters_number
+            )
+        self.search_button.configure(text="...", command=self.__method_open_file, width = 4)
 
-        self.selected_file.grid(row=0, column=0)
-        self.search_button.grid(row=0, column=1)
+        self.selected_file.grid(row=0, column=0, padx=2)
+        self.search_button.grid(row=0, column=1, padx=2)
     def __set_files_frame(self):
-        self.selected_files.configure(height =12, padding=2, columns=["index", "name"], selectmode="extended")
+        self.selected_files.configure(
+            height = 12, 
+            padding = 2, 
+            columns = ["index", "name"],
+            show = 'headings', 
+            selectmode = "extended"
+            )
+        self.selected_files.heading("index", text="index")
+        self.selected_files.heading("name", text="name")
+        self.selected_files.column("#0", minwidth=0, width=0)
+        self.selected_files.column("index", width=30)
+        self.selected_files.column("name", width=self.width -10)
         
         # Event assign
         self.selected_files.config(
@@ -281,13 +325,13 @@ class Manuscript(tk.LabelFrame):
         self.selected_files_scroll_y.config(command= self.selected_files.yview)
 
         # Locate 001 Choose one of them
-        self.selected_files.grid(row=0, column=0)
-        self.selected_files_scroll_x.grid(row=1, column=0)
-        self.selected_files_scroll_y.grid(row=0, column=1)
+        self.selected_files.grid(row=0, column=0, pady=3, padx=3, sticky="news")
+        self.selected_files_scroll_x.grid(row=1, column=0, pady=0, padx=0)
+        self.selected_files_scroll_y.grid(row=0, column=1, pady=0, padx=0)
         # Locate 002
-        self.selected_files.pack(side = tk.LEFT, fill = tk.BOTH, anchor = tk.W)
-        self.selected_files_scroll_y.pack(side = tk.RIGHT, fill = tk.Y, anchor = tk.E)
-        self.selected_files_scroll_x.pack(side = tk.BOTTOM, fill = tk.X, anchor = tk.S)
+        #self.selected_files.pack(side = tk.LEFT, fill = tk.BOTH, anchor = tk.W)
+        #self.selected_files_scroll_y.pack(side = tk.RIGHT, fill = tk.Y, anchor = tk.E)
+        #self.selected_files_scroll_x.pack(side = tk.BOTTOM, fill = tk.X, anchor = tk.S)
 
 
     def __set_modulate_buttons_frame(self):
@@ -311,8 +355,23 @@ class Manuscript(tk.LabelFrame):
         # Event assign
         self.selected_files.bind("<<TreeviewSelect>>", )
         self.selected_files.bind("<ButtonRelease-1>", self.__event_file_selection)
-
+    # cal
+    def __get_character_width(self):
+        point = self.font["size"]
+        pixel_width = int(self.width*0.8)
+        glyph_width = 3.5
+        return int(pixel_width/glyph_width)
     # Methods
+    def __method_open_file(self):
+        filename = filedialog.askopenfilename(
+            initialdir="~", title="Select Manuscript", filetypes=(("PDF", "*.pdf"),)
+        )
+        if filename != "":
+            self.variables["selected_file"].set(filename)
+            pass
+        else:
+            print(f"Not a vaild PDF file: file ({filename})")
+
     def __method_move_file(self):
         pass
     def __method_remove_selected_ones(self):
@@ -326,7 +385,7 @@ class Manuscript(tk.LabelFrame):
         return None
 class FileInfo(tk.LabelFrame):
     def __init__(self, parent, language_pack, *args, **kwargs):
-        super().__init__(self, *args, **kwargs)
+        super().__init__(parent, *args, **kwargs)
         self.parent = parent
         self.ui_texts = language_pack
 
@@ -337,7 +396,7 @@ class FileInfo(tk.LabelFrame):
         super().configure(text=self.name)
 class Output(tk.LabelFrame):
     def __init__(self, parent, language_pack,  *args, **kwargs):
-        super().__init__(self, *args, **kwargs)
+        super().__init__(parent, *args, **kwargs)
         self.parent = parent
         self.ui_texts = language_pack
 
@@ -350,27 +409,35 @@ class Files(tk.Frame):
         self.parent = parent
         self.width = 0
         self.height = 0
-        self.ui_texts = language_pack
-        self.name = self.ui_texts["name"]
-        self.resources = resources
-
         if "width" in kwargs.keys():
             self.width = kwargs["width"]
         if "height" in kwargs.keys():
-            self.height = kwargs["height"]
+            self.height= kwargs["height"]
+
+        print("Files")
+        print("width:", self.width, "hegight:", self.height)
+
+        self.ui_texts = language_pack
+        self.name = self.ui_texts["name"]
+        self.resources = resources
+        #temp
+        self.resources["manuscript"] = ""
+        self.resources["file-info"] = ""
+        self.resources["output"] = ""
+
 
         self.frames = [
-            Manuscript(self, self.ui_texts["manuscript"], self.resources["manuscript"]),
-            FileInfo(self, self.ui_texts["file_info"], self.resources["file-info"]),
-            Output(self, self.ui_texts["output"], self.resources["output"])
+            Manuscript(self, self.ui_texts["frames"]["manuscript"], self.resources["manuscript"], width=int(self.width/2), height=self.height),
+            #FileInfo(self, self.ui_texts["frames"]["file_info"], self.resources["file-info"]),
+            #Output(self, self.ui_texts["frames"]["output"], self.resources["output"])
         ]
 
         self.set_frame_layout()
         
     def set_frame_layout(self):
         self.frames[0].grid(row=0, column=0, rowspan=2)
-        self.frames[1].grid(row=0, column=1)
-        self.frames[2].grid(row=1, column=1)
+        #self.frames[1].grid(row=0, column=1)
+        #self.frames[2].grid(row=1, column=1)
 
     def __add_new_file(self, event=None):
         pass        
@@ -448,6 +515,5 @@ class ProgressBar(tk.Frame):
 
 if __name__ == "__main__":
     #font = tk.font.Font(family="Noto Serif", size=12)
-    ui = UI(language_code="ko")
-    ui.geometry("400x270")
+    ui = UI(language_code="en", width=650, height=500)
     ui.mainloop()

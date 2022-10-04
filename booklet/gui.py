@@ -372,7 +372,7 @@ class Booklet:
         # pakcing in subframe "frame_file_list"
         treeview_files_list.pack(side=tk.LEFT, expand=tk.YES, fill=tk.BOTH, anchor=tk.W)
         files_scroll_y.pack(side=tk.RIGHT , expand=tk.YES, fill=tk.Y, anchor=tk.E )
-        files_scroll_x.pack(side=tk.BOTTOM , expand=tk.YES, fill=tk.x, anchor=tk.S )
+        files_scroll_x.pack(side=tk.BOTTOM , expand=tk.YES, fill=tk.X, anchor=tk.S )
 
 
         button_file_up = ttk.Button(image = , command = )

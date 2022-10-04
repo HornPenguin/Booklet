@@ -1,5 +1,8 @@
 language: en
-
+font:
+  name:
+  path:
+  size:
 # menubar
 menubar:
   help:
@@ -24,7 +27,6 @@ menubar:
     submenu: # It must be a list
       - "en" 
       - "ko"
-
 # Tab
 tabs:
   files:
