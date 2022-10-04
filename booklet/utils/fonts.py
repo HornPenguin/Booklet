@@ -29,6 +29,8 @@
 from __future__ import annotations
 import platform, os, io
 
+import tkinter as tk
+from tkinter import ttk
 
 from PIL import Image, ImageDraw, ImageFont
 from fontTools import ttLib
@@ -57,13 +59,14 @@ font_paths = {  # Search path
     ],
 }
 
-
-def _get_font_info(file, path):
+def __get_font_info(file, path):
     def get_info(font):
+        # See https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6name.html
+        # or https://docs.microsoft.com/en-us/typography/opentype/spec/name#name-ids
         name_codes = [
             16,
             1,
-        ]  # See https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6name.html or https://docs.microsoft.com/en-us/typography/opentype/spec/name#name-ids
+        ]
         code = (
             name_codes[0]
             if font["name"].getDebugName(name_codes[0]) != None
@@ -100,43 +103,45 @@ def _get_font_info(file, path):
     return font_info_list
 
 
-font_directory = font_paths[platform_type]
+def get_system_fonts():
+    font_directory = font_paths[platform_type]
+    font_database = {}
+    tem_font_files = []
 
-font_database = {}
+    for font_direct in font_directory:
+        for i, (root, dirs, files) in enumerate(os.walk(font_direct)):
+            tem_font_files.append({"root": root, "files": files})
 
-tem_font_files = []
-for font_direct in font_directory:
-    for i, (root, dirs, files) in enumerate(os.walk(font_direct)):
-        tem_font_files.append({"root": root, "files": files})
+    for font_files in tem_font_files:
+        root = font_files["root"]
+        files = font_files["files"]
+        for file in files:
+            if os.path.splitext(file)[1] in font_formats:
+                font_file_path = pathjoin(root, file)
+                font_infos = __get_font_info(file, font_file_path)
+                for font_info in font_infos:
+                    if font_info[0] == None:
+                        continue
+                    font_name = font_info[0]
+                    suffixs = font_info[1]
+                    if font_name not in font_database.keys():
+                        font_database[font_name] = {suffixs: font_file_path}
+                    else:
+                        font_database[font_name][suffixs] = font_file_path
 
-for font_files in tem_font_files:
-    root = font_files["root"]
-    files = font_files["files"]
-    for file in files:
-        if os.path.splitext(file)[1] in font_formats:
-            font_file_path = pathjoin(root, file)
-            font_infos = _get_font_info(file, font_file_path)
-            for font_info in font_infos:
-                if font_info[0] == None:
-                    continue
-                font_name = font_info[0]
-                suffixs = font_info[1]
-                if font_name not in font_database.keys():
-                    font_database[font_name] = {suffixs: font_file_path}
-                else:
-                    font_database[font_name][suffixs] = font_file_path
 
-font_database = dict(sorted(font_database.items()))
+    return dict(sorted(font_database.items()))
 
 
 def get_font_file(name, suffix):
-    if name not in font_database.keys():
+    system_fonts = get_system_fonts()
+    if name not in system_fonts.keys():
         raise ValueError(f"Name is not in font_database")
-    if suffix not in font_database[name].keys():
-        raise ValueError(f"Invaild suffix: {font_database[name].keys()}")
+    if suffix not in system_fonts[name].keys():
+        raise ValueError(f"Invaild suffix: {system_fonts[name].keys()}")
 
     fontname = f"{name}-{suffix}"
-    filepath = font_database[name][suffix]
+    filepath = system_fonts[name][suffix]
 
     return fontname, filepath
 
@@ -144,8 +149,7 @@ def get_font_file(name, suffix):
 def get_font_file_without_s(name):
     name_font, suffix = name.split("-")
     return get_font_file(name_font, suffix)
-
-
+ 
 # https://stackoverflow.com/questions/4190667/how-to-get-width-of-a-truetype-font-character-in-1200ths-of-an-inch-with-python
 # by dawid
 def get_text_dim(string, font_file: str, size):
@@ -190,3 +194,20 @@ def cal_num_width(num_string, widths=None, simple=True, d_max=None):
             rep = num_string.count(str(i))
             length += rep * widths[i][0]
     return length
+
+
+# tktiner foont dialog
+
+class tkFontdialog(tk.Frame):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.parent = parent
+
+        self.system_fonts = font_database
+        self.fontfile:str
+        self.fonttype:str
+        self.size:float
+        self.italic:bool
+        self.bold:bool
+    
+        self.system_fonts_Combobox = ttk.Combobox(self, values=)
