@@ -65,7 +65,7 @@ button_files = [
 ]
 button_size = (30, 30)
 __temp_1 = { name: Image.open(PATH_ADD_THEME_BUTTONS/f"{name}.png").resize(button_size,Image.Resampling(1)) for name in button_files}
-__temp_2 = { f"{name}_toggled" : Image.open(PATH_ADD_THEME_BUTTONS/f"{name}_toggled.png").resize((30, 30),Image.Resampling(1)) for name in button_files }
+__temp_2 = { f"{name}_hover" : Image.open(PATH_ADD_THEME_BUTTONS/f"{name}_hover.png").resize((30, 30),Image.Resampling(1)) for name in button_files }
 
 button_icons_manuscripts = {**__temp_1, **__temp_2}
 # -Audio file
