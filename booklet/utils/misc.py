@@ -34,18 +34,15 @@ import tempfile
 
 import webbrowser
 
+def get_base_path():
+    try:
+        base_path = Path(sys._MEIPASS)
+    except:
+        base_path = Path(Path(".").resolve())
+    return base_path
 
 # system related routine
 def resources_path(rel_path: str, dir: str) -> str:
-    """Get absolute resource path to use temper directory.
-
-    :param rel_path: Relative path that used inside of codes
-    :type rel_path: str
-    :param dir: Subdirectory in project directory
-    :type dir: str
-    :return: Absolute path in execution environment for resource
-    :rtype: str
-    """
     # Get absolute path to resources, works for dev and for PyInstaller
     try:
         # PyInstaller creates a temp folder and stores path in _MEIPASS

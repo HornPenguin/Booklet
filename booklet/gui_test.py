@@ -71,7 +71,7 @@ from booklet.utils.color import hex2cmyk, cmyk2rgb, rgb2hex
 #    booklet_ui.execute()
 
 class UI(tk.Tk):
-    def __init__(self, *args, language_code="en", font=None, width=650, height=500, **kwargs):
+    def __init__(self, *args, language_code="en", font=None, width=650, height=500, resources=None,  **kwargs):
         super().__init__(*args, **kwargs)
         self.width = width
         self.height = height
@@ -80,6 +80,7 @@ class UI(tk.Tk):
         self.title(APP_NAME)
         self.language_code = language_code
         self.ui_texts = self.__load_ui_texts()
+        self.resources = resources
 
         self.font = font if font != None else None 
 
@@ -90,12 +91,11 @@ class UI(tk.Tk):
         self.tab_notebook = ttk.Notebook(
             self, 
             width=self.width, 
-            height=int(self.height*0.8)
+            height=int(self.height*0.7)
             )
-        print(self.tab_notebook.winfo_width())
-        print(int(self.width))
+        notebook_height = int(self.height*0.7)
         self.tabs = [
-            Files(self.tab_notebook, self.ui_texts["tabs"]["files"], {}, width=self.width, height=int(self.height*0.8)), 
+            Files(self.tab_notebook, self.ui_texts["tabs"]["files"], self.resources["Files"], width=self.width, height=notebook_height), 
             #Section(self.tab_notebook).set_ui_texts(self.ui_texts["Section"]),
             #Imposition(self.tab_notebook).set_ui_texts(self.ui_texts["Imposition"]),
             #PrintingMark(self.tab_notebook).set_ui_texts(self.ui_texts["Printing Marks"]),
@@ -124,7 +124,7 @@ class UI(tk.Tk):
     #    self.language_code = language_code
     #    pass
     def locating_layout(self):
-        self.tab_notebook.grid(row=0, column=0)
+        self.tab_notebook.grid(row=0, column=0, pady=10)
 
         self.button_generate.grid(row=2, column=0)
     def __load_ui_texts(self):
@@ -229,16 +229,18 @@ class Manuscript(tk.LabelFrame):
     def __init__(self, parent, language_pack, resources, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.parent = parent
+        #------------------------------------------
+        self.grid_propagate(True)
         self.width = 0
         self.height = 0
         if "width" in kwargs.keys():
             self.width = kwargs["width"]
         if "height" in kwargs.keys():
             self.height= kwargs["height"]
+        # Temperorary Zone
         self.font= {"size":12}
-        print("Manuscript")
-        print("width:",self.width, "height:", self.height)
 
+        #------------------------------------------
         self.ui_texts = language_pack
         self.resources = resources
         # UI strings
@@ -246,7 +248,6 @@ class Manuscript(tk.LabelFrame):
         # Value variables
         self.selected_file_name = tk.StringVar(value="")
         
-
         self.texts = []
         self.variables ={}
         self.frame= {
@@ -254,14 +255,17 @@ class Manuscript(tk.LabelFrame):
             "files": ttk.Frame(self),
             "buttons": ttk.Frame(self)
             }
+        # Funtional variables
+        self.file_list = [] # (filename, path, title, author, pages)
+        self.sorted = False
+        self.sort_type = True # True: ascend False: descend 
+
 
         # Frame 1 search bar
         self.selected_file = ttk.Entry(
             self.frame["search_file"], 
             textvariable= self.selected_file_name,
             state="disabled")
-        button_width = int(self.width*0.1)
-        print("button:", button_width )
         self.search_button = ttk.Button(
             self.frame["search_file"], 
             width=5  )
@@ -274,76 +278,79 @@ class Manuscript(tk.LabelFrame):
         self.__set_files_frame()
         
         # Frame 3 buttons
-        self.modulate_files_up = ttk.Button(self.frame["buttons"])
-        self.modulate_files_down = ttk.Button(self.frame["buttons"])
-        self.modulate_files_delete = ttk.Button(self.frame["buttons"])
-        self.modulate_files_delete_all = ttk.Button(self.frame["buttons"])
-        self.modulate_files_sort = ttk.Button(self.frame["buttons"])
+        self.modulate_files_up = tk.Button(self.frame["buttons"])
+        self.modulate_files_down = tk.Button(self.frame["buttons"])
+        self.modulate_files_delete = tk.Button(self.frame["buttons"])
+        self.modulate_files_delete_all = tk.Button(self.frame["buttons"])
+        self.modulate_files_sort = tk.Button(self.frame["buttons"])
         self.__set_modulate_buttons_frame()
         
         # Event assign 
 
         # Locate layout elements
-
-        self.frame["search_file"].grid(row = 0, column= 0, columnspan =2, padx=10, pady=5)
-        self.frame["files"].grid(row = 1, column=0 )
-        self.frame["buttons"].grid(row = 1, column=1 )
-
         
+        self.frame["search_file"].grid(row = 0, column= 0, columnspan =2, padx=5, pady=5, sticky=tk.W+tk.N)
+        self.frame["files"].grid(row = 1, padx=5, pady=5, column=0, sticky=tk.W+tk.N)
+        self.frame["buttons"].grid(row = 1, padx=5, pady=5, column=1, sticky=tk.N+tk.W)
+
     # Frame set
     def __set_search_file_frame(self):
         self.variables["selected_file"] = tk.StringVar(value="")
-        characters_number = self.__get_character_width()
+        #characters_number = self.__get_character_width()
         self.selected_file.configure(
             textvariable=self.variables["selected_file"],
-            width = characters_number
+            width = 45
             )
         self.search_button.configure(text="...", command=self.__method_open_file, width = 4)
 
-        self.selected_file.grid(row=0, column=0, padx=2)
+        self.selected_file.grid(row=0, column=0, padx=2, sticky=tk.W)
         self.search_button.grid(row=0, column=1, padx=2)
     def __set_files_frame(self):
         self.selected_files.configure(
-            height = 12, 
+            height = 8, 
             padding = 2, 
-            columns = ["index", "name"],
+            columns = ["n","files"],
+            displaycolumns=["n","files"],
             show = 'headings', 
             selectmode = "extended"
             )
-        self.selected_files.heading("index", text="index")
-        self.selected_files.heading("name", text="name")
-        self.selected_files.column("#0", minwidth=0, width=0)
-        self.selected_files.column("index", width=30)
-        self.selected_files.column("name", width=self.width -10)
+        self.selected_files.heading("n", text="n")
+        self.selected_files.column("n", width=10)
+        self.selected_files.heading("files", text="files")
+        self.selected_files.column("files", width=254, stretch=True)
+
+        self.frame["files"].configure(width=int(self.width), height=self.height)
+        self.frame["files"].grid_propagate(False)
         
         # Event assign
         self.selected_files.config(
             xscrollcommand = self.selected_files_scroll_x.set,
             yscrollcommand = self.selected_files_scroll_y.set
             )
-        self.selected_files_scroll_x.config(command= self.selected_files.xview)
-        self.selected_files_scroll_y.config(command= self.selected_files.yview)
+        self.selected_files_scroll_x.config(command= self.selected_files.xview, orient="horizontal")
+        self.selected_files_scroll_y.config(command= self.selected_files.yview, orient="vertical")
 
-        # Locate 001 Choose one of them
-        self.selected_files.grid(row=0, column=0, pady=3, padx=3, sticky="news")
-        self.selected_files_scroll_x.grid(row=1, column=0, pady=0, padx=0)
-        self.selected_files_scroll_y.grid(row=0, column=1, pady=0, padx=0)
-        # Locate 002
-        #self.selected_files.pack(side = tk.LEFT, fill = tk.BOTH, anchor = tk.W)
-        #self.selected_files_scroll_y.pack(side = tk.RIGHT, fill = tk.Y, anchor = tk.E)
-        #self.selected_files_scroll_x.pack(side = tk.BOTTOM, fill = tk.X, anchor = tk.S)
-
-
+        self.selected_files.grid(row=0, column=0, pady=3, ipadx=2, sticky="nw")
+        self.selected_files_scroll_x.grid(row=1, column=0, pady=0, padx=0, sticky=tk.W+tk.S)
+        self.selected_files_scroll_y.grid(row=0, column=1, pady=3, padx=0, sticky=tk.E+tk.N)
     def __set_modulate_buttons_frame(self):
+        images = self.resources
+        for key in images.keys():
+            images[key] = ImageTk.PhotoImage(images[key], master = self.frame["buttons"])
 
+        # Style settings:
+        self.modulate_files_up.configure(bd=0)
+        self.modulate_files_down.configure(bd=0)
+        self.modulate_files_delete.configure(bd=0)
+        self.modulate_files_delete_all.configure(bd=0)
+        self.modulate_files_sort.configure(bd=0)
         # Resource assign
-
-        self.modulate_files_up.grid(row = 0, column=0)
-        self.modulate_files_down.grid(row = 1, column=0)
-        self.modulate_files_delete.grid(row = 2, column=0)
-        self.modulate_files_delete_all.grid(row= 2 , column=1)
-        self.modulate_files_sort.grid(row=0, column=1, rowspan=2)
-
+        self.modulate_files_up.configure(image = images['up'])
+        self.modulate_files_down.configure(image = images['down'])
+        self.modulate_files_delete.configure(image = images['delete'])
+        self.modulate_files_delete_all.configure(image = images['delete_all'])
+        self.modulate_files_sort.configure(image = images['sort_up'])
+        
         # Method assign
         self.modulate_files_up.configure(command=self.__method_move_file)
         self.modulate_files_down.configure(command=self.__method_move_file)
@@ -351,35 +358,126 @@ class Manuscript(tk.LabelFrame):
         self.modulate_files_delete_all.configure(command=self.__method_remove_all)
         self.modulate_files_sort.configure(command=self.__method_sort)
 
+        # Events assign
+        self.modulate_files_up.bind("<Enter>", partial(self.__effect_hover_button, button_name="up", type_e=True))
+        self.modulate_files_up.bind("<Leave>", partial(self.__effect_hover_button, button_name="up", type_e=False))
+        self.modulate_files_down.bind("<Enter>", partial(self.__effect_hover_button, button_name="down", type_e=True))
+        self.modulate_files_down.bind("<Leave>", partial(self.__effect_hover_button, button_name="down", type_e=False))
+        self.modulate_files_delete.bind("<Enter>", partial(self.__effect_hover_button, button_name="delete", type_e=True))
+        self.modulate_files_delete.bind("<Leave>", partial(self.__effect_hover_button, button_name="delete", type_e=False))
+        self.modulate_files_delete_all.bind("<Enter>", partial(self.__effect_hover_button, button_name="delete_all", type_e=True))
+        self.modulate_files_delete_all.bind("<Leave>", partial(self.__effect_hover_button, button_name="delete_all", type_e=False))
+        self.modulate_files_sort.bind("<Enter>", partial(self.__effect_hover_button, button_name="sort", type_e=True))
+        self.modulate_files_sort.bind("<Leave>", partial(self.__effect_hover_button, button_name="sort", type_e=False))
+
+        # Locate
+        self.modulate_files_sort.grid(row=0, column=0, pady=2, sticky=tk.N)
+        self.modulate_files_up.grid(row = 1, column=0, pady=2, sticky=tk.N)
+        self.modulate_files_down.grid(row = 2, column=0, pady=2, sticky=tk.N)
+        self.modulate_files_delete.grid(row = 3, column=0, pady=2, sticky=tk.N)
+        self.modulate_files_delete_all.grid(row= 4 , column=0, pady=2, sticky=tk.N)
+        
     def __set_events(self):
         # Event assign
         self.selected_files.bind("<<TreeviewSelect>>", )
         self.selected_files.bind("<ButtonRelease-1>", self.__event_file_selection)
-    # cal
+    
+    # intertal_methods
     def __get_character_width(self):
-        point = self.font["size"]
-        pixel_width = int(self.width*0.8)
-        glyph_width = 3.5
-        return int(pixel_width/glyph_width)
+        #point = self.font["size"]
+        #pixel_width = int(self.width*0.8)
+        #glyph_width = 3.5
+        #return int(pixel_width/glyph_width)
+        return 25
+    def __get_file_infos(self, file_path):
+        if type(file_path) != str and not isinstance(file_path, Path):
+            raise TypeError(
+                f"Given path must be a string variable. Current:{type(file_path)}"
+            )
+        if type(file_path) == str:
+            file_path =Path(file_path)
+
+        if not file_path.is_file():
+            raise ValueError("File {file_path} does not exist.")
+        
+        name = file_path.name
+        pdf = pypdf.PdfFileReader(file_path)
+        title = None
+        authors = None
+        page_size = (None, None)
+        pages = len(pdf.pages)
+        if pages != 0:
+            pdfinfos = pdf.metadata
+            title = pdfinfos["/Title"] if "/Title" in pdfinfos.keys() else None
+            authors = pdfinfos["/Author"] if "/Author" in pdfinfos.keys() else None
+            page_size = [
+                float(pdf.getPage(0).mediaBox.width),
+                float(pdf.getPage(0).mediaBox.height),
+            ]
+        
+        return name, title, authors, page_size
+    
+    # Effects
+    def __effect_hover_button(self, event, button_name, type_e): # type_e = True: enter, leave
+        if button_name != "sort":
+            key = button_name + ("_toggled" if type_e else "") 
+        elif button_name == "sort":
+            key_name = button_name+("_up" if self.sort_type else "_down") 
+            key = key_name + ("_toggled" if type_e else "") 
+        
+        if button_name == "up":
+                button = self.modulate_files_up
+        elif button_name  == "down":
+            button = self.modulate_files_down
+        elif button_name == "delete":
+            button = self.modulate_files_delete
+        elif button_name == "delete_all":
+            button = self.modulate_files_delete_all
+        elif button_name == "sort":
+            button = self.modulate_files_sort
+        button.configure(image = self.resources[key])
     # Methods
     def __method_open_file(self):
-        filename = filedialog.askopenfilename(
+        filenames = filedialog.askopenfilenames(
             initialdir="~", title="Select Manuscript", filetypes=(("PDF", "*.pdf"),)
         )
-        if filename != "":
-            self.variables["selected_file"].set(filename)
-            pass
+        if len(filenames) != 0:
+            for filename in filenames:
+                name, title, authors, page_size = self.__get_file_infos(filename)
+                file ={
+                    "name": name,
+                    "path": filename,
+                    "title": title,
+                    "author": authors,
+                    "page_size": page_size
+                    }
+                self.file_list.append(file)
+
+                self.variables["selected_file"].set(filename)
+                # Add to treeview
+                self.selected_files.insert("", "end", values=(len(self.file_list),name))
         else:
             print(f"Not a vaild PDF file: file ({filename})")
 
-    def __method_move_file(self):
-        pass
+    def __method_move_file(self, direction=True):
+        if direction: # up
+            pass
+        else: # down
+            pass
+        self.sorted = False
     def __method_remove_selected_ones(self):
         pass
     def __method_remove_all(self):
         pass
-    def __method_sort(self):
-        pass
+    def __method_sort(self, sort_type=True):
+        if sort_type: # ascend
+            pass
+        else: # descend
+            pass
+        for i, file in enumerate(self.file_list):
+            self.selected_files.insert("", "end", values=(i+1, file["name"]))
+    
+        self.sorted = True
     @property
     def settings(self):
         return None
@@ -393,7 +491,7 @@ class FileInfo(tk.LabelFrame):
         # Value variables
     def set_ui_strings(self):
         # Title set 
-        super().configure(text=self.name)
+        super().configure(text=self.name)     
 class Output(tk.LabelFrame):
     def __init__(self, parent, language_pack,  *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
@@ -402,7 +500,7 @@ class Output(tk.LabelFrame):
 
         # UI strings
         # Value variables
-
+        pass
 class Files(tk.Frame):
     def __init__(self, parent, language_pack, resources, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
@@ -415,19 +513,19 @@ class Files(tk.Frame):
             self.height= kwargs["height"]
 
         print("Files")
-        print("width:", self.width, "hegight:", self.height)
+        print("width:", self.width, "hegiht:", self.height)
 
         self.ui_texts = language_pack
         self.name = self.ui_texts["name"]
         self.resources = resources
         #temp
-        self.resources["manuscript"] = ""
-        self.resources["file-info"] = ""
-        self.resources["output"] = ""
+        #self.resources["manuscript"] = ""
+        #self.resources["file-info"] = ""
+        #self.resources["output"] = ""
 
 
         self.frames = [
-            Manuscript(self, self.ui_texts["frames"]["manuscript"], self.resources["manuscript"], width=int(self.width/2), height=self.height),
+            Manuscript(self, self.ui_texts["frames"]["manuscript"], self.resources["manuscript"], width=int(self.width/2), height=int(0.75*self.height)),
             #FileInfo(self, self.ui_texts["frames"]["file_info"], self.resources["file-info"]),
             #Output(self, self.ui_texts["frames"]["output"], self.resources["output"])
         ]
@@ -435,7 +533,7 @@ class Files(tk.Frame):
         self.set_frame_layout()
         
     def set_frame_layout(self):
-        self.frames[0].grid(row=0, column=0, rowspan=2)
+        self.frames[0].grid(row=0, column=0, rowspan=2, pady = 5, padx=5)
         #self.frames[1].grid(row=0, column=1)
         #self.frames[2].grid(row=1, column=1)
 
@@ -506,6 +604,7 @@ class Utils(tk.Frame):
     def update_ui_language(**kwargs):
         pass
 
+import os
 # Independent Frame
 class ProgressBar(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
@@ -515,5 +614,10 @@ class ProgressBar(tk.Frame):
 
 if __name__ == "__main__":
     #font = tk.font.Font(family="Noto Serif", size=12)
-    ui = UI(language_code="en", width=650, height=500)
+    resources = {
+        "Files": {
+            "manuscript":  data.button_icons_manuscripts
+        },
+        }
+    ui = UI(language_code="en", width=650, height=500, resources= resources)
     ui.mainloop()

@@ -29,10 +29,11 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 
 from PIL import Image
 
-from booklet.utils.misc import resources_path
+from booklet.utils.misc import get_base_path, resources_path
 from booklet.utils.images import icon_path
 
 
@@ -42,42 +43,50 @@ epi = (
 )
 
 # File path
-
-PATH_RESOURCE = "resources"
-PATH_TEXT = os.path.join(PATH_RESOURCE,"text")
-PATH_SOUND = os.path.join(PATH_RESOURCE,"sound")
-PATH_LANGUAGE = os.path.join(PATH_RESOURCE,"language")
-PATH_IMAGE = os.path.join(PATH_RESOURCE,"image")
+BASE_PATH  = get_base_path()
+PATH_RESOURCE = BASE_PATH/"resources"
+PATH_TEXT = PATH_RESOURCE/"text"
+PATH_SOUND = PATH_RESOURCE/"sound"
+PATH_LANGUAGE = PATH_RESOURCE/"language"
+PATH_IMAGE = PATH_RESOURCE/"image"
+PATH_ADD_THEME = PATH_RESOURCE/"add_theme"
+PATH_ADD_THEME_BUTTONS = PATH_ADD_THEME/"buttons"
 
 
 # Resources
 TK_THEME = "azure.tcl" 
+button_files = [
+    "up",
+    "down",
+    "delete",
+    "delete_all",
+    "sort_up",
+    "sort_down"
+]
+button_size = (30, 30)
+__temp_1 = { name: Image.open(PATH_ADD_THEME_BUTTONS/f"{name}.png").resize(button_size,Image.Resampling(1)) for name in button_files}
+__temp_2 = { f"{name}_toggled" : Image.open(PATH_ADD_THEME_BUTTONS/f"{name}_toggled.png").resize((30, 30),Image.Resampling(1)) for name in button_files }
+
+button_icons_manuscripts = {**__temp_1, **__temp_2}
 # -Audio file
-beep_file_name = "beep_ping.wav"
-beep_file = resources_path(beep_file_name, PATH_SOUND)
+beep_file = PATH_SOUND/"beep_ping.wav"
 
 # -Images
 task_bar_icon = icon_path
 logo_width = logo_height = 70
-logo = Image.open(resources_path("logo.png", PATH_IMAGE)).resize(
+logo = Image.open(PATH_IMAGE/"logo.png").resize(
     (logo_width, logo_height), Image.Resampling(1)
 )
-
-imposition_icon_names = ["imposition", "split"]
-imposition_iconpaths = {
-    name: resources_path(f"{name}.png", PATH_IMAGE) for name in imposition_icon_names
+icon_images = {
+    "imposition": ["imposition", "split"],
+    "printing" : ["proof", "cmyk", "registration", "crop"]
 }
 imposition_icons = {
-    name: Image.open(imposition_iconpaths[name]) for name in imposition_icon_names
-}
-printing_icon_names = ["proof", "cmyk", "registration", "trim"]
-printing_iconpaths = {
-    name: resources_path(f"{name}.png", PATH_IMAGE) for name in printing_icon_names
+    name: Image.open(PATH_IMAGE/f"{name}.png") for name in icon_images["imposition"]
 }
 printing_icons = {
-    name: Image.open(printing_iconpaths[name]) for name in printing_icon_names
+    name: Image.open(PATH_IMAGE/f"{name}.png") for name in icon_images["printing"]
 }
-
 icons = {**imposition_icons, **printing_icons}
 
 # Regular expression
@@ -85,9 +94,9 @@ re_get_ranges = r"([ ]{0,}\d+[ ]{0,}-{1,1}[ ]{0,}\d+[ ]{0,}|[ ]{0,}\d+[ ]{0,}[^,
 re_check_permited_character = r"([^-,\d\s])+?"
 
 # Text
-about_text_path = resources_path("about", PATH_TEXT)
-license_text_path = resources_path("license", PATH_TEXT)
-url_text_path = resources_path("urls", PATH_TEXT)
+about_text_path = PATH_TEXT/"about"
+license_text_path = PATH_TEXT/"license"
+url_text_path = PATH_TEXT/"urls"
 
 with open(url_text_path, mode="r") as f:
     git_repository = f.readline()
@@ -107,6 +116,7 @@ with open(license_text_path, "r") as f:
     license += rlist
 
 
+# Paper-format
 format_head = ["Format", "width(mm)", "height(mm)"]
 format_table = [
     ("A3", 297, 420),
