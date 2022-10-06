@@ -33,6 +33,17 @@
 import collections
 
 # Utils
+def exchange(i, j, li):
+    mi = min(i,j)
+    ma = max(i,j)
+    mi_el = li[mi]
+    ma_el = li[ma]
+
+    l1 = li[:mi]
+    l2 = li[mi+1: ma]
+    l3 = li[ma+1:]
+
+    return l1 + [ma_el] + l2 + [mi_el] + l3
 
 def split_list(list1d: list, n: int, mode="l") -> list:
     if not isinstance(list1d, collections.Iterable):

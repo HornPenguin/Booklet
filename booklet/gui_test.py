@@ -62,6 +62,7 @@ from booklet.meta import APP_NAME
 from booklet.utils.misc import *
 from booklet.utils.conversion import mm2pts, pts2mm
 from booklet.utils.color import hex2cmyk, cmyk2rgb, rgb2hex
+from booklet.utils.matrix import exchange
 
 # UI--------------------------------------------------------------------------------------------
 
@@ -122,6 +123,7 @@ class UI(tk.Tk):
         for i, tab in enumerate(self.tabs):
             tab.update_ui_texts()
             self.tab_notebook.tab(i, tab.ui_texts["name"])
+
     #def set_resources_datas(self, urls:dict, images:dict, mics:dict, language_code:str="en"):
     #    self.language_code = language_code
     #    pass
@@ -265,7 +267,8 @@ class Manuscript(tk.LabelFrame):
             self.button_images[key] = ImageTk.PhotoImage(self.resources["images"][key], master = self.frame["buttons"])
 
         # Funtional variables
-        self.file_list = [] # (filename, path, title, author, pages)
+        self.file_list = [] 
+        self.focused_file = None
         self.sorted = False
         self.sort_type = True # True: ascend False: descend 
         self.focused_files_pre = []
@@ -304,6 +307,8 @@ class Manuscript(tk.LabelFrame):
         self.frame["buttons"].grid(row = 1, ipadx=0, padx=0, pady=2, column=1, sticky=tk.N+tk.W)
 
         self.main_frame.pack(padx=10, fill=tk.BOTH)
+    def update_ui_texts(self):
+        pass
     # Frame set
     def __set_search_file_frame(self):
         self.variables["selected_file"] = tk.StringVar(value="")
@@ -361,8 +366,8 @@ class Manuscript(tk.LabelFrame):
         self.modulate_files_sort.configure(image = self.button_images['sort_up'])
         
         # Method assign
-        self.modulate_files_up.configure(command=self.__method_move_file)
-        self.modulate_files_down.configure(command=self.__method_move_file)
+        self.modulate_files_up.configure(command=partial(self.__method_move_file, True))
+        self.modulate_files_down.configure(command=partial(self.__method_move_file, False))
         self.modulate_files_delete.configure(command=self.__method_remove_selected_ones)
         self.modulate_files_delete_all.configure(command=self.__method_remove_all)
         self.modulate_files_sort.configure(command=self.__method_sort)
@@ -386,11 +391,6 @@ class Manuscript(tk.LabelFrame):
         self.modulate_files_delete.grid(row = 3, column=0, pady=2, sticky=tk.N+tk.W)
         self.modulate_files_delete_all.grid(row= 4 , column=0, pady=2, sticky=tk.N+tk.W)
         
-    def __set_events(self):
-        # Event assign
-        self.selected_files.bind("<<TreeviewSelect>>", )
-        
-    
     # Intertal_methods
     #def __get_character_width(self):
     #    point = self.font["size"]
@@ -439,7 +439,8 @@ class Manuscript(tk.LabelFrame):
                 if not file in self.focused_files_pre:
                     self.focused_files_pre.append(file)
                     focused_file = file
-        return int(focused_file[1:])-1
+        if focused_file is None: return False
+        else: return self.selected_files.index(focused_file), focused_file
     # Effects
     def __effect_hover_button(self, event, button_name, type_e): # type_e = True: enter, leave
         if button_name != "sort":
@@ -461,11 +462,21 @@ class Manuscript(tk.LabelFrame):
         button.configure(image = self.button_images[key])
     # Methods
     def __method_focusing_file(self, event):
-        focused_index = self.__get_focused_file()
-        # Get file object
-        file = self.file_list[focused_index]
-        # Set entry  
-        self.variables["selected_file"].set(str(file["path"]))
+        focused_index, focused = self.__get_focused_file()
+        if focused:
+            # Get file object
+            print("index:", focused_index)
+            print("file_list:", [ item["name"] for item in self.file_list])
+            children = self.selected_files.get_children()
+            print("treeview:", children)
+            for item in children:
+                print("items:", self.selected_files.item(item))
+            file = self.file_list[focused_index]
+            # Set entry  
+            self.variables["selected_file"].set(str(file["path"]))
+            self.focused_file = file
+        else:
+            pass
     def __method_open_file(self):
         filenames = filedialog.askopenfilenames(
             initialdir="~", title="Select Manuscript", filetypes=(("PDF", "*.pdf"),)
@@ -480,35 +491,79 @@ class Manuscript(tk.LabelFrame):
                 self.variables["selected_file"].set(str(self.focused_file["path"]))
                 # Add to treeview
                 self.selected_files.insert("", "end", values=(len(self.file_list), file["name"]))
+                self.selected_files.get_children()
         else:
-            print(f"Not a vaild PDF file: file ({filename})")
-
+            print(f"Not a vaild PDF file: file ({filenames})")
     def __method_move_file(self, direction=True):
+        focused_index, focused = self.__get_focused_file()
+        if not focused:
+            return 1
+
         if direction: # up
-            pass
+            previous = self.selected_files.prev(focused)
+            if previous != "": # Not a top
+                self.selected_files.move(focused, self.selected_files.parent(focused), focused_index-1)
+                self.file_list = exchange(focused_index, focused_index-1, self.file_list)
+                to_index = focused_index-1
+            else: # Top
+                return 2
         else: # down
-            pass
+            next = self.selected_files.next(focused)
+            if next !="":
+                self.selected_files.move(focused, self.selected_files.parent(focused), focused_index+1)
+                self.file_list = exchange(focused_index, focused_index+1, self.file_list)
+                to_index = focused_index+1
+            else:
+                return 3
+        remains = []
+        for item in self.selected_files.get_children():
+            remains.append(self.selected_files.item(item)["values"])
+            self.selected_files.delete(item)
+        for i, value in enumerate(remains):
+            self.selected_files.insert('', 'end', values=(i+1, value[1]))
+        
+        self.selected_files.selection_add(self.selected_files.get_children()[to_index])
         self.sorted = False
     def __method_remove_selected_ones(self):
-        pass
+        selected_index= self.selected_files.selection()
+        non_selected_index = [self.selected_files.index(item) for item in self.selected_files.get_children() if item not in selected_index]
+        files_remained = []
+        for i in non_selected_index:
+            files_remained.append(self.file_list[i])
+        self.file_list = files_remained
+        for item in self.selected_files.selection():
+            self.selected_files.delete(item)
+        
+        remains = []
+        for item in self.selected_files.get_children():
+            remains.append(self.selected_files.item(item)["values"])
+            self.selected_files.delete(item)
+        for i, value in enumerate(remains):
+            self.selected_files.insert('', 'end', values=(i+1, value[1]))
     def __method_remove_all(self):
         for item in self.selected_files.get_children():
-            i = int(item[1:])-1
             self.selected_files.delete(item)
         self.file_list = []
         self.variables["selected_file"].set("")
     def __method_sort(self, sort_type=True):
+        item_names = [self.selected_files.item(item)["values"][1] for item in self.selected_files.get_children()]
+
         if sort_type: # ascend
-            pass
+            item_names = sorted(item_names)
+            self.file_list = sorted(self.file_list, key= lambda x: x['name'])
         else: # descend
-            pass
-        for i, file in enumerate(self.file_list):
-            self.selected_files.insert("", "end", values=(i+1, file["name"]))
-    
+            item_names = sorted(item_names, reverse=True)
+            self.file_list = sorted(self.file_list, key= lambda x: x['name'], reverse=True)
+        
+        for item in self.selected_files.get_children():
+            self.selected_files.delete(item)
+        for i, name in enumerate(item_names):
+            self.selected_files.insert('','end', values=(i+1, name))
+
         self.sorted = True
     @property
-    def settings(self):
-        return None
+    def focused_file(self):
+        return self.focused_file
 class FileInfo(tk.LabelFrame):
     def __init__(self, parent, language_pack, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
@@ -517,9 +572,13 @@ class FileInfo(tk.LabelFrame):
 
         # UI strings
         # Value variables
+    
     def set_ui_strings(self):
         # Title set 
         super().configure(text=self.name)     
+    def update_ui_texts(self):
+        pass
+
 class Output(tk.LabelFrame):
     def __init__(self, parent, language_pack,  *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
@@ -528,7 +587,9 @@ class Output(tk.LabelFrame):
 
         # UI strings
         # Value variables
+    def update_ui_texts(self):
         pass
+
 class Files(tk.Frame):
     def __init__(self, parent, language_pack, resources, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
@@ -603,7 +664,7 @@ class Section(tk.Frame):
         super().__init__(parent, *args, **kwargs)
         self.parent = parent
 
-    def update_ui_language(**kwargs):
+    def update_ui_texts(self):
         pass
 class Imposition(tk.Frame):
     name = "Imposition"
@@ -611,7 +672,7 @@ class Imposition(tk.Frame):
         super().__init__(parent, *args, **kwargs)
         self.parent = parent
 
-    def update_ui_language(**kwargs):
+    def update_ui_texts(self):
         pass
 
 class PrintingMark(tk.Frame):
@@ -620,7 +681,7 @@ class PrintingMark(tk.Frame):
         super().__init__(parent, *args, **kwargs)
         self.parent = parent
 
-    def update_ui_language(**kwargs):
+    def update_ui_texts(self):
         pass
 
 class Utils(tk.Frame):
@@ -629,7 +690,7 @@ class Utils(tk.Frame):
         super().__init__(parent, *args, **kwargs)
         self.parent = parent
 
-    def update_ui_language(**kwargs):
+    def update_ui_texts(self):
         pass
 
 import os
