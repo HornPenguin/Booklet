@@ -1,4 +1,4 @@
-language: ko
+language: kr
 font:
   name:
   path:
@@ -7,26 +7,26 @@ font:
 menubar:
   help:
     name: "도움말"
-    submenu:
+    subentries:
       about: "정보"
       license: "이용허락"
       source: "소스코드"
   reference:
     name: "참고"
-    submenu:
+    subentries:
       tutorial : "이용 안내"
       paper-format: "종이 크기"
       paper-fold: "종이 접기"
   settings: 
     name: "설정"
-    submenu:
+    subentries:
       load: "불러오기"
       save: "저장"
   language:
     name: "언어"
-    submenu: # It must be a list, and do not modify it
-      - "en" 
-      - "ko"
+    subentries: # It is recommeded to preserve language codes
+      en: "영어" 
+      kr: "한국어"
 # Tab
 tabs:
   files:
@@ -154,5 +154,5 @@ tabs:
 #
 ## Misc UI
 #
-Generate: "변환"
+generate: "변환"
 #

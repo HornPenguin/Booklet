@@ -7,28 +7,27 @@ font:
 menubar:
   help:
     name: "Help"
-    subentries:
+    command:
       about: "About"
       license: "License"
       source: "Source"
   reference:
     name: "Reference"
-    subentries:
+    command:
       tutorial : "Tutorial"
       paper-format: "Paper format"
       paper-fold: "Paper fold"
   settings: 
     name: "Settings"
-    subentries:
+    command:
       load: "Load"
       save: "Save"
   language:
     name: "Language"
-    subentries:
-      en: "en" 
-      kr: "kr"
-
-# Tab in Notebook 
+    command: # It must be a list
+      - "en" 
+      - "ko"
+# Tab
 tabs:
   files:
     name: "Files"
@@ -106,7 +105,7 @@ tabs:
           paper-format: "Paper format"
           page-format: "Page format"
           maximum-fill: "Maximum fill"
-  printingmarks:
+  printigmarks:
       name: "Printing Marks"
       frames:
         printingmarks:

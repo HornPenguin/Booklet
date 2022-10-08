@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import platform, os, sys
 import sys, os
+from tkinter.font import families
 sys.path.insert(0, os.path.abspath("."))
 from functools import partial
 import re
@@ -88,7 +89,7 @@ class UI(tk.Tk):
         self.font = font if font != None else None 
 
 
-        self.variables = {"button": tk.StringVar(value=self.ui_texts["Generate"])}
+        self.variables = {"button": tk.StringVar(value=self.ui_texts["generate"])}
         self.tool_bar = ToolBar(self, self.ui_texts["menubar"], "")
         super().configure(menu=self.tool_bar)
         
@@ -128,7 +129,7 @@ class UI(tk.Tk):
             tab.update_ui_texts(lang_pack)
             self.tab_notebook.tab(i, text = lang_pack["name"])
 
-        self.variables["button"].set(self.ui_texts["Generate"])
+        self.variables["button"].set(self.ui_texts["generate"])
     #def set_resources_datas(self, urls:dict, images:dict, mics:dict, language_code:str="en"):
     #    self.language_code = language_code
     #    pass
@@ -181,22 +182,22 @@ class ToolBar(tk.Menu):
             self.add_cascade(label=self.ui_texts[label]["name"], menu=menu)
 
     def __set_menu_help_labels(self):
-        labels = self.ui_texts["help"]["submenu"]
+        labels = self.ui_texts["help"]["command"]
         self.menus[0].add_command(label = labels["about"], command = self.about)
         self.menus[0].add_command(label = labels["license"], command = self.license)
         self.menus[0].add_command(label = labels["source"], command = self.source)
     def __set_menu_reference_labels(self):
-        labels = self.ui_texts["reference"]["submenu"]
+        labels = self.ui_texts["reference"]["command"]
         self.menus[1].add_command(label = labels["tutorial"], command = self.tutorial)
         self.menus[1].add_command(label = labels["paper-format"], command = self.paper_format)
         self.menus[1].add_command(label = labels["paper-fold"], command = self.paper_fold)
     def __set_menu_settings_labels(self):
-        labels = self.ui_texts["settings"]["submenu"]
+        labels = self.ui_texts["settings"]["command"]
         self.menus[2].add_command(label = labels["load"], command= self.load_setting)
         self.menus[2].add_command(label = labels["save"], command= self.save_setting)
 
     def __set_menu_language_labels(self):
-        labels = self.ui_texts["language"]["submenu"]
+        labels = self.ui_texts["language"]["command"]
         for language in labels:
             self.menus[3].add_command(
                 label = language, 
@@ -207,8 +208,8 @@ class ToolBar(tk.Menu):
         for i, menu in zip(range(0, len(self.menus)), self.ui_texts):
             self.entryconfigure(i, label = self.ui_texts[menu]["name"])
             if menu != "language":
-                for j in range(0, len(self.ui_texts[menu]["submenu"])):
-                    label_value = list(self.ui_texts[menu]["submenu"].values())[j]
+                for j in range(0, len(self.ui_texts[menu]["command"])):
+                    label_value = list(self.ui_texts[menu]["command"].values())[j]
                     self.menus[i].entryconfigure(j, label = label_value)
 
     
@@ -217,9 +218,9 @@ class ToolBar(tk.Menu):
     def license(self):
         pass
     def source(self):
-        open_url(self.resources["url"]["repository"])
+        open_url(self.resources["urls"]["repository"])
     def tutorial(self):
-        open_url(self.resources["url"]["tutorial"])
+        open_url(self.resources["urls"]["tutorial"])
     def paper_format(self):
         format = self.resources["data"]["paper-format"]
     def paper_fold(self):
@@ -783,8 +784,6 @@ class Files(tk.Frame):
 
     def update_ui_texts(self, string_pack):
         self.set_ui_texts(string_pack)
-
-
 class Section(tk.Frame):
     name = "Section"
     def __init__(self, parent, language_pack,  *args, **kwargs):
@@ -810,7 +809,6 @@ class PrintingMark(tk.Frame):
 
     def update_ui_texts(self):
         pass
-
 class Utils(tk.Frame):
     name = "Utils"
     def __init__(self, parent, language_pack,  *args, **kwargs):
@@ -820,6 +818,8 @@ class Utils(tk.Frame):
     def update_ui_texts(self):
         pass
 
+
+
 import os
 # Independent Frame
 class ProgressBar(tk.Frame):
@@ -827,13 +827,103 @@ class ProgressBar(tk.Frame):
         super().__init__(parent, *args, **kwargs)
         self.parent = parent
 
+#------------------------------
+# HP class tests
+from tkinter import Menu
+from booklet.ui import HPMenu, HPLabelFrame, HPFrame, HPNoteBook
+from booklet.ui.menubar import HPBooklet_Menu
+from collections.abc import Iterable
 
+class HPBooklet_UI(tk.Tk):
+    def __init__(
+            self, 
+            *args,
+            lang_code = "en",
+            resources = None,
+            **kwargs
+        ):
+        self.width = 0
+        self.height = 0
+        if "width" in kwargs.keys():
+            self.width = kwargs["width"]
+            del(kwargs["width"])
+        if "height" in kwargs.keys():
+            self.height = kwargs["height"]
+            del(kwargs["height"])
+
+        super().__init__(*args, **kwargs)
+        self.language_code = lang_code
+        self.resources = resources
+        
+        
+        self.call("source", resources_path(data.TK_THEME, data.PATH_RESOURCE))
+        self.call("set_theme", "light")
+        self.title(APP_NAME)
+
+        self.ui_texts = self.__load_ui_texts()
+
+        self.sub_elements ={} # Each keys must be same with language setting file key
+        self.sub_elemnts_direct = {} # Switching can be acheive by direct modification of tk.StringVar.
+        self.string_vars = {
+            "generate": tk.StringVar(value="")
+        }
+
+        # Import elements 
+        #   Frames, Notebooks ...
+        self.sub_elements["menubar"] = HPBooklet_Menu(
+                                                self, 
+                                                self,
+                                                self.ui_texts["menubar"], 
+                                                self.resources["menubar"]
+                                                )
+        super().configure(menu=self.sub_elements["menubar"])
+        self.sub_elements["tabs"] = HPNoteBook(
+                                            self, 
+                                            self.ui_texts["tabs"], 
+                                            self.resources["tabs"],
+                                            width=self.width, 
+                                            height=int(self.height*0.7)
+                                            )
+        #   Buttons, Labels
+        self.sub_elemnts_direct["generate"] = ttk.Button(self, textvariable=self.string_vars["generate"])
+
+        self.string_vars["generate"].set(self.ui_texts["generate"])
+        self.sub_elemnts_direct["generate"].pack()
+
+    def __load_ui_texts(self):
+        lang_path =resources_path(self.language_code+".yaml", data.PATH_LANGUAGE)
+        with open(lang_path, "r", encoding="utf-8") as lang:
+            return yaml.load(lang, yaml.FullLoader)
+    def pop_up(self, texts, images, width, height):
+        pass
+
+    def update_ui_texts(self, lang_code):
+        self.language_code = lang_code
+        self.ui_texts = self.__load_ui_texts()
+        keys = list(self.ui_texts.keys())[2:] # 0: language, 1: font settings
+        for i, key in enumerate(keys):
+            if isinstance(self.ui_texts[key], Iterable) and type(self.ui_texts[key]) != str:
+                self.sub_elements[key].update_ui_texts(self.ui_texts[key])
+            else:
+                self.string_vars[key].set(self.ui_texts[key])
+
+from booklet.ui.resources import resources
 if __name__ == "__main__":
     #font = tk.font.Font(family="Noto Serif", size=12)
-    resources = {
-        "Files": {
-            "manuscript": {"images": data.button_icons_manuscripts}
-            },
-        }
-    ui = UI(language_code="en", width=650, height=500, resources= resources)
-    ui.mainloop()
+    #resources = {
+    #    "Files": {
+    #        "manuscript": {"images": data.button_icons}
+    #        },
+    #    }
+    #ui = UI(language_code="en", width=650, height=500, resources= resources)
+    #ui.mainloop()
+    #resources["main"]["font"] = tk.font.Font(family="Noto Serif", size=12)
+    
+    HPbooklet = HPBooklet_UI(
+        lang_code = "en",
+        resources = resources,
+        width = 650,
+        height = 500
+        )
+    HPbooklet.mainloop()
+    
