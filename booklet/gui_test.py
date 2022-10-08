@@ -38,13 +38,15 @@ from typing import Literal
 
 # tkinter----------------------------------
 import tkinter as tk
+from tkinter import ttk
 from tkinter import filedialog
+from tkinter.colorchooser import askcolor
 
 if platform.system() != "Darwin":
-    from tkinter import ttk
+    from tkinter import Label, Button
 else:
-    import tkmacosx as ttk  # Mac OS specific module
-from tkinter.colorchooser import askcolor
+    from tkmacosx import Label, Button
+from tkinter import StringVar, IntVar, DoubleVar
 
 # 3rd parties----------------------------
 from PIL import Image, ImageTk
@@ -119,11 +121,14 @@ class UI(tk.Tk):
         self.language_code = code
         self.ui_texts = self.__load_ui_texts()
 
-        self.tool_bar.update_ui_texts()
+        self.tool_bar.update_ui_texts(self.ui_texts["menubar"])
+        
         for i, tab in enumerate(self.tabs):
-            tab.update_ui_texts()
-            self.tab_notebook.tab(i, tab.ui_texts["name"])
+            lang_pack = list(self.ui_texts["tabs"].values())[i]
+            tab.update_ui_texts(lang_pack)
+            self.tab_notebook.tab(i, text = lang_pack["name"])
 
+        self.variables["button"].set(self.ui_texts["Generate"])
     #def set_resources_datas(self, urls:dict, images:dict, mics:dict, language_code:str="en"):
     #    self.language_code = language_code
     #    pass
@@ -189,6 +194,7 @@ class ToolBar(tk.Menu):
         labels = self.ui_texts["settings"]["submenu"]
         self.menus[2].add_command(label = labels["load"], command= self.load_setting)
         self.menus[2].add_command(label = labels["save"], command= self.save_setting)
+
     def __set_menu_language_labels(self):
         labels = self.ui_texts["language"]["submenu"]
         for language in labels:
@@ -197,11 +203,14 @@ class ToolBar(tk.Menu):
                  command=partial(self.update_language, language)
                 )
 
-
-
     def set_ui_texts(self):
         for i, menu in zip(range(0, len(self.menus)), self.ui_texts):
-            self.entryconfigure(i, label = menu["name"])
+            self.entryconfigure(i, label = self.ui_texts[menu]["name"])
+            if menu != "language":
+                for j in range(0, len(self.ui_texts[menu]["submenu"])):
+                    label_value = list(self.ui_texts[menu]["submenu"].values())[j]
+                    self.menus[i].entryconfigure(j, label = label_value)
+
     
     def about(self):
         pass
@@ -220,7 +229,7 @@ class ToolBar(tk.Menu):
     def save_setting(self):
         self.parent.save_setting()
     def update_language(self, lang_code):
-        self.parent.update_language(lang_code)
+        self.parent.set_language(lang_code)
     def update_ui_texts(self, language_pack):
         self.ui_texts = language_pack
         self.set_ui_texts()
@@ -287,7 +296,6 @@ class Manuscript(tk.LabelFrame):
         # Frame 2 files list
         self.selected_files = ttk.Treeview(self.frame["files"])
         self.selected_files_scroll_y = ttk.Scrollbar(self.frame["files"])
-        self.selected_files_scroll_x = ttk.Scrollbar(self.frame["files"])
         self.__set_files_frame()
         
         # Frame 3 buttons
@@ -307,8 +315,10 @@ class Manuscript(tk.LabelFrame):
         self.frame["buttons"].grid(row = 1, ipadx=0, padx=0, pady=2, column=1, sticky=tk.N+tk.W)
 
         self.main_frame.pack(padx=10, fill=tk.BOTH)
-    def update_ui_texts(self):
-        pass
+    def update_ui_texts(self, language_pack):
+        self.ui_texts = language_pack
+        super().config(text=self.ui_texts["name"])
+        self.selected_files.heading("#2", text=self.ui_texts["strings"]["files"])
     # Frame set
     def __set_search_file_frame(self):
         self.variables["selected_file"] = tk.StringVar(value="")
@@ -332,7 +342,7 @@ class Manuscript(tk.LabelFrame):
             )
         self.selected_files.heading(" ", text=" ")
         self.selected_files.column(" ", width=10)
-        self.selected_files.heading("files", text="files")
+        self.selected_files.heading("files", text=self.ui_texts["strings"]["files"])
         self.selected_files.column("files", width=250, stretch=True)
 
         self.frame["files"].configure(width=int(self.width), height=self.height)
@@ -342,14 +352,11 @@ class Manuscript(tk.LabelFrame):
         self.selected_files.bind("<ButtonRelease-1>", self.__method_focusing_file)
 
         self.selected_files.config(
-            xscrollcommand = self.selected_files_scroll_x.set,
             yscrollcommand = self.selected_files_scroll_y.set
             )
-        self.selected_files_scroll_x.config(command= self.selected_files.xview, orient="horizontal")
         self.selected_files_scroll_y.config(command= self.selected_files.yview, orient="vertical")
 
         self.selected_files.grid(           row=0, column=0, pady=0, padx=0, sticky=tk.W+tk.N)
-        self.selected_files_scroll_x.grid(  row=1, column=0, pady=0, padx=0, sticky=tk.W+tk.S+tk.E)
         self.selected_files_scroll_y.grid(  row=0, column=1, pady=0, padx=0, sticky=tk.E+tk.N+tk.S)
     def __set_modulate_buttons_frame(self):
         # Style settings:
@@ -494,6 +501,8 @@ class Manuscript(tk.LabelFrame):
                 self.selected_files.get_children()
         else:
             print(f"Not a vaild PDF file: file ({filenames})")
+        
+        self.sorted = False
     def __method_move_file(self, direction=True):
         focused_index, focused = self.__get_focused_file()
         if not focused:
@@ -523,6 +532,7 @@ class Manuscript(tk.LabelFrame):
             self.selected_files.insert('', 'end', values=(i+1, value[1]))
         
         self.selected_files.selection_add(self.selected_files.get_children()[to_index])
+
         self.sorted = False
     def __method_remove_selected_ones(self):
         selected_index= self.selected_files.selection()
@@ -545,16 +555,24 @@ class Manuscript(tk.LabelFrame):
             self.selected_files.delete(item)
         self.file_list = []
         self.variables["selected_file"].set("")
-    def __method_sort(self, sort_type=True):
+
+        self.sorted = False
+    def __method_sort(self, event=None):
+        print("Sort")
+        print("Current State:", self.sorted)
+        print("Sort type:", "Ascend" if self.sort_type else "Dscend")
+
         item_names = [self.selected_files.item(item)["values"][1] for item in self.selected_files.get_children()]
 
-        if sort_type: # ascend
+        if self.sort_type: # ascend
             item_names = sorted(item_names)
             self.file_list = sorted(self.file_list, key= lambda x: x['name'])
+            self.sort_type = False
         else: # descend
             item_names = sorted(item_names, reverse=True)
             self.file_list = sorted(self.file_list, key= lambda x: x['name'], reverse=True)
-        
+            self.sort_type = True
+
         for item in self.selected_files.get_children():
             self.selected_files.delete(item)
         for i, name in enumerate(item_names):
@@ -562,31 +580,142 @@ class Manuscript(tk.LabelFrame):
 
         self.sorted = True
     @property
-    def focused_file(self):
+    def focused_file_info(self):
         return self.focused_file
 class FileInfo(tk.LabelFrame):
-    def __init__(self, parent, language_pack, *args, **kwargs):
+    def __init__(self, parent, language_pack, resources, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.parent = parent
-        self.ui_texts = language_pack
+        #------------------------------------------
+        self.grid_propagate(True)
+        self.width = 0
+        self.height = 0
+        if "width" in kwargs.keys():
+            self.width = kwargs["width"]
+        if "height" in kwargs.keys():
+            self.height= kwargs["height"]
+        # Temperorary Zone
+        self.font= {"size":12}
 
+        #------------------------------------------
+        self.ui_texts = language_pack
+        self.resources = resources
+        
         # UI strings
+        super().config(text=self.ui_texts["name"])
+        self.ui_texts_variables = {
+            "name": tk.StringVar(value=self._ui_texts["strings"]["name"]),
+            "path": tk.StringVar(value=self._ui_texts["strings"]["path"]),
+            "title": tk.StringVar(value=self._ui_texts["strings"]["title"]),
+            "authors" : tk.StringVar(value=self._ui_texts["strings"]["author"]),
+            "created_date": tk.StringVar(value=self._ui_texts["strings"]["created_date"]),
+            "mod_date": tk.StringVar(value=self._ui_texts["strings"]["mod_date"]),
+            "pages" : tk.StringVar(value=self._ui_texts["strings"]["pages"]),
+            "page_format": tk.StringVar(value=self._ui_texts["strings"]["page_format"]),
+        }
         # Value variables
-    
+        self.variables = {
+            "name": tk.StringVar(value=""), 
+            "path": tk.StringVar(value=""),
+            "title": tk.StringVar(value=""),
+            "authors": tk.StringVar(value=""),
+            "created_date": tk.StringVar(value=""),
+            "mod_date": tk.StringVar(value=""),
+            "pages": tk.StringVar(value=""),
+            "page_format_x": tk.DoubleVar(value=0.),
+            "page_format_y": tk.DoubleVar(value=0.)
+        }
+
+        # Frame
+
+        self.frame = {
+            "texts" : ttk.Frame(self),
+            "values" : ttk.Frame(self)
+        }
+
+        # Frame 1 "texts"
+        self.file_name = ttk.Label(self.frame["texts"])
+        self.file_path = ttk.Label(self.frame["texts"])
+        self.file_title = ttk.Label(self.frame["texts"])
+        self.file_author = ttk.Label(self.frame["texts"])
+        self.file_created_date = ttk.Label(self.frame["texts"])
+        self.file_mod_date = ttk.Label(self.frame["texts"])
+        self.file_pages = ttk.Label(self.frame["texts"])
+        self.file_page_format = ttk.Label(self.frame["texts"])
+        # Frame 2 "values"
+
+        # Locate
+        self.frame["texts"].grid(row=0, column=0, padx =5, pady=2)
+        self.frame["values"].grid(row=0, column=1, padx =5, pady=2)
+
+    def __set_text_frame(self):
+        pass
+    def __set_values_frame(self):
+        pass
     def set_ui_strings(self):
         # Title set 
-        super().configure(text=self.name)     
+        super().config(text=self.ui_texts["name"])
+        for variable, string in zip(self.ui_texts_variables, self.ui_texts["strings"]):
+            variable.set(string)
     def update_ui_texts(self):
         pass
-
 class Output(tk.LabelFrame):
-    def __init__(self, parent, language_pack,  *args, **kwargs):
+    def __init__(self, parent, language_pack, resources, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.parent = parent
         self.ui_texts = language_pack
 
+        #------------------------------------------
+        self.grid_propagate(True)
+        self.width = 0
+        self.height = 0
+        if "width" in kwargs.keys():
+            self.width = kwargs["width"]
+        if "height" in kwargs.keys():
+            self.height= kwargs["height"]
+        # Temperorary Zone
+        self.font= {"size":12}
+
+        #------------------------------------------
+        self.ui_texts = language_pack
+        self.resources = resources
+
         # UI strings
+        super().config(text=self.ui_texts["name"])
+        self.ui_texts_variables = {
+            "merge": tk.StringVar(value=""),
+            "total_pages": tk.StringVar(value=""),
+            "name": tk.StringVar(value="")
+        }
         # Value variables
+        self.variables = {
+            "output_path": tk.StringVar(value=""),
+            "name" : tk.StringVar(value=""),
+            "prefix" : tk.StringVar(value=""),
+            "suffix" : tk.StringVar(value="")
+        }
+
+        # Frame
+
+        self.frame = {
+            "merge": ttk.Frame(self),
+            "name" : ttk.Frame(self),
+            "output_path": ttk.Frame(self)
+        }
+
+        # Frame 1 "merge"
+        self.frame["merge"]
+        # Frame 2 "name"
+        self.frame["name"]
+        self.name_label = ttk.Label(self.frame["name"])
+        # Frame 3 "output_path"
+        self.frame["output_path"]
+        
+
+
+        self.frame["merge"].grid(row=0, column=0)
+        self.frame["name"].grid(row=1, column=0)
+        self.frame["output_path"].grid(row=2, column=0)
     def update_ui_texts(self):
         pass
 
@@ -600,9 +729,6 @@ class Files(tk.Frame):
             self.width = kwargs["width"]
         if "height" in kwargs.keys():
             self.height= kwargs["height"]
-
-        print("Files")
-        print("width:", self.width, "hegiht:", self.height)
 
         self.ui_texts = language_pack
         self.name = self.ui_texts["name"]
@@ -641,20 +767,21 @@ class Files(tk.Frame):
             self.selected_files.delete(file)
 
     def set_ui_texts(self, string_pack):
+        self.ui_texts = string_pack
         self.name = self.ui_texts["name"]
         strings =[]
-        if "strings" in string_pack.keys():
-            for st in string_pack["strings"]:
+        if "strings" in self.ui_texts.keys():
+            for st in self.ui_texts["strings"]:
                 strings.append(st)
-        print(string_pack["frames"])
-        for frame in string_pack["frames"].values():
-            strings.append(frame["strings"])
-        for value, st in zip(self.strings, strings):
-            if isinstance(value, tk.StringVar):
-                value.set(st)
+            for value, st in zip(self.strings, strings):
+                if isinstance(value, tk.StringVar):
+                    value.set(st)
+        for i, frame_pack in zip(range(0, len(self.frames)), self.ui_texts["frames"].values()):
+            self.frames[i].update_ui_texts(frame_pack)
+        
         # Additional set for non-StringVar() texts.
 
-    def update_ui_language(self, string_pack):
+    def update_ui_texts(self, string_pack):
         self.set_ui_texts(string_pack)
 
 

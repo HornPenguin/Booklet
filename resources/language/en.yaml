@@ -7,24 +7,24 @@ font:
 menubar:
   help:
     name: "Help"
-    submenu:
+    command:
       about: "About"
       license: "License"
       source: "Source"
   reference:
     name: "Reference"
-    submenu:
+   command:
       tutorial : "Tutorial"
       paper-format: "Paper format"
       paper-fold: "Paper fold"
   settings: 
     name: "Settings"
-    submenu:
+    command:
       load: "Load"
       save: "Save"
   language:
     name: "Language"
-    submenu: # It must be a list
+    command: # It must be a list
       - "en" 
       - "ko"
 # Tab
@@ -35,22 +35,26 @@ tabs:
       manuscript:
         name: "Manuscript"
         strings:
-          index: "index"
-          file-name: "file-name"
+          index: " "
+          files: "files"
       file_info:
         name: "File Info"
         strings:
+          name: "Name"
           path: "Path"
           title: "Title"
           author: "Author(s)"
+          created_date: "Created Date"
+          mod_date: "Modified Date"
           pages: "Pages"
-          format: "Format"
+          page_format: "Page Format"
       output:
         name: "Output"
         strings:
-          file-name: "File name"
           merge: "Merge"
           total-page: "Total pages"
+          name: "File name"
+          as: "as"
           split-per: "Split per" 
   section:
     name: "Section"

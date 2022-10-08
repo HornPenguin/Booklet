@@ -137,3 +137,11 @@ def pix2pts(value: Union[int, tuple[int, int]]) -> Union[float, tuple[float, flo
     :rtype: Union[float, tuple[float, float]]
     """
     return __pts_pix(value, mode=False)
+
+
+def __pdf_datetime(value, mode):
+    pass
+def pdf_date2date(value):
+    return __pdf_datetime(value, mode=True)
+def date2pdf_date(value):
+    return __pdf_datetime(value, mode=False)

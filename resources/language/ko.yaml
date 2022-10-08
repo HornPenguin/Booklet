@@ -1,4 +1,9 @@
 language: ko
+font:
+  name:
+  path:
+  size:
+# menubar
 menubar:
   help:
     name: "도움말"
@@ -23,6 +28,35 @@ menubar:
       - "en" 
       - "ko"
 # Tab
+tabs:
+  files:
+    name: "파일"
+    frames:
+      manuscript:
+        name: "원고"
+        strings:
+          index: " "
+          files: "파일"
+      file_info:
+        name: "파일 정보"
+        strings:
+          name: "이름"
+          path: "경로"
+          title: "제목"
+          author: "저자(들)"
+          created_date: "생성 날짜"
+          mod_date: "수정 날짜"
+          pages: "쪽수"
+          page_format: "쪽 크기"
+      output:
+        name: "출력"
+        strings:
+          merge: "병합"
+          total-page: "총 쪽수"
+          name: "이름"
+          as: "을"
+          split-per: "분할" 
+
 #tabs:
 #  - name: "파일"
 #    frames:
@@ -120,5 +154,5 @@ menubar:
 #
 ## Misc UI
 #
-#Generate: "Generate"
+Generate: "변환"
 #
