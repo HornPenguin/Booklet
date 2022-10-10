@@ -46,7 +46,7 @@ from booklet.core.modifiers import *
 from booklet.utils.misc import *
 from booklet.data import *
 from booklet.utils.images import icon_path
-from booklet.gui import Booklet
+from booklet.ui import Booklet
 from booklet.parser import parser
 from booklet.utils.conversion import pts2mm, mm2pts
 
