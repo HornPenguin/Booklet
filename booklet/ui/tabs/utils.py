@@ -1,14 +1,19 @@
 from booklet.ui import HPFrame, HPLabelFrame
 
-class Imposition(HPFrame):
+
+class Utils(HPFrame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, *kwargs)
 
 
-class Book(HPLabelFrame):
+class ToImage(HPLabelFrame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, *kwargs)
 
-class Repetition(HPLabelFrame):
+class Duplex(HPLabelFrame):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, *kwargs)
+
+class Note(HPLabelFrame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, *kwargs)

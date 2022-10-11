@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import Toplevel, ttk
 
 from tkinter import filedialog
 from tkinter.colorchooser import askcolor
@@ -125,6 +125,7 @@ class HPNoteBook(Notebook):
         self.ui_texts = ui_texts
         self.resources = resources
 
+
     def update_ui_texts(self, ui_texts):
         self.ui_texts = ui_texts
         number_of_tabs = len(self.tabs())
@@ -132,3 +133,18 @@ class HPNoteBook(Notebook):
             name = list(self.ui_texts.values())[i]["name"]
             self.tab(i, text = name)
 
+
+
+class PopUp(Toplevel):
+    def __init__(
+        self, 
+        parent, 
+        ui_texts, 
+        resources, 
+        *args, 
+        **kwargs):
+        super().__init__(*args, **kwargs)
+        self.parent = parent
+
+        self.ui_texts = ui_texts
+        self.resources = resources
