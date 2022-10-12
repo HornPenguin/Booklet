@@ -54,6 +54,7 @@ class HPBooklet_Tabs(HPNoteBook):
         self.height = kwargs["height"] if "height" in kwargs.keys() else 0
         del(kwargs["width"])
         del(kwargs["height"])
+
         super().__init__(*args, **kwargs)
         
         tabs = [

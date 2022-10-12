@@ -73,14 +73,9 @@ class HPMenu(Menu):
 class HPLabelFrame(LabelFrame):
     def __init__(self, parent, ui_texts, resources, *args, **kwargs):
         
-        self.width = 0
-        self.height = 0
-        if "width" in kwargs.keys():
-            self.width = kwargs["width"]
-        if "height" in kwargs.keys():
-            self.width = kwargs["height"]
-    
-        
+        self.width = kwargs["width"] if "width" in kwargs.keys() else 0
+        self.height = kwargs["height"] if "height" in kwargs.keys() else 0
+
         super().__init__(parent, *args, **kwargs)
         self.parent = parent
         self.ui_texts = ui_texts
@@ -89,7 +84,7 @@ class HPLabelFrame(LabelFrame):
         super().config(text = self.ui_texts["name"])
 
         self.sub_frames = []
-        self.string_vars = [] # tkinter StringVar
+        self.string_vars = {} # tkinter StringVar to be convert with ui_text update
         
     def update_ui_texts(self, ui_texts):
         self.ui_texts = ui_texts
@@ -98,7 +93,7 @@ class HPLabelFrame(LabelFrame):
 
         for i, subframe in enumerate(self.sub_frames):
             subframe.update_ui_texts(subframe_strings[i])
-        for i, label_string_var in enumerate(self.string_vars):
+        for i, label_string_var in enumerate(self.string_vars.values()):
             label_string_var.set(label_strings[i])
 
 class HPFrame(Frame):
@@ -123,6 +118,8 @@ class HPFrame(Frame):
                 subframe.update_ui_texts(subframe_strings[i])
             for i, label_string_var in enumerate(self.string_vars):
                 label_string_var.set(label_strings[i])
+        elif len(self.sub_frames) == 1:
+            self.sub_frames.values()[0].update_ui_texts(ui_texts)
 
 class HPNoteBook(Notebook):
     def __init__(self, parent, ui_texts, resources, *args, **kwargs):

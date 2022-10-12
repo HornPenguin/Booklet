@@ -182,22 +182,22 @@ class ToolBar(tk.Menu):
             self.add_cascade(label=self.ui_texts[label]["name"], menu=menu)
 
     def __set_menu_help_labels(self):
-        labels = self.ui_texts["help"]["command"]
+        labels = self.ui_texts["help"]["subentries"]
         self.menus[0].add_command(label = labels["about"], command = self.about)
         self.menus[0].add_command(label = labels["license"], command = self.license)
         self.menus[0].add_command(label = labels["source"], command = self.source)
     def __set_menu_reference_labels(self):
-        labels = self.ui_texts["reference"]["command"]
+        labels = self.ui_texts["reference"]["subentries"]
         self.menus[1].add_command(label = labels["tutorial"], command = self.tutorial)
         self.menus[1].add_command(label = labels["paper-format"], command = self.paper_format)
         self.menus[1].add_command(label = labels["paper-fold"], command = self.paper_fold)
     def __set_menu_settings_labels(self):
-        labels = self.ui_texts["settings"]["command"]
+        labels = self.ui_texts["settings"]["subentries"]
         self.menus[2].add_command(label = labels["load"], command= self.load_setting)
         self.menus[2].add_command(label = labels["save"], command= self.save_setting)
 
     def __set_menu_language_labels(self):
-        labels = self.ui_texts["language"]["command"]
+        labels = self.ui_texts["language"]["subentries"]
         for language in labels:
             self.menus[3].add_command(
                 label = language, 
@@ -208,8 +208,8 @@ class ToolBar(tk.Menu):
         for i, menu in zip(range(0, len(self.menus)), self.ui_texts):
             self.entryconfigure(i, label = self.ui_texts[menu]["name"])
             if menu != "language":
-                for j in range(0, len(self.ui_texts[menu]["command"])):
-                    label_value = list(self.ui_texts[menu]["command"].values())[j]
+                for j in range(0, len(self.ui_texts[menu]["subentries"])):
+                    label_value = list(self.ui_texts[menu]["subentries"].values())[j]
                     self.menus[i].entryconfigure(j, label = label_value)
 
     
@@ -847,7 +847,7 @@ if __name__ == "__main__":
         lang_code = "en",
         resources = resources,
         width = 650,
-        height = 500
+        height = 450
         )
     HPbooklet.mainloop()
     
