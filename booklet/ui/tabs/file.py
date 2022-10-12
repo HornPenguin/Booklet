@@ -496,7 +496,10 @@ class FileInfo(HPLabelFrame):
         if focused is  not None:
             for key in focused.keys():
                 self.file_infos[key].set(focused[key])
-        
+    
+    def update_ui_texts(self, ui_texts):
+        super().update_ui_texts(ui_texts)
+        super().config(text=self.ui_texts["name"])
 
 
 class Output(HPLabelFrame):

@@ -87,14 +87,20 @@ class HPLabelFrame(LabelFrame):
         self.string_vars = {} # tkinter StringVar to be convert with ui_text update
         
     def update_ui_texts(self, ui_texts):
+        label_strings = ui_texts["strings"] if "strings" in ui_texts.keys() else None
+        subframe_strings = list(ui_texts["frames"].values()) if "frames" in ui_texts.keys() else None
+        if subframe_strings is not None:
+            for i, subframe in enumerate(self.sub_frames):
+                subframe.update_ui_texts(subframe_strings[i])
+        if label_strings is not None:
+            keys = list(self.ui_texts["strings"].keys())
+            for i, label_string_var in enumerate(self.string_vars.values()):
+                key = keys[i]
+                try:
+                    label_string_var.set(label_strings[key])
+                except:
+                    print(label_strings)
         self.ui_texts = ui_texts
-        label_strings = self.ui_texts["strings"]
-        subframe_strings = list(self.ui_texts["subframes"].values())
-
-        for i, subframe in enumerate(self.sub_frames):
-            subframe.update_ui_texts(subframe_strings[i])
-        for i, label_string_var in enumerate(self.string_vars.values()):
-            label_string_var.set(label_strings[i])
 
 class HPFrame(Frame):
     def __init__(self, parent, *args, ui_texts=None, resources=None,**kwargs):
@@ -106,20 +112,29 @@ class HPFrame(Frame):
         self.resources = resources
 
         self.sub_frames = []
-        self.string_vars = [] # tkinter StringVar
+        self.string_vars = {} # tkinter StringVar
 
     def update_ui_texts(self, ui_texts):
-        if self.ui_texts is not None:
+        print(ui_texts.keys())
+        if self.ui_texts is not None: # Directly have ones
             self.ui_texts = ui_texts
-            label_strings = self.ui_texts["strings"]
-            subframe_strings = list(self.ui_texts["subframes"].values())
+            label_strings = self.ui_texts["strings"] if "strings" in self.ui_texts.keys() else None
+            subframe_strings = list(self.ui_texts["frames"].values()) if "frames" in self.ui_texts.keys() else None
+
+            if subframe_strings is not None:
+                for i, subframe in enumerate(self.sub_frames):
+                    subframe.update_ui_texts(subframe_strings[i])
+            if label_strings is not None:
+                for i, label_string_var in enumerate(self.string_vars.values()):
+                    label_string_var.set(label_strings[i])
+        elif len(self.sub_frames) != 0 and ui_texts is not None:
+            label_strings = ui_texts["strings"]
+            subframe_strings = list(ui_texts["subframes"].values())
 
             for i, subframe in enumerate(self.sub_frames):
                 subframe.update_ui_texts(subframe_strings[i])
             for i, label_string_var in enumerate(self.string_vars):
                 label_string_var.set(label_strings[i])
-        elif len(self.sub_frames) == 1:
-            self.sub_frames.values()[0].update_ui_texts(ui_texts)
 
 class HPNoteBook(Notebook):
     def __init__(self, parent, ui_texts, resources, *args, **kwargs):
@@ -131,10 +146,12 @@ class HPNoteBook(Notebook):
 
     def update_ui_texts(self, ui_texts):
         self.ui_texts = ui_texts
-        number_of_tabs = len(self.tabs())
-        for i in range(0, number_of_tabs):
-            name = list(self.ui_texts.values())[i]["name"]
-            self.tab(i, text = name)
+        for i, tab in enumerate(self.children.values()):
+            sub_lang_pack = list(self.ui_texts.values())[i]
+            print(sub_lang_pack["name"])
+            self.tab(i, text = sub_lang_pack["name"])
+            tab.update_ui_texts(sub_lang_pack)
+
 
 
 

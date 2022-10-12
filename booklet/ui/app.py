@@ -62,6 +62,10 @@ class HPBooklet_Tabs(HPNoteBook):
         ]
         for tab in tabs:
             self.add(tab, text=tab.ui_texts["name"])
+    
+    def update_ui_texts(self, ui_texts):
+        super().update_ui_texts(ui_texts)
+
 
 
 # Progress bar
@@ -143,6 +147,7 @@ class HPBooklet(tk.Tk):
         self.ui_texts = self.__load_ui_texts()
         keys = list(self.ui_texts.keys())[2:] # 0: language, 1: font settings
         for i, key in enumerate(keys):
+            print(key)
             if isinstance(self.ui_texts[key], Iterable) and type(self.ui_texts[key]) != str:
                 self.sub_elements[key].update_ui_texts(self.ui_texts[key])
             else:
