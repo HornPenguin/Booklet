@@ -16,7 +16,7 @@ import yaml
 
 # Project
 
-import booklet.data as data
+from booklet import data
 from booklet.meta import APP_NAME
 from booklet.utils.misc import *
 from booklet.utils.conversion import mm2pts, pts2mm
@@ -27,7 +27,7 @@ from booklet.ui import HPMenu, HPLabelFrame, HPFrame, HPNoteBook
 from booklet.ui.menubar import HelpMenu, ReferMenu, SettingMenu, LanguageMenu
 from booklet.ui.tabs.file import FileIO
 from booklet.ui.tabs.section import Section
-from booklet.ui.tabs.imposition import Imposiiton
+from booklet.ui.tabs.imposition import Imposition
 from booklet.ui.tabs.printingmarks import PrintingMarks
 from booklet.ui.tabs.utils import Utils
 
@@ -50,10 +50,14 @@ class HPBooklet_Menu(HPMenu):
 # Tabs
 class HPBooklet_Tabs(HPNoteBook):
     def __init__(self, *args, **kwargs):
+        self.width = kwargs["width"] if "width" in kwargs.keys() else 0
+        self.height = kwargs["height"] if "height" in kwargs.keys() else 0
+        del(kwargs["width"])
+        del(kwargs["height"])
         super().__init__(*args, **kwargs)
         
         tabs = [
-            FileIO(self, self.ui_texts["files"], self.resources["files"], width=self.width, height=self.height)
+            FileIO(self, ui_texts = self.ui_texts["files"], resources = self.resources["files"], width=self.width, height=self.height)
         ]
         for tab in tabs:
             self.add(tab, text=tab.ui_texts["name"])

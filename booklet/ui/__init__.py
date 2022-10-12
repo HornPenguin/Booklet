@@ -4,10 +4,11 @@ from tkinter import Toplevel, ttk
 from tkinter import filedialog
 from tkinter.colorchooser import askcolor
 
-#if platform.system() != "Darwin":
-#    from tkinter import Label, Button
-#else:
-#    from tkmacosx import Label, Button
+import platform
+if platform.system().startswith != "Darwin":
+    from tkinter import Label, Button
+else:
+    from tkmacosx import Label, Button
 
 from tkinter import StringVar, IntVar, DoubleVar
 
@@ -71,13 +72,15 @@ class HPMenu(Menu):
 
 class HPLabelFrame(LabelFrame):
     def __init__(self, parent, ui_texts, resources, *args, **kwargs):
+        
         self.width = 0
         self.height = 0
         if "width" in kwargs.keys():
             self.width = kwargs["width"]
         if "height" in kwargs.keys():
             self.width = kwargs["height"]
-            
+    
+        
         super().__init__(parent, *args, **kwargs)
         self.parent = parent
         self.ui_texts = ui_texts
@@ -99,9 +102,11 @@ class HPLabelFrame(LabelFrame):
             label_string_var.set(label_strings[i])
 
 class HPFrame(Frame):
-    def __init__(self, parent, ui_texts, resources, *args, **kwargs):
+    def __init__(self, parent, *args, ui_texts=None, resources=None,**kwargs):
+        
         super().__init__(parent, *args, **kwargs)
         self.parent = parent
+
         self.ui_texts = ui_texts
         self.resources = resources
 
@@ -109,14 +114,15 @@ class HPFrame(Frame):
         self.string_vars = [] # tkinter StringVar
 
     def update_ui_texts(self, ui_texts):
-        self.ui_texts = ui_texts
-        label_strings = self.ui_texts["strings"]
-        subframe_strings = list(self.ui_texts["subframes"].values())
+        if self.ui_texts is not None:
+            self.ui_texts = ui_texts
+            label_strings = self.ui_texts["strings"]
+            subframe_strings = list(self.ui_texts["subframes"].values())
 
-        for i, subframe in enumerate(self.sub_frames):
-            subframe.update_ui_texts(subframe_strings[i])
-        for i, label_string_var in enumerate(self.string_vars):
-            label_string_var.set(label_strings[i])
+            for i, subframe in enumerate(self.sub_frames):
+                subframe.update_ui_texts(subframe_strings[i])
+            for i, label_string_var in enumerate(self.string_vars):
+                label_string_var.set(label_strings[i])
 
 class HPNoteBook(Notebook):
     def __init__(self, parent, ui_texts, resources, *args, **kwargs):
