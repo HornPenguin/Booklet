@@ -132,9 +132,9 @@ class HPBooklet(tk.Tk):
         self.string_vars["generate"].set(self.ui_texts["generate"])
         
         # Locating
-        self.sub_elements["tabs"].grid(row=0, column=0)
-        self.sub_elements["progress"].grid(row=1, column=0)
-        self.sub_elemnts_direct["generate"].grid(row=2, column=0)
+        self.sub_elements["tabs"].grid(row=0, column=0, pady= 2)
+        self.sub_elements["progress"].grid(row=1, column=0, pady= 20)
+        self.sub_elemnts_direct["generate"].grid(row=2, column=0, pady= 10)
         
     
     def __load_ui_texts(self):

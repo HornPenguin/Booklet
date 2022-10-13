@@ -17,7 +17,9 @@ from PIL import Image, ImageTk
 import PyPDF2 as pypdf
 
 from booklet.ui import HPFrame, HPLabelFrame
+from booklet.utils.conversion import pts2mm
 from booklet.utils.matrix import exchange
+from booklet.utils.pdftime import pdf2local_time
 
 
 class FileIO(HPFrame):
@@ -29,11 +31,11 @@ class FileIO(HPFrame):
         
         super().__init__(*args, **kwargs)
         
-        self.main_frame = HPFrame(self, width=self.width, height=self.height)
+        #self.main_frame = HPFrame(self, width=self.width, height=self.height)
 
         self.sub_frames.append(
                 Manuscript(
-                    self.main_frame, 
+                    self, 
                     self.ui_texts["frames"]["manuscript"],
                     self.resources["manuscript"],
                     width = int(0.5*self.width),
@@ -42,7 +44,7 @@ class FileIO(HPFrame):
             )
         self.sub_frames.append(
                 FileInfo(
-                    self.main_frame, 
+                    self, 
                     self.ui_texts["frames"]["file_info"],
                     self.resources["manuscript"],
                     width = int(0.5*self.width),
@@ -51,7 +53,7 @@ class FileIO(HPFrame):
             )
         self.sub_frames.append(
                 Output(
-                    self.main_frame, 
+                    self, 
                     self.ui_texts["frames"]["output"],
                     self.resources["manuscript"],
                     width = int(0.5*self.width),
@@ -62,7 +64,8 @@ class FileIO(HPFrame):
         self.sub_frames[0].grid(row = 0, column = 0, rowspan = 2, padx = 10, pady = 2, ipady=4)
         self.sub_frames[1].grid(row = 0, column = 1, rowspan = 1, padx = 10, pady = 2, ipady=4)
         self.sub_frames[2].grid(row = 1, column = 1, rowspan = 1, padx = 10, pady = 2, ipady=4)
-        self.main_frame.pack( padx =1, pady=1)
+        #self.main_frame.pack(padx =1, pady=1)
+        print("Files Frame:", self.width)
     
     @property
     def settings(self):
@@ -70,6 +73,10 @@ class FileIO(HPFrame):
     @settings.setter
     def settings(self, *args):
         pass
+
+    def call_frames_routine(self, frame_index, attr_name, *args, **kwargs):
+        method = getattr(self.sub_frames[frame_index], attr_name)
+        method(*args, **kwargs)
 
 class Manuscript(HPLabelFrame):
     # --------------------------
@@ -83,7 +90,7 @@ class Manuscript(HPLabelFrame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        
+        print("Manuscript", self.parent.sub_frames)
 
         self.main_frame = Frame(self, width = self.width, height = self.height)
         self.layout_frames = {
@@ -141,6 +148,8 @@ class Manuscript(HPLabelFrame):
 
         
         self.main_frame.pack(padx=10, fill=BOTH)
+
+        print("Manu Frame:", self.width)
     def update_ui_texts(self, language_pack):
         self.ui_texts = language_pack
         super().config(text=self.ui_texts["name"])
@@ -248,14 +257,18 @@ class Manuscript(HPLabelFrame):
             "created_date": None,
             "mod_date": None,
             "pages" : len(pdf.pages),
-            "page_size": (float(pdf.getPage(0).mediaBox.width), float(pdf.getPage(0).mediaBox.height))
+            "page_size": (pts2mm(float(pdf.getPage(0).mediaBox.width)), pts2mm(float(pdf.getPage(0).mediaBox.height)))
         }
         pdfinfos = pdf.metadata
         file["title"] = pdfinfos["/Title"] if "/Title" in pdfinfos.keys() else None
         file["authors"] = pdfinfos["/Author"] if "/Author" in pdfinfos.keys() else None
-        file["created_date"] = pdfinfos["/CreationDate"] if "/CreationDate" in pdfinfos.keys() else None
-        file["mod_date"] = pdfinfos["/ModDate"] if "/ModDate" in pdfinfos.keys() else None
-        
+        if "/CreationDate" in pdfinfos.keys():
+            datetime = pdf2local_time(pdfinfos["/CreationDate"])
+            file["created_date"] = datetime.strftime(r"%Y-%m-%d  %H:%M:%S") 
+        if "/ModDate" in pdfinfos.keys():
+            datetime = pdf2local_time(pdfinfos["/ModDate"])
+            file["mod_date"] = datetime.strftime(r"%Y-%m-%d  %H:%M:%S") 
+
         return file 
     def __get_focused_file(self):
         current_selection = self.selected_files.selection()
@@ -298,16 +311,17 @@ class Manuscript(HPLabelFrame):
 
         if focused:
             # Get file object
-            print("index:", focused_index)
-            print("file_list:", [ item["name"] for item in self.file_list])
+            # print("index:", focused_index)
+            # print("file_list:", [ item["name"] for item in self.file_list])
             children = self.selected_files.get_children()
-            print("treeview:", children)
-            for item in children:
-                print("items:", self.selected_files.item(item))
+            # print("treeview:", children)
+            #for item in children:
+            #    print("items:", self.selected_files.item(item))
             file = self.file_list[focused_index]
             # Set entry  
             self.string_vars["selected_file"].set(str(file["path"]))
             self.focused_file = file
+            self.parent.call_frames_routine(1, "update_file_infos", self.focused_file)
         else:
             pass
     def __method_open_file(self):
@@ -418,12 +432,11 @@ class FileInfo(HPLabelFrame):
     #
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+        self.grid_propagate(False)
 
-        self.main_frame = HPFrame(self)
         self.layout_frames ={
-            "left_labels" : HPFrame(self.main_frame),
-            "print" : HPFrame(self.main_frame),
+            "left_labels" : HPFrame(self),
+            "print" : HPFrame(self),
         }
 
         # Variable
@@ -475,27 +488,74 @@ class FileInfo(HPLabelFrame):
 
         self.layout_frames["left_labels"].grid(row=0, column=0)
         self.layout_frames["print"].grid(row=0, column=1)
-        self.main_frame.pack(padx=10, fill=BOTH)
+
+        print("File_info Frame:", self.width)
     
     def __set_left_labels_frame(self):
-        self.name_label.grid(       row = 0, column = 0, pady=1, padx=2 )
-        self.path_label.grid(       row = 1, column = 0, pady=1, padx=2 )
-        self.title_label.grid(      row = 2, column = 0, pady=1, padx=2 )
-        self.author_label.grid(     row = 3, column = 0, pady=1, padx=2 )
-        self.create_date_label.grid(row = 4, column = 0, pady=1, padx=2 )
-        self.mod_date_label.grid(   row = 5, column = 0, pady=1, padx=2 )
-        self.pages_label.grid(      row = 6, column = 0, pady=1, padx=2 )
-        self.page_size_label.grid(  row = 9, column = 0, pady=1, padx=2 )
+        padx = 2
+        label_width = int(0.4*self.width) - 2*padx
+        frame_width = int(0.4*self.width)
 
-        self.layout_frames["left_labels"].configure(width = int(0.45*self.width))
+        self.path_label.configure(width = label_width, wraplength= label_width)
+        self.name_label.configure(width = label_width, wraplength= label_width)
+        self.title_label.configure(width = label_width, wraplength= label_width)
+        self.author_label.configure(width = label_width, wraplength= label_width)
+        self.create_date_label.configure(width = label_width, wraplength= label_width)
+        self.mod_date_label.configure(width = label_width, wraplength= label_width)
+        self.pages_label.configure(width = label_width, wraplength= label_width)
+        self.page_size_label.configure(width = label_width, wraplength= label_width)
+
+        self.name_label.grid(       row = 0, column = 0, pady=1, padx=padx )
+        self.path_label.grid(       row = 1, column = 0, pady=1, padx=padx )
+        self.title_label.grid(      row = 2, column = 0, pady=1, padx=padx )
+        self.author_label.grid(     row = 3, column = 0, pady=1, padx=padx )
+        self.create_date_label.grid(row = 4, column = 0, pady=1, padx=padx )
+        self.mod_date_label.grid(   row = 5, column = 0, pady=1, padx=padx )
+        self.pages_label.grid(      row = 6, column = 0, pady=1, padx=padx )
+        self.page_size_label.grid(  row = 7, column = 0, pady=1, padx=padx )
+
+        self.layout_frames["left_labels"].configure(width = frame_width)
     def __set_print_frame(self):
-        self.layout_frames["print"].configure(width = int(0.55*self.width))
+        print(self.width)
+        padx = 2
+        label_width = 5
+        frame_width = 20
 
-    def __update_file_infos(self):
-        focused = self.parent.sub_frames[0].focused_file # Manuscript
-        if focused is  not None:
-            for key in focused.keys():
-                self.file_infos[key].set(focused[key])
+        self.path_label_var.configure(width = label_width, wraplength= label_width)
+        self.name_label_var.configure(width = label_width, wraplength= label_width)
+        self.title_label_var.configure(width = label_width, wraplength= label_width)
+        self.author_label_var.configure(width = label_width, wraplength= label_width)
+        self.create_date_label_var.configure(width = label_width, wraplength= label_width)
+        self.mod_date_label_var.configure(width = label_width, wraplength= label_width)
+        self.pages_label_var.configure(width = label_width, wraplength= label_width)
+        self.page_size_frame.configure(width = label_width)
+
+        self.name_label_var.grid(           row = 0, column = 1, pady = 1, padx = padx)
+        self.path_label_var .grid(          row = 1, column = 1, pady = 1, padx = padx)
+        self.title_label_var .grid(         row = 2, column = 1, pady = 1, padx = padx)
+        self.author_label_var.grid(         row = 3, column = 1, pady = 1, padx = padx)
+        self.create_date_label_var.grid(    row = 4, column = 1, pady = 1, padx = padx)
+        self.mod_date_label_var.grid(       row = 5, column = 1, pady = 1, padx = padx)
+        self.pages_label_var.grid(          row = 6, column = 1, pady = 1, padx = padx)
+        
+        self.page_size_width_label_var.grid(row = 0, column = 0)
+        self.page_size_product.grid(row = 0, column = 1)
+        self.page_size_height_label_var.grid(row = 0, column = 2)
+        self.page_size_frame.grid(          row = 7, column = 1, pady = 1, padx = padx)
+
+        
+
+        self.layout_frames["print"].configure(width = frame_width)
+
+    def update_file_infos(self, focused_file):
+        if focused_file is  not None:
+            for key in focused_file.keys():
+                if isinstance(self.file_infos[key], StringVar):
+                    self.file_infos[key].set(focused_file[key])
+                elif isinstance(self.file_infos[key], tuple):
+                    for i in range(0, len(self.file_infos[key])):
+                        self.file_infos[key][i].set(focused_file[key][i])
+
     
     def update_ui_texts(self, ui_texts):
         super().update_ui_texts(ui_texts)
@@ -513,9 +573,13 @@ class Output(HPLabelFrame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
+        print("Output", self.parent.sub_frames)
 
         self.layout_frames = {
             "left_label": HPFrame(self, width = int(0.33*self.width)),
             "name": HPFrame(self, width = int(0.33*self.width)),
             "output_dir": HPFrame(self, width = int(0.33*self.width)),
         }
+    def update_ui_texts(self, ui_texts):
+        super().update_ui_texts(ui_texts)
+        super().config(text=self.ui_texts["name"])

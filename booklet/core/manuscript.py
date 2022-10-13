@@ -49,7 +49,9 @@ import PyPDF2 as pypdf
 
 # Project modules
 from booklet.utils.misc import *
+from booklet.utils.pdftime import local_pdf_time_now
 from booklet.utils import validation
+
 
 
 
@@ -328,16 +330,7 @@ class Manuscript:
             return 1
 
         self.meta["/Producer"] = "HornPenguin Booklet"
-
-        dt = datetime.now() - datetime.utcnow()
-        sec = dt.seconds
-        time = str(int(sec / 3600)).zfill(2)
-        min = str(int(sec % 3600)).zfill(2)
-        sign = "+" if dt.days == 0 else "-"
-        utcstring = sign + f"{time}'{min}'"
-        current = datetime.now().strftime(r"%Y%m%d%H%M%S")
-
-        self.meta["/ModDate"] = f"D:{current}{utcstring}"
+        self.meta["/ModDate"] = local_pdf_time_now()
 
         # Save
         if split != None and split:

@@ -46,7 +46,7 @@ tabs:
           author: "저자(들)"
           created_date: "생성 날짜"
           mod_date: "수정 날짜"
-          pages: "쪽수"
+          pages: "쪽 수"
           page_format: "쪽 크기"
       output:
         name: "출력"
