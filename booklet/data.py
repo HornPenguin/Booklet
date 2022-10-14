@@ -63,7 +63,7 @@ button_files = [
     "sort_up",
     "sort_down"
 ]
-button_size = (30, 30)
+button_size = (35, 35)
 __temp_1 = { name: Image.open(PATH_ADD_THEME_BUTTONS/f"{name}.png").resize(button_size,Image.Resampling(1)) for name in button_files}
 __temp_2 = { f"{name}_hover" : Image.open(PATH_ADD_THEME_BUTTONS/f"{name}_hover.png").resize((30, 30),Image.Resampling(1)) for name in button_files }
 
@@ -115,7 +115,8 @@ with open(license_text_path, "r") as f:
     rlist = list(filter(lambda x: x != "" and x != "\n", license_list))
     license += rlist
 
-
+#----------------------------------------------------
+# Option datas
 # Paper-format
 format_head = ["Format", "width(mm)", "height(mm)"]
 format_table = [

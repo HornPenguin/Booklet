@@ -16,7 +16,7 @@ def parsing_pdf_time(pdf_time:str):
     if "D:" not in pdf_time:
         vaild = False
         vaild_command = "No \'D:\'"
-        
+
     pdf_time = "D:"+pdf_time.split("D:")[1]
     length = len(pdf_time)
 

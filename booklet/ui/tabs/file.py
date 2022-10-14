@@ -1,21 +1,13 @@
 import sys
 from functools import partial
 from pathlib import Path
+from textwrap import wrap
 
-
-from tkinter import Button as tk_Button
-from tkinter import W, E, N, S, BOTH
-from tkinter import StringVar, IntVar, DoubleVar
-from tkinter import DISABLED, ACTIVE
-from tkinter import filedialog
-
-from tkinter.ttk import Button, Label, Frame, Entry, Treeview, Scrollbar
-if sys.platform.startswith("darwin"):
-    from tkmacosx import Button
 
 from PIL import Image, ImageTk
 import PyPDF2 as pypdf
 
+from booklet.ui.tabs import *
 from booklet.ui import HPFrame, HPLabelFrame
 from booklet.utils.conversion import pts2mm
 from booklet.utils.matrix import exchange
@@ -30,6 +22,7 @@ class FileIO(HPFrame):
         #del(kwargs["height"])
         
         super().__init__(*args, **kwargs)
+        
         
         #self.main_frame = HPFrame(self, width=self.width, height=self.height)
 
@@ -48,7 +41,7 @@ class FileIO(HPFrame):
                     self.ui_texts["frames"]["file_info"],
                     self.resources["manuscript"],
                     width = int(0.5*self.width),
-                    height = int(0.55*self.height)
+                    height = int(0.51*self.height)
                 )
             )
         self.sub_frames.append(
@@ -61,9 +54,9 @@ class FileIO(HPFrame):
                 )
             )
 
-        self.sub_frames[0].grid(row = 0, column = 0, rowspan = 2, padx = 10, pady = 2, ipady=4)
-        self.sub_frames[1].grid(row = 0, column = 1, rowspan = 1, padx = 10, pady = 2, ipady=4)
-        self.sub_frames[2].grid(row = 1, column = 1, rowspan = 1, padx = 10, pady = 2, ipady=4)
+        self.sub_frames[0].grid(row = 0, column = 0, rowspan = 2, padx = 10, pady = 2, ipady=4, sticky = N+S+E+W)
+        self.sub_frames[1].grid(row = 0, column = 1, rowspan = 1, padx = 10, pady = 2, ipady=4, sticky = N+S+E+W)
+        self.sub_frames[2].grid(row = 1, column = 1, rowspan = 1, padx = 10, pady = 2, ipady=4, sticky = N+S+E+W)
         #self.main_frame.pack(padx =1, pady=1)
         print("Files Frame:", self.width)
     
@@ -95,15 +88,10 @@ class Manuscript(HPLabelFrame):
         self.main_frame = Frame(self, width = self.width, height = self.height)
         self.layout_frames = {
             "search_file": HPFrame(self.main_frame, width=self.width),
-            "files": HPFrame(self.main_frame),
+            "files": HPFrame(self.main_frame, width= int(0.79*self.width)),
             "buttons": HPFrame(self.main_frame, width= int(0.2*self.width)),
         }
-        # Locate layout elements
         
-        self.layout_frames["search_file"].grid(row = 0, column= 0, columnspan =2, padx=0, pady=2, sticky=W+N)
-        self.layout_frames["files"].grid(row = 1, padx=0, pady=2, ipady=4, column=0, sticky=W+N+S)
-        self.layout_frames["buttons"].grid(row = 1, ipadx=0, padx=0, pady=2, column=1, sticky=N+W)
-
         self.button_images ={}
         for key in self.resources["images"]["button"].keys():
             self.button_images[key] = ImageTk.PhotoImage(self.resources["images"]["button"][key], master = self.layout_frames["buttons"])
@@ -146,7 +134,12 @@ class Manuscript(HPLabelFrame):
         
         # Event assign 
 
+        # Locate layout elements
         
+        self.layout_frames["search_file"].grid(row = 0, column= 0, columnspan =2, padx=0, pady=2, sticky=W+N)
+        self.layout_frames["files"].grid(row = 1, column=0, padx=0, pady=2, ipady=2,  sticky=W+N+S)
+        self.layout_frames["buttons"].grid(row = 1,  column=1, ipadx=0, padx=0, pady=2, sticky=N+W)
+
         self.main_frame.pack(padx=10, fill=BOTH)
 
         print("Manu Frame:", self.width)
@@ -169,6 +162,7 @@ class Manuscript(HPLabelFrame):
     def __set_files_frame(self):
         self.selected_files.configure(
             padding = 2, 
+            height = 15,
             columns = [" ","files"],
             displaycolumns=[" ","files"],
             show = 'headings', 
@@ -179,7 +173,7 @@ class Manuscript(HPLabelFrame):
         self.selected_files.heading("files", text=self.ui_texts["strings"]["files"])
         self.selected_files.column("files", width=250, stretch=True)
 
-        self.layout_frames["files"].configure(width=int(self.width), height=self.height)
+        self.layout_frames["files"].configure(width=int(self.width))
         
         # Event assign
         self.selected_files.bind("<ButtonRelease-1>", self.__method_focusing_file)
@@ -189,7 +183,7 @@ class Manuscript(HPLabelFrame):
             )
         self.selected_files_scroll_y.config(command= self.selected_files.yview, orient="vertical")
 
-        self.selected_files.grid(           row=0, column=0, pady=0, padx=0, sticky=W+N)
+        self.selected_files.grid(           row=0, column=0, pady=0, padx=0, sticky=W+N+S)
         self.selected_files_scroll_y.grid(  row=0, column=1, pady=0, padx=0, sticky=E+N+S)
     def __set_modulate_buttons_frame(self):
         # Style settings:
@@ -246,7 +240,7 @@ class Manuscript(HPLabelFrame):
             file_path =Path(file_path)
 
         if not file_path.is_file():
-            raise ValueError("File {file_path} does not exist.")
+            raise ValueError(f"File {str(file_path)} does not exist.")
         
         pdf = pypdf.PdfFileReader(file_path)
         file ={
@@ -263,15 +257,22 @@ class Manuscript(HPLabelFrame):
         file["title"] = pdfinfos["/Title"] if "/Title" in pdfinfos.keys() else None
         file["authors"] = pdfinfos["/Author"] if "/Author" in pdfinfos.keys() else None
         if "/CreationDate" in pdfinfos.keys():
-            datetime = pdf2local_time(pdfinfos["/CreationDate"])
-            file["created_date"] = datetime.strftime(r"%Y-%m-%d  %H:%M:%S") 
+            try:
+                datetime = pdf2local_time(pdfinfos["/CreationDate"])
+                file["created_date"] = datetime.strftime(r"%Y-%m-%d  %H:%M:%S") 
+            except:
+                file["created_date"] = pdfinfos["/CreationDate"]
         if "/ModDate" in pdfinfos.keys():
-            datetime = pdf2local_time(pdfinfos["/ModDate"])
-            file["mod_date"] = datetime.strftime(r"%Y-%m-%d  %H:%M:%S") 
+            try:
+                datetime = pdf2local_time(pdfinfos["/ModDate"])
+                file["mod_date"] = datetime.strftime(r"%Y-%m-%d  %H:%M:%S") 
+            except:
+                file["mod_date"] = pdfinfos["/ModDate"]
 
         return file 
     def __get_focused_file(self):
         current_selection = self.selected_files.selection()
+
         focused_file = None
         if len(current_selection) ==0:
             pass
@@ -338,7 +339,12 @@ class Manuscript(HPLabelFrame):
                 self.string_vars["selected_file"].set(str(self.focused_file["path"]))
                 # Add to treeview
                 self.selected_files.insert("", "end", values=(len(self.file_list), file["name"]))
-                self.selected_files.get_children()
+                first_iid = self.selected_files.get_children()[0]
+                #print(first_iid)
+                self.selected_files.focus([first_iid])
+                self.selected_files.selection_set([first_iid])
+                self.focused_file = self.file_list[0]
+                self.parent.call_frames_routine(1, "update_file_infos", self.focused_file)
         else:
             print(f"Not a vaild PDF file: file ({filenames})")
         
@@ -390,6 +396,8 @@ class Manuscript(HPLabelFrame):
             self.selected_files.delete(item)
         for i, value in enumerate(remains):
             self.selected_files.insert('', 'end', values=(i+1, value[1]))
+        
+        self.parent.call_frames_routine(1, "update_file_infos", None)
     def __method_remove_all(self):
         for item in self.selected_files.get_children():
             self.selected_files.delete(item)
@@ -397,6 +405,7 @@ class Manuscript(HPLabelFrame):
         self.string_vars["selected_file"].set("")
 
         self.sorted = False
+        self.parent.call_frames_routine(1, "update_file_infos", None)
     def __method_sort(self, event=None):
         print("Sort")
         print("Current State:", self.sorted)
@@ -424,21 +433,24 @@ class Manuscript(HPLabelFrame):
         return self.focused_file
 
 class FileInfo(HPLabelFrame):
-    # -----------------------
-    # |             |       |
-    # | left_labels | print |
-    # |             |       |
-    # -----------------------
     #
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.grid_propagate(False)
+        #self.grid_propagate(False)
 
-        self.layout_frames ={
-            "left_labels" : HPFrame(self),
-            "print" : HPFrame(self),
-        }
-
+        # This method overlapes inner frame to outer boundary during scrolling
+        # See, for solution, https://stackoverflow.com/questions/16188420/tkinter-scrollbar-for-frame
+        self.content_canvas = Canvas(self, width = self.width, height = self.height, bd=0, highlightthickness=0)
+        self.content_scroll_y = Scrollbar(self, orient="vertical", command= self.content_canvas.yview)
+        self.content_canvas.configure(yscrollcommand=self.content_scroll_y.set)
+        self.main_frame = HPFrame(self, width= self.width, height =self.height)
+        self.main_frame.bind(
+                    "<Configure>",
+                    lambda e: self.content_canvas.configure(
+                        scrollregion=self.content_canvas.bbox("all")
+                    )
+                )
+        self.content_canvas.create_window((0, 0), window=self.main_frame, anchor="nw")
         # Variable
         self.file_infos ={
             "name": StringVar(value =""),
@@ -450,8 +462,7 @@ class FileInfo(HPLabelFrame):
             "pages" : StringVar(value =""),
             "page_size": (DoubleVar(value=0.0), DoubleVar(value=0.0))
         }
-        
-        # Frame 1 left_labels
+        # UI string setting
         self.string_vars["name"] = StringVar(value=self.ui_texts["strings"]["name"])
         self.string_vars["path"] = StringVar(value=self.ui_texts["strings"]["path"])
         self.string_vars["title"] = StringVar(value=self.ui_texts["strings"]["title"])
@@ -461,100 +472,129 @@ class FileInfo(HPLabelFrame):
         self.string_vars["pages"] = StringVar(value=self.ui_texts["strings"]["pages"])
         self.string_vars["page_size"] = StringVar(value=self.ui_texts["strings"]["page_format"])
 
-        self.name_label = Label(self.layout_frames["left_labels"], textvariable=self.string_vars["name"])
-        self.path_label = Label(self.layout_frames["left_labels"], textvariable=self.string_vars["path"])
-        self.title_label = Label(self.layout_frames["left_labels"], textvariable=self.string_vars["title"])
-        self.author_label = Label(self.layout_frames["left_labels"], textvariable=self.string_vars["author"])
-        self.create_date_label = Label(self.layout_frames["left_labels"], textvariable=self.string_vars["created_date"])
-        self.mod_date_label = Label(self.layout_frames["left_labels"], textvariable=self.string_vars["mod_date"])
-        self.pages_label = Label(self.layout_frames["left_labels"], textvariable=self.string_vars["pages"])
-        self.page_size_label = Label(self.layout_frames["left_labels"], textvariable=self.string_vars["page_size"])
-        self.__set_left_labels_frame()
+        # UI frame
+        
+        self.name_frame =           HPFrame(self.main_frame, width = self.width)
+        self.path_frame =           HPFrame(self.main_frame, width = self.width)
+        self.title_frame =          HPFrame(self.main_frame, width = self.width)
+        self.author_frame =         HPFrame(self.main_frame, width = self.width)
+        self.create_date_frame =    HPFrame(self.main_frame, width = self.width)
+        self.mod_date_frame =       HPFrame(self.main_frame, width = self.width)
+        self.pages_frame =          HPFrame(self.main_frame, width = self.width)
+        self.page_size_frame =      HPFrame(self.main_frame, width = self.width)
+
+        self.name_label = Label(self.name_frame, textvariable=self.string_vars["name"])
+        self.path_label = Label(self.path_frame, textvariable=self.string_vars["path"])
+        self.title_label = Label(self.title_frame, textvariable=self.string_vars["title"])
+        self.author_label = Label(self.author_frame, textvariable=self.string_vars["author"])
+        self.create_date_label = Label(self.create_date_frame, textvariable=self.string_vars["created_date"])
+        self.mod_date_label = Label(self.mod_date_frame, textvariable=self.string_vars["mod_date"])
+        self.pages_label = Label(self.pages_frame, textvariable=self.string_vars["pages"])
+        self.page_size_label = Label(self.page_size_frame, textvariable=self.string_vars["page_size"])
 
         # Frame 2 print
-        self.name_label_var = Label(self.layout_frames["print"], textvariable=self.file_infos["name"])
-        self.path_label_var =  Label(self.layout_frames["print"], textvariable=self.file_infos["path"])
-        self.title_label_var = Label(self.layout_frames["print"], textvariable=self.file_infos["title"])
-        self.author_label_var = Label(self.layout_frames["print"], textvariable=self.file_infos["authors"])
-        self.create_date_label_var = Label(self.layout_frames["print"], textvariable=self.file_infos["created_date"])
-        self.mod_date_label_var = Label(self.layout_frames["print"], textvariable=self.file_infos["mod_date"])
-        self.pages_label_var = Label(self.layout_frames["print"], textvariable=self.file_infos["pages"])
+        self.name_label_var = Label(self.name_frame, textvariable=self.file_infos["name"])
+        self.path_label_var =  Label(self.path_frame, textvariable=self.file_infos["path"])
+        self.title_label_var = Label(self.title_frame, textvariable=self.file_infos["title"])
+        self.author_label_var = Label(self.author_frame, textvariable=self.file_infos["authors"])
+        self.create_date_label_var = Label(self.create_date_frame, textvariable=self.file_infos["created_date"])
+        self.mod_date_label_var = Label(self.mod_date_frame, textvariable=self.file_infos["mod_date"])
+        self.pages_label_var = Label(self.pages_frame, textvariable=self.file_infos["pages"])
 
-        self.page_size_frame = HPFrame(self.layout_frames["print"])
-        self.page_size_width_label_var = Label(self.page_size_frame, textvariable=self.file_infos["page_size"][0])
-        self.page_size_product = Label(self.page_size_frame) # Product image
-        self.page_size_height_label_var = Label(self.page_size_frame, textvariable=self.file_infos["page_size"][1])
-        self.__set_print_frame()
+        self.page_size_label_frame = HPFrame(self.page_size_frame)
+        self.page_size_width_label_var = Label(self.page_size_label_frame, textvariable=self.file_infos["page_size"][0])
+        self.page_size_product = Label(self.page_size_label_frame, text="x") # Product image
+        self.page_size_height_label_var = Label(self.page_size_label_frame, textvariable=self.file_infos["page_size"][1])
 
-        self.layout_frames["left_labels"].grid(row=0, column=0)
-        self.layout_frames["print"].grid(row=0, column=1)
+        self.__set_labels()
 
-        print("File_info Frame:", self.width)
-    
-    def __set_left_labels_frame(self):
-        padx = 2
-        label_width = int(0.4*self.width) - 2*padx
-        frame_width = int(0.4*self.width)
+        self.name_frame.grid(           row=0, column=0, sticky=W, pady=2.5, padx=2)
+        self.path_frame.grid(           row=1, column=0, sticky=W, pady=2.5, padx=2)
+        self.title_frame.grid(          row=2, column=0, sticky=W, pady=2.5, padx=2)
+        self.author_frame.grid(         row=3, column=0, sticky=W, pady=2.5, padx=2)
+        self.create_date_frame.grid(    row=4, column=0, sticky=W, pady=2.5, padx=2)
+        self.mod_date_frame.grid(       row=5, column=0, sticky=W, pady=2.5, padx=2)
+        self.pages_frame.grid(          row=6, column=0, sticky=W, pady=2.5, padx=2)
+        self.page_size_frame.grid(      row=7, column=0, sticky=W, pady=2.5, padx=2)
 
-        self.path_label.configure(width = label_width, wraplength= label_width)
-        self.name_label.configure(width = label_width, wraplength= label_width)
-        self.title_label.configure(width = label_width, wraplength= label_width)
-        self.author_label.configure(width = label_width, wraplength= label_width)
-        self.create_date_label.configure(width = label_width, wraplength= label_width)
-        self.mod_date_label.configure(width = label_width, wraplength= label_width)
-        self.pages_label.configure(width = label_width, wraplength= label_width)
-        self.page_size_label.configure(width = label_width, wraplength= label_width)
+        self.content_canvas.grid(row=0, column=0, sticky = W+N+S)
+        self.content_scroll_y.grid(row=0, column =1 , sticky = N+S+E)
 
-        self.name_label.grid(       row = 0, column = 0, pady=1, padx=padx )
-        self.path_label.grid(       row = 1, column = 0, pady=1, padx=padx )
-        self.title_label.grid(      row = 2, column = 0, pady=1, padx=padx )
-        self.author_label.grid(     row = 3, column = 0, pady=1, padx=padx )
-        self.create_date_label.grid(row = 4, column = 0, pady=1, padx=padx )
-        self.mod_date_label.grid(   row = 5, column = 0, pady=1, padx=padx )
-        self.pages_label.grid(      row = 6, column = 0, pady=1, padx=padx )
-        self.page_size_label.grid(  row = 7, column = 0, pady=1, padx=padx )
 
-        self.layout_frames["left_labels"].configure(width = frame_width)
-    def __set_print_frame(self):
-        print(self.width)
-        padx = 2
-        label_width = 5
-        frame_width = 20
+    def __set_labels(self):
+        info_label_width = 16
+        info_wrap_width = int(0.4*self.width)
+        label_width = 35
+        wrap_width = int(0.55*self.width)
 
-        self.path_label_var.configure(width = label_width, wraplength= label_width)
-        self.name_label_var.configure(width = label_width, wraplength= label_width)
-        self.title_label_var.configure(width = label_width, wraplength= label_width)
-        self.author_label_var.configure(width = label_width, wraplength= label_width)
-        self.create_date_label_var.configure(width = label_width, wraplength= label_width)
-        self.mod_date_label_var.configure(width = label_width, wraplength= label_width)
-        self.pages_label_var.configure(width = label_width, wraplength= label_width)
-        self.page_size_frame.configure(width = label_width)
+        self.name_label.configure(width = info_label_width, wraplength= info_wrap_width, anchor="center")
+        self.path_label.configure(width = info_label_width, wraplength= info_wrap_width, anchor="center")
+        self.title_label.configure(width = info_label_width, wraplength= info_wrap_width, anchor="center")
+        self.author_label.configure(width = info_label_width, wraplength= info_wrap_width, anchor="center")
+        self.create_date_label.configure(width = info_label_width, wraplength= info_wrap_width, anchor="center")
+        self.mod_date_label.configure(width = info_label_width, wraplength= info_wrap_width, anchor="center")
+        self.pages_label.configure(width = info_label_width, wraplength= info_wrap_width, anchor="center")
+        self.page_size_label.configure(width = info_label_width, wraplength= info_wrap_width, anchor="center")
 
-        self.name_label_var.grid(           row = 0, column = 1, pady = 1, padx = padx)
-        self.path_label_var .grid(          row = 1, column = 1, pady = 1, padx = padx)
-        self.title_label_var .grid(         row = 2, column = 1, pady = 1, padx = padx)
-        self.author_label_var.grid(         row = 3, column = 1, pady = 1, padx = padx)
-        self.create_date_label_var.grid(    row = 4, column = 1, pady = 1, padx = padx)
-        self.mod_date_label_var.grid(       row = 5, column = 1, pady = 1, padx = padx)
-        self.pages_label_var.grid(          row = 6, column = 1, pady = 1, padx = padx)
+        self.name_label_var.configure(width = label_width, wraplength=wrap_width, anchor="center")
+        self.path_label_var.configure(width = label_width, wraplength=wrap_width)
+        self.title_label_var.configure(width = label_width, wraplength=wrap_width, anchor="center")
+        self.author_label_var.configure(width = label_width, wraplength=wrap_width, anchor="center")
+        self.create_date_label_var.configure(width = label_width, wraplength=wrap_width, anchor="center")
+        self.mod_date_label_var.configure(width = label_width, wraplength=wrap_width, anchor="center")
+        self.pages_label_var.configure(width = label_width, wraplength=wrap_width, anchor="center")
         
-        self.page_size_width_label_var.grid(row = 0, column = 0)
-        self.page_size_product.grid(row = 0, column = 1)
-        self.page_size_height_label_var.grid(row = 0, column = 2)
-        self.page_size_frame.grid(          row = 7, column = 1, pady = 1, padx = padx)
+        self.page_size_label_frame.configure(width = wrap_width)
+        self.page_size_width_label_var.configure(width = int(0.48*label_width), wraplength=int(0.45*wrap_width), anchor="center")
+        self.page_size_height_label_var.configure(width = int(0.48*label_width), wraplength=int(0.45*wrap_width), anchor="center")
 
-        
 
-        self.layout_frames["print"].configure(width = frame_width)
+        self.name_label.grid(row =0, column =0, sticky=W)
+        self.name_label_var.grid(row =0, column =1, sticky=W, padx = 5)
+
+        self.path_label.grid(row =0, column =0, sticky=W)
+        self.path_label_var.grid(row =0, column =1, sticky=W, padx = 5)
+
+        self.title_label.grid(row =0, column =0, sticky=W)
+        self.title_label_var.grid(row =0, column =1, sticky=W, padx = 5)
+
+        self.author_label.grid(row =0, column =0, sticky=W)
+        self.author_label_var.grid(row =0, column =1, sticky=W, padx = 5)
+
+        self.create_date_label.grid(row =0, column =0, sticky=W)
+        self.create_date_label_var.grid(row =0, column =1, sticky=W, padx = 5)
+
+        self.mod_date_label.grid(row =0, column =0, sticky=W)
+        self.mod_date_label_var.grid(row =0, column =1, sticky=W, padx = 5)
+
+        self.pages_label.grid(row =0, column =0, sticky=W)
+        self.pages_label_var.grid(row =0, column =1, sticky=W, padx = 5)
+
+        self.page_size_label.grid(row =0, column =0, sticky=W)
+
+        self.page_size_width_label_var.grid(row=0, column=0, sticky = N+S+W+E)
+        self.page_size_product.grid(row=0, column=1, sticky= W+E)
+        self.page_size_height_label_var.grid(row=0, column=2, sticky = N+S+W+E)
+
+        self.page_size_label_frame.grid(row =0, column =1, sticky = W+E, padx = 5)
 
     def update_file_infos(self, focused_file):
-        if focused_file is  not None:
+        if focused_file is not None:
             for key in focused_file.keys():
                 if isinstance(self.file_infos[key], StringVar):
-                    self.file_infos[key].set(focused_file[key])
+                    if key == "path":
+                        self.file_infos[key].set(focused_file[key].parents[0])
+                    else:
+                        self.file_infos[key].set(focused_file[key])
                 elif isinstance(self.file_infos[key], tuple):
                     for i in range(0, len(self.file_infos[key])):
                         self.file_infos[key][i].set(focused_file[key][i])
+        else:
+            for key in self.file_infos:
+                if isinstance(self.file_infos[key], StringVar):
+                    self.file_infos[key].set("")
+                elif isinstance(self.file_infos[key], tuple):
+                    self.file_infos[key][i].set(0.0)
 
     
     def update_ui_texts(self, ui_texts):
@@ -573,13 +613,60 @@ class Output(HPLabelFrame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        print("Output", self.parent.sub_frames)
+        # Ui texts
+        self.string_vars["merge"] = StringVar(value="")
+        self.string_vars["total_page"] = StringVar(value="")
+        self.string_vars["file_name"] = StringVar(value="")
+        self.string_vars["as"] = StringVar(value="")
+        self.string_vars["split_per"] = StringVar(value="")
+        # Variables
+        self.merge_onoff = BooleanVar(value=False)
+        self.names = {
+            "name": StringVar(value=""),
+            "prefix": StringVar(value=""),
+            "suffix": StringVar(value="")
+        }
+        self.split_per_onoff = BooleanVar(value=False)
+        self.split_per_page = IntVar(value = 1)
+        self.output_directory_path = StringVar(value="")
+        # Functional variables
+        self.total_pages = IntVar(value = 0)
 
         self.layout_frames = {
-            "left_label": HPFrame(self, width = int(0.33*self.width)),
-            "name": HPFrame(self, width = int(0.33*self.width)),
-            "output_dir": HPFrame(self, width = int(0.33*self.width)),
+            "merge" : HPFrame(self, width = self.width),
+            "name" : HPFrame(self, width = self.width),
+            "output_directory": HPFrame(self, width = self.width)
         }
+
+        self.merge_label = Label(self.layout_frames["merge"])
+        self.total_pages_label = Label(self.layout_frames["merge"])
+        self.__set_merge_frame()
+
+        self.directory_entry = Entry(
+            self.layout_frames["output_directory"], 
+            textvariable= self.output_directory_path,
+            state="disabled")
+        self.search_directory = Button(
+            self.layout_frames["output_directory"], 
+            width=5)
+        self.__set_output_directory_frame()
+
+        self.layout_frames["output_directory"].grid(row=2, column=0, padx = 5, sticky=S+W+E)
+    def __set_merge_frame(self):
+        pass
+    def __set_file_name_frame(self):
+        pass
+    def __set_output_directory_frame(self):
+        self.directory_entry.configure(
+            textvariable= self.output_directory_path,
+            width = 42
+        )
+        self.search_directory.configure(text="...", command = self.__method_open_directory, width = 4)
+
+        self.directory_entry.grid(row = 0, column=0, padx=2, sticky = W+N+S)
+        self.search_directory.grid(row=0, column=1, padx=2, ipadx = 2)
+    def __method_open_directory(self):
+        pass
     def update_ui_texts(self, ui_texts):
         super().update_ui_texts(ui_texts)
         super().config(text=self.ui_texts["name"])

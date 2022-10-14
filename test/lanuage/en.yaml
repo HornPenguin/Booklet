@@ -46,9 +46,10 @@ tabs:
       output:
         name: "Output"
         strings:
-          file-name: "File name"
           merge: "Merge"
           total-page: "Total pages"
+          file-name: "File name"
+          as : "as"
           split-per: "Split per" 
   section:
     name: "Section"

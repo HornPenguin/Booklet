@@ -347,7 +347,7 @@ class Manuscript(tk.LabelFrame):
         self.selected_files.column("files", width=250, stretch=True)
 
         self.frame["files"].configure(width=int(self.width), height=self.height)
-        self.frame["files"].grid_propagate(False)
+        #self.frame["files"].grid_propagate(False)
         
         # Event assign
         self.selected_files.bind("<ButtonRelease-1>", self.__method_focusing_file)
@@ -846,8 +846,8 @@ if __name__ == "__main__":
     HPbooklet = HPBooklet(
         lang_code = "en",
         resources = resources,
-        width = 450,
-        height = 450
+        width = 750,
+        height = 550
         )
     HPbooklet.mainloop()
     
