@@ -1,17 +1,24 @@
+from msilib.schema import ComboBox
 import sys
 from functools import partial
 from pathlib import Path
 from textwrap import wrap
 
 
+
 from PIL import Image, ImageTk
 import PyPDF2 as pypdf
 
 from booklet.ui.tabs import *
-from booklet.ui import HPFrame, HPLabelFrame
+from booklet.ui import HPFrame, HPLabelFrame, HPFrameVScroll
 from booklet.utils.conversion import pts2mm
 from booklet.utils.matrix import exchange
 from booklet.utils.pdftime import pdf2local_time
+
+
+MANUSCRIPT = 0
+FILEINFO = 1
+OUTPUT =2
 
 
 class FileIO(HPFrame):
@@ -41,7 +48,7 @@ class FileIO(HPFrame):
                     self.ui_texts["frames"]["file_info"],
                     self.resources["manuscript"],
                     width = int(0.5*self.width),
-                    height = int(0.51*self.height)
+                    height = int(0.55*self.height)
                 )
             )
         self.sub_frames.append(
@@ -55,8 +62,9 @@ class FileIO(HPFrame):
             )
 
         self.sub_frames[0].grid(row = 0, column = 0, rowspan = 2, padx = 10, pady = 2, ipady=4, sticky = N+S+E+W)
-        self.sub_frames[1].grid(row = 0, column = 1, rowspan = 1, padx = 10, pady = 2, ipady=4, sticky = N+S+E+W)
         self.sub_frames[2].grid(row = 1, column = 1, rowspan = 1, padx = 10, pady = 2, ipady=4, sticky = N+S+E+W)
+        self.sub_frames[1].grid(row = 0, column = 1, rowspan = 1, padx = 10, pady = 2, ipady=4, sticky = N+S+E+W)
+        
         #self.main_frame.pack(padx =1, pady=1)
         print("Files Frame:", self.width)
     
@@ -70,6 +78,8 @@ class FileIO(HPFrame):
     def call_frames_routine(self, frame_index, attr_name, *args, **kwargs):
         method = getattr(self.sub_frames[frame_index], attr_name)
         method(*args, **kwargs)
+    def get_frames_property(self, frame_index, attr_name):
+        return getattr(self.sub_frames[frame_index], attr_name)
 
 class Manuscript(HPLabelFrame):
     # --------------------------
@@ -82,8 +92,6 @@ class Manuscript(HPLabelFrame):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        print("Manuscript", self.parent.sub_frames)
 
         self.main_frame = Frame(self, width = self.width, height = self.height)
         self.layout_frames = {
@@ -322,7 +330,7 @@ class Manuscript(HPLabelFrame):
             # Set entry  
             self.string_vars["selected_file"].set(str(file["path"]))
             self.focused_file = file
-            self.parent.call_frames_routine(1, "update_file_infos", self.focused_file)
+            self.parent.call_frames_routine(FILEINFO, "update_file_infos", self.focused_file)
         else:
             pass
     def __method_open_file(self):
@@ -344,7 +352,8 @@ class Manuscript(HPLabelFrame):
                 self.selected_files.focus([first_iid])
                 self.selected_files.selection_set([first_iid])
                 self.focused_file = self.file_list[0]
-                self.parent.call_frames_routine(1, "update_file_infos", self.focused_file)
+                self.parent.call_frames_routine(FILEINFO, "update_file_infos", self.focused_file)
+
         else:
             print(f"Not a vaild PDF file: file ({filenames})")
         
@@ -397,7 +406,7 @@ class Manuscript(HPLabelFrame):
         for i, value in enumerate(remains):
             self.selected_files.insert('', 'end', values=(i+1, value[1]))
         
-        self.parent.call_frames_routine(1, "update_file_infos", None)
+        self.parent.call_frames_routine(FILEINFO, "update_file_infos", None)
     def __method_remove_all(self):
         for item in self.selected_files.get_children():
             self.selected_files.delete(item)
@@ -405,12 +414,8 @@ class Manuscript(HPLabelFrame):
         self.string_vars["selected_file"].set("")
 
         self.sorted = False
-        self.parent.call_frames_routine(1, "update_file_infos", None)
+        self.parent.call_frames_routine(FILEINFO, "update_file_infos", None)
     def __method_sort(self, event=None):
-        print("Sort")
-        print("Current State:", self.sorted)
-        print("Sort type:", "Ascend" if self.sort_type else "Dscend")
-
         item_names = [self.selected_files.item(item)["values"][1] for item in self.selected_files.get_children()]
 
         if self.sort_type: # ascend
@@ -431,30 +436,34 @@ class Manuscript(HPLabelFrame):
     @property
     def focused_file_info(self):
         return self.focused_file
-
+    @property
+    def currnet_files(self):
+        return self.file_list
 class FileInfo(HPLabelFrame):
     #
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        #self.grid_propagate(False)
+        self.grid_propagate(False)
 
         # This method overlapes inner frame to outer boundary during scrolling
         # See, for solution, https://stackoverflow.com/questions/16188420/tkinter-scrollbar-for-frame
-        self.content_canvas = Canvas(self, width = self.width, height = self.height, bd=0, highlightthickness=0)
-        self.content_scroll_y = Scrollbar(self, orient="vertical", command= self.content_canvas.yview)
-        self.content_canvas.configure(yscrollcommand=self.content_scroll_y.set)
-        self.main_frame = HPFrame(self, width= self.width, height =self.height)
-        self.main_frame.bind(
-                    "<Configure>",
-                    lambda e: self.content_canvas.configure(
-                        scrollregion=self.content_canvas.bbox("all")
-                    )
-                )
-        self.content_canvas.create_window((0, 0), window=self.main_frame, anchor="nw")
+        #self.content_canvas = Canvas(self, width = self.width, height = self.height, bd=0, highlightthickness=0)
+        #self.content_scroll_y = Scrollbar(self, orient="vertical", command= self.content_canvas.yview)
+        #self.content_canvas.configure(yscrollcommand=self.content_scroll_y.set)
+        #self.main_frame = HPFrame(self, width= self.width, height =self.height)
+        #self.main_frame.bind(
+        #            "<Configure>",
+        #            lambda e: self.content_canvas.configure(
+        #                scrollregion=self.content_canvas.bbox("all")
+        #            )
+        #        )
+        #self.content_canvas.create_window((0, 0), window=self.main_frame, anchor="nw")
+        
+        self.main_frame = HPFrameVScroll(self, width= self.width, height =self.height)
         # Variable
         self.file_infos ={
             "name": StringVar(value =""),
-            "path": StringVar(value =""),
+            "path": StringVar(value =5*"---------------------------------------------------------"),
             "title": StringVar(value =""),
             "authors" : StringVar(value =""),
             "created_date": StringVar(value =""),
@@ -474,14 +483,14 @@ class FileInfo(HPLabelFrame):
 
         # UI frame
         
-        self.name_frame =           HPFrame(self.main_frame, width = self.width)
-        self.path_frame =           HPFrame(self.main_frame, width = self.width)
-        self.title_frame =          HPFrame(self.main_frame, width = self.width)
-        self.author_frame =         HPFrame(self.main_frame, width = self.width)
-        self.create_date_frame =    HPFrame(self.main_frame, width = self.width)
-        self.mod_date_frame =       HPFrame(self.main_frame, width = self.width)
-        self.pages_frame =          HPFrame(self.main_frame, width = self.width)
-        self.page_size_frame =      HPFrame(self.main_frame, width = self.width)
+        self.name_frame =           HPFrame(self.main_frame.interior, width = self.width)
+        self.path_frame =           HPFrame(self.main_frame.interior, width = self.width)
+        self.title_frame =          HPFrame(self.main_frame.interior, width = self.width)
+        self.author_frame =         HPFrame(self.main_frame.interior, width = self.width)
+        self.create_date_frame =    HPFrame(self.main_frame.interior, width = self.width)
+        self.mod_date_frame =       HPFrame(self.main_frame.interior, width = self.width)
+        self.pages_frame =          HPFrame(self.main_frame.interior, width = self.width)
+        self.page_size_frame =      HPFrame(self.main_frame.interior, width = self.width)
 
         self.name_label = Label(self.name_frame, textvariable=self.string_vars["name"])
         self.path_label = Label(self.path_frame, textvariable=self.string_vars["path"])
@@ -508,18 +517,19 @@ class FileInfo(HPLabelFrame):
 
         self.__set_labels()
 
-        self.name_frame.grid(           row=0, column=0, sticky=W, pady=2.5, padx=2)
-        self.path_frame.grid(           row=1, column=0, sticky=W, pady=2.5, padx=2)
-        self.title_frame.grid(          row=2, column=0, sticky=W, pady=2.5, padx=2)
-        self.author_frame.grid(         row=3, column=0, sticky=W, pady=2.5, padx=2)
-        self.create_date_frame.grid(    row=4, column=0, sticky=W, pady=2.5, padx=2)
-        self.mod_date_frame.grid(       row=5, column=0, sticky=W, pady=2.5, padx=2)
-        self.pages_frame.grid(          row=6, column=0, sticky=W, pady=2.5, padx=2)
-        self.page_size_frame.grid(      row=7, column=0, sticky=W, pady=2.5, padx=2)
+        self.name_frame.grid(           row=0, column=0, sticky=W+N+S, pady=1.5, padx=2)
+        self.path_frame.grid(           row=1, column=0, sticky=W+N+S, pady=1.5, padx=2)
+        self.title_frame.grid(          row=2, column=0, sticky=W+N+S, pady=1.5, padx=2)
+        self.author_frame.grid(         row=3, column=0, sticky=W+N+S, pady=1.5, padx=2)
+        self.create_date_frame.grid(    row=4, column=0, sticky=W+N+S, pady=1.5, padx=2)
+        self.mod_date_frame.grid(       row=5, column=0, sticky=W+N+S, pady=1.5, padx=2)
+        self.pages_frame.grid(          row=6, column=0, sticky=W+N+S, pady=1.5, padx=2)
+        self.page_size_frame.grid(      row=7, column=0, sticky=W+N+S, pady=1.5, padx=2)
 
-        self.content_canvas.grid(row=0, column=0, sticky = W+N+S)
-        self.content_scroll_y.grid(row=0, column =1 , sticky = N+S+E)
+        #self.content_canvas.grid(row=0, column=0, sticky = W+N+S)
+        #self.content_scroll_y.grid(row=0, column =1 , sticky = N+S+E)
 
+        self.main_frame.grid(row=0, column=0)
 
     def __set_labels(self):
         info_label_width = 16
@@ -595,6 +605,7 @@ class FileInfo(HPLabelFrame):
                     self.file_infos[key].set("")
                 elif isinstance(self.file_infos[key], tuple):
                     self.file_infos[key][i].set(0.0)
+        self.main_frame.scroll_region_update()
 
     
     def update_ui_texts(self, ui_texts):
@@ -614,33 +625,50 @@ class Output(HPLabelFrame):
         super().__init__(*args, **kwargs)
         
         # Ui texts
-        self.string_vars["merge"] = StringVar(value="")
-        self.string_vars["total_page"] = StringVar(value="")
-        self.string_vars["file_name"] = StringVar(value="")
-        self.string_vars["as"] = StringVar(value="")
-        self.string_vars["split_per"] = StringVar(value="")
+        self.string_vars["merge"] = StringVar(value=self.ui_texts["strings"]["merge"])
+        self.string_vars["total_page"] = StringVar(value=self.ui_texts["strings"]["total_page"])
+        self.string_vars["name"] = StringVar(value=self.ui_texts["strings"]["name"])
+        self.string_vars["as"] = StringVar(value=self.ui_texts["strings"]["as"])
+        self.string_vars["split_per"] = StringVar(value=self.ui_texts["strings"]["split_per"])
         # Variables
         self.merge_onoff = BooleanVar(value=False)
+        self.name_entry_var  = StringVar(value="")
         self.names = {
             "name": StringVar(value=""),
             "prefix": StringVar(value=""),
-            "suffix": StringVar(value="")
+            "suffix": StringVar(value="_HPBooklet")
         }
         self.split_per_onoff = BooleanVar(value=False)
         self.split_per_page = IntVar(value = 1)
         self.output_directory_path = StringVar(value="")
         # Functional variables
+        self.info_label_width = 13
         self.total_pages = IntVar(value = 0)
-
+        self.name_type_previous = list(self.names.keys())[0]
+        # Frames
         self.layout_frames = {
             "merge" : HPFrame(self, width = self.width),
             "name" : HPFrame(self, width = self.width),
+            "split": HPFrame(self, width = self.width),
             "output_directory": HPFrame(self, width = self.width)
         }
 
         self.merge_label = Label(self.layout_frames["merge"])
+        self.merge_label_checkbutton = Checkbutton(self.layout_frames["merge"])
         self.total_pages_label = Label(self.layout_frames["merge"])
+        self.total_pages_label_var = Label(self.layout_frames["merge"])
         self.__set_merge_frame()
+
+        self.file_name_label = Label(self.layout_frames["name"])
+        self.file_name_entry = Entry(self.layout_frames["name"])
+        self.file_name_as_label = Label(self.layout_frames["name"])
+        self.file_name_types_combo = Combobox(self.layout_frames["name"])
+        self.__set_file_name_frame()
+
+        self.split_label = Label(self.layout_frames["split"])
+        self.split_checkbutton = Checkbutton(self.layout_frames["split"])
+        self.split_per_entry = Entry(self.layout_frames["split"])
+        self.__set_split_frame()
 
         self.directory_entry = Entry(
             self.layout_frames["output_directory"], 
@@ -651,11 +679,43 @@ class Output(HPLabelFrame):
             width=5)
         self.__set_output_directory_frame()
 
-        self.layout_frames["output_directory"].grid(row=2, column=0, padx = 5, sticky=S+W+E)
+        self.layout_frames["merge"].grid(row= 0, column =0, padx=5, sticky = S+W+E+N, ipady = 3)
+        self.layout_frames["name"].grid(row= 1, column =0, padx=5, sticky = S+W+E+N, ipady = 3)
+        self.layout_frames["split"].grid(row=2, column = 0, padx = 5, sticky=S+W+E+N, ipady = 3)
+        self.layout_frames["output_directory"].grid(row=3, column=0, padx = 5, sticky=S+W+E+N, ipady = 3)
     def __set_merge_frame(self):
-        pass
+        self.merge_label.configure(width = self.info_label_width, textvariable = self.string_vars["merge"], anchor="center")
+        self.merge_label_checkbutton.configure(variable = self.merge_onoff, command=self.__command_total_page_cal)
+        self.total_pages_label.configure(textvariable=self.string_vars["total_page"], anchor="center")
+        self.total_pages_label_var.configure(textvariable = self.total_pages)
+
+
+        self.merge_label.grid(          row = 0, column = 0, padx = (5,5), sticky=W+E)
+        self.merge_label_checkbutton.grid( row = 0, column = 1, padx = 5, sticky=W+E)
+        self.total_pages_label.grid(    row = 0, column = 2, padx = 5, sticky=W+E)
+        self.total_pages_label_var.grid(row = 0, column = 3, padx = 5, sticky=W+E)
+        self.layout_frames["merge"].configure(borderwidth=2)
     def __set_file_name_frame(self):
-        pass
+        self.file_name_label.configure(width = self.info_label_width, textvariable = self.string_vars["name"], anchor="center")
+        self.file_name_entry.configure(textvariable = self.name_entry_var)
+        self.file_name_as_label.configure(textvariable = self.string_vars["as"], anchor="center")
+        self.file_name_types_combo.configure(value=list(self.names.keys()), state="readonly", width = int(0.025*self.width))
+        self.file_name_types_combo.current(0)
+        self.file_name_types_combo.bind("<<ComboboxSelected>>", self.__event_name_types_selected)
+
+        self.file_name_label.grid(      row = 0, column = 0, padx=(5,5))
+        self.file_name_entry.grid(      row = 0, column = 1, padx=(2,2))
+        self.file_name_as_label.grid(   row = 0, column = 2, padx=(2,2))
+        self.file_name_types_combo.grid(row = 0, column = 3, padx=(2,2))
+    def __set_split_frame(self):
+        self.split_label.configure(width = self.info_label_width, textvariable = self.string_vars["split_per"], anchor="center")
+        self.split_checkbutton.configure(variable = self.split_per_onoff, command = self.__command_split_check)
+        self.split_per_entry.configure(textvariable = self.split_per_page, state=DISABLED)
+
+        
+        self.split_label.grid(row= 0, column = 0, padx = (5,5), sticky= N+S+W)
+        self.split_checkbutton.grid(row= 0, column = 1, sticky= N+S+W)
+        self.split_per_entry.grid(row= 0, column = 2, sticky= N+S+W)
     def __set_output_directory_frame(self):
         self.directory_entry.configure(
             textvariable= self.output_directory_path,
@@ -665,7 +725,38 @@ class Output(HPLabelFrame):
 
         self.directory_entry.grid(row = 0, column=0, padx=2, sticky = W+N+S)
         self.search_directory.grid(row=0, column=1, padx=2, ipadx = 2)
+
     def __method_open_directory(self):
+        pass
+    def __command_split_check(self):
+        if self.split_per_onoff.get():
+            self.split_per_entry.configure(state=ACTIVE)
+        else:
+            self.split_per_entry.configure(state=DISABLED)
+    def __command_total_page_cal(self):
+        file_list = self.parent.get_frames_property(MANUSCRIPT, "currnet_files")
+        if len(file_list) >= 1 :
+            total_pages = 0
+            for file in file_list:
+                total_pages += file["pages"]
+            self.total_pages.set(total_pages)
+        else:
+            self.total_pages.set(0)
+            
+        
+    def __event_name_types_selected(self, event=None):
+
+        i = self.file_name_types_combo.current()
+        key = list(self.names.keys())[i]
+
+        string = self.names[key].get()
+        current = self.name_entry_var.get()
+
+        self.names[self.name_type_previous].set(current)
+        self.name_entry_var.set(string)
+        self.name_type_previous = key
+
+    def __validate_integer_input(self):
         pass
     def update_ui_texts(self, ui_texts):
         super().update_ui_texts(ui_texts)

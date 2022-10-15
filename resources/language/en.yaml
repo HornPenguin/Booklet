@@ -53,10 +53,10 @@ tabs:
         name: "Output"
         strings:
           merge: "Merge"
-          total-page: "Total pages"
+          total_page: "Total pages"
           name: "File name"
           as: "as"
-          split-per: "Split per" 
+          split_per: "Split per" 
   section:
     name: "Section"
     frames:
@@ -65,18 +65,18 @@ tabs:
         strings:
           onoff: "On/Off"
           pages_per: "Pages per"
-          paper-format: "Paper format"
-          custom-format: "Custom format"
-          page-range: "Page range"
-          blank-pages: "Blank pages"
+          paper_format: "Paper format"
+          custom_format: "Custom format"
+          page_range: "Page range"
+          blank_pages: "Blank pages"
       custom:
         name: "Custom"
         strings:
           onoff: "On/Off"
-          pages-per: "Pages per"
+          pages_per: "Pages per"
           layout: "Layout"
-          page-order-front: "Page order front"
-          fold-sequence: "Fold-sequence"
+          page_order_front: "Page order front"
+          fold_sequence: "Fold sequence"
           axis: "Axis"
           split: "Split"
           order: "Order"
@@ -90,11 +90,11 @@ tabs:
         strings:
           onoff: "On/Off"
           layout: "Layout"
-          collection-mark: "Collection mark"
+          collection_mark: "Collection mark"
           gap: "Gap"
-          fold-line: "Fold line"
-          fold-gap: "Fold gap"
-          paper-thickness: "Paper thickness"
+          fold_line: "Fold line"
+          fold_gap: "Fold gap"
+          paper_thickness: "Paper thickness"
       repetition:
         name: "Repetition"
         strings:
@@ -102,10 +102,10 @@ tabs:
           layout: "Layout"
           fit: "Fit"
           gap: "Gap"
-          gap-line: "Gap Line"
-          paper-format: "Paper format"
-          page-format: "Page format"
-          maximum-fill: "Maximum fill"
+          gap_line: "Gap Line"
+          paper_format: "Paper format"
+          page_format: "Page format"
+          maximum_fill: "Maximum fill"
   printingmarks:
       name: "Printing Marks"
       frames:
@@ -133,7 +133,7 @@ tabs:
             onoff: "On/Off"
             translation: "Translation"
             rotation: "Rotation"
-            preserve-dimension:  "Preserve dim"
+            preserve_dimension:  "Preserve dim"
         note:
           name: "Note"
           strings:
