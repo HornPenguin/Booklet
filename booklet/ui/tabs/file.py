@@ -10,7 +10,7 @@ from PIL import Image, ImageTk
 import PyPDF2 as pypdf
 
 from booklet.ui.tabs import *
-from booklet.ui import HPFrame, HPLabelFrame, HPFrameVScroll
+from booklet.ui import HPFrame, HPLabelFrame, HPVScrollWapper
 from booklet.utils.conversion import pts2mm
 from booklet.utils.matrix import exchange
 from booklet.utils.pdftime import pdf2local_time
@@ -459,11 +459,11 @@ class FileInfo(HPLabelFrame):
         #        )
         #self.content_canvas.create_window((0, 0), window=self.main_frame, anchor="nw")
         
-        self.main_frame = HPFrameVScroll(self, width= self.width, height =self.height)
+        self.main_frame = HPVScrollWapper(self, width= int(1.02*self.width), height =int(0.95*self.height))
         # Variable
         self.file_infos ={
             "name": StringVar(value =""),
-            "path": StringVar(value =5*"---------------------------------------------------------"),
+            "path": StringVar(value =""),
             "title": StringVar(value =""),
             "authors" : StringVar(value =""),
             "created_date": StringVar(value =""),
@@ -483,14 +483,14 @@ class FileInfo(HPLabelFrame):
 
         # UI frame
         
-        self.name_frame =           HPFrame(self.main_frame.interior, width = self.width)
-        self.path_frame =           HPFrame(self.main_frame.interior, width = self.width)
-        self.title_frame =          HPFrame(self.main_frame.interior, width = self.width)
-        self.author_frame =         HPFrame(self.main_frame.interior, width = self.width)
-        self.create_date_frame =    HPFrame(self.main_frame.interior, width = self.width)
-        self.mod_date_frame =       HPFrame(self.main_frame.interior, width = self.width)
-        self.pages_frame =          HPFrame(self.main_frame.interior, width = self.width)
-        self.page_size_frame =      HPFrame(self.main_frame.interior, width = self.width)
+        self.name_frame =           HPFrame(self.main_frame.frame, width = self.width)
+        self.path_frame =           HPFrame(self.main_frame.frame, width = self.width)
+        self.title_frame =          HPFrame(self.main_frame.frame, width = self.width)
+        self.author_frame =         HPFrame(self.main_frame.frame, width = self.width)
+        self.create_date_frame =    HPFrame(self.main_frame.frame, width = self.width)
+        self.mod_date_frame =       HPFrame(self.main_frame.frame, width = self.width)
+        self.pages_frame =          HPFrame(self.main_frame.frame, width = self.width)
+        self.page_size_frame =      HPFrame(self.main_frame.frame, width = self.width)
 
         self.name_label = Label(self.name_frame, textvariable=self.string_vars["name"])
         self.path_label = Label(self.path_frame, textvariable=self.string_vars["path"])
@@ -529,13 +529,14 @@ class FileInfo(HPLabelFrame):
         #self.content_canvas.grid(row=0, column=0, sticky = W+N+S)
         #self.content_scroll_y.grid(row=0, column =1 , sticky = N+S+E)
 
+        self.main_frame.configure(borderwidth=2, relief="groove")
         self.main_frame.grid(row=0, column=0)
 
     def __set_labels(self):
         info_label_width = 16
-        info_wrap_width = int(0.4*self.width)
-        label_width = 35
-        wrap_width = int(0.55*self.width)
+        info_wrap_width = int(0.34*self.width)
+        label_width = 32
+        wrap_width = int(0.5*self.width)
 
         self.name_label.configure(width = info_label_width, wraplength= info_wrap_width, anchor="center")
         self.path_label.configure(width = info_label_width, wraplength= info_wrap_width, anchor="center")

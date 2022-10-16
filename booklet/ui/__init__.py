@@ -1,3 +1,4 @@
+from re import L
 import tkinter as tk
 from tkinter import Toplevel, ttk
 from tkinter.colorchooser import askcolor
@@ -102,8 +103,13 @@ class HPLabelFrame(LabelFrame):
 
 class HPFrame(Frame):
     def __init__(self, parent, *args, ui_texts=None, resources=None,**kwargs):
+        
         super().__init__(parent, *args, **kwargs)
         self.parent = parent
+
+        self.width = kwargs["width"] if "width" in kwargs.keys() else None
+        self.height = kwargs["height"] if "height" in kwargs.keys() else None
+
 
         self.ui_texts = ui_texts
         self.resources = resources
@@ -167,7 +173,7 @@ class HPPopUp(Toplevel):
 # Based on
 #   https://web.archive.org/web/20170514022131id_/http://tkinter.unpythonic.net/wiki/VerticalScrolledFrame
 
-class HPFrameVScroll(HPFrame):
+class HPVScrollWapper(HPFrame):
     """A pure Tkinter scrollable frame that actually works!
     * Use the 'interior' attribute to place widgets inside the scrollable frame.
     * Construct and pack/place/grid normally.
@@ -175,45 +181,61 @@ class HPFrameVScroll(HPFrame):
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
+        self.grid_propagate(True)
         # Create a canvas object and a vertical scrollbar for scrolling it.
         self.vscrollbar = ttk.Scrollbar(self, orient=tk.VERTICAL)
-        self.vscrollbar.grid(row=0, column=1, sticky = tk.N+tk.S+tk.E)
         #self.vscrollbar.pack(fill=tk.Y, side=tk.RIGHT, expand=tk.FALSE)
         self.canvas = tk.Canvas(self, bd=0, highlightthickness=0,
+                            width = int(0.9*self.width), height= int(self.height),
                            yscrollcommand=self.vscrollbar.set)
         #canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=tk.TRUE)
-        self.canvas.grid(row=0, column=0, sticky=tk.W+tk.E)
         self.vscrollbar.config(command=self.canvas.yview)
+
+        
 
         # Reset the view
         self.canvas.xview_moveto(0)
         self.canvas.yview_moveto(0)
 
         # Create a frame inside the canvas which will be scrolled with it.
-        self.interior = HPFrame(self.canvas)
-        self.interior_id = self.canvas.create_window(0, 0, window=self.interior,
+        self.frame = HPFrame(self.canvas, width = self.width, height = int(0.8*self.height))
+        self.frame.grid_propagate(True)
+        self.frame_id = self.canvas.create_window(0, 0, window=self.frame,
                                            anchor=tk.NW)
 
         # Track changes to the canvas and frame width and sync them,
         # also updating the scrollbar.
-        def _configure_interior(event):
-            # Update the scrollbars to match the size of the inner frame.
-            size = (self.interior.winfo_reqwidth(), self.interior.winfo_reqheight())
-            self.canvas.config(scrollregion="0 0 %s %s" % size)
-            if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
-                # Update the canvas's width to fit the inner frame.
-                self.canvas.config(width=self.interior.winfo_reqwidth())
-        self.interior.bind('<Configure>', _configure_interior)
+        self.frame.bind('<Configure>', self.__configure_frame)
+        self.canvas.bind('<Configure>', self.__configure_canvas)
 
-        def _configure_canvas(event):
-            if self.interior.winfo_reqwidth() != self.canvas.winfo_width():
-                # Update the inner frame's width to fill the canvas.
-                self.canvas.itemconfigure(self.interior_id, width=self.canvas.winfo_width())
-        self.canvas.bind('<Configure>', _configure_canvas)
+        self.frame.configure(borderwidth=2, relief="groove")
+
+        self.canvas.grid(row=0, column=0, pady = (2,0), sticky=tk.N+tk.S+tk.W)
+        self.vscrollbar.grid(row=0, column=1, pady = (2,0), sticky = tk.N+tk.S+tk.E)
+
+        self.canvas.yview_moveto(1.0)
 
     def scroll_region_update(self):
         self.canvas.update_idletasks()
-        self.canvas.config(scrollregion=self.interior.bbox())
+        self.canvas.config(scrollregion=self.frame.bbox())
+    def __configure_frame(self, event):
+        size = (self.frame.winfo_reqwidth(), self.frame.winfo_reqheight())
+        #self.canvas.config(scrollregion=f"0 0 {size[0]} {size[1]}")
+        if self.frame.winfo_reqwidth() != self.canvas.winfo_width():
+            # Update the canvas's width to fit the inner frame.
+            self.canvas.config(width=self.frame.winfo_reqwidth())
+            
+        #if self.frame.winfo_reqheight() != self.canvas.winfo_height():
+        #    # update the canvas's width to fit the inner frame
+        #    self.canvas.config(height = self.frame.winfo_reqheight())
+    def __configure_canvas(self, event):
+        if self.frame.winfo_reqwidth() != self.canvas.winfo_width():
+            # Update the inner frame's width to fill the canvas.
+            self.canvas.itemconfigure(self.frame_id, width=self.canvas.winfo_width())
+        self.scroll_region_update()
+        self.canvas.yview_moveto(0.0)
+
+        
+
 
 
