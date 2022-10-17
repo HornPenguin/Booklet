@@ -459,7 +459,7 @@ class FileInfo(HPLabelFrame):
         #        )
         #self.content_canvas.create_window((0, 0), window=self.main_frame, anchor="nw")
         
-        self.main_frame = HPVScrollWapper(self, width= int(1.02*self.width), height =int(0.95*self.height))
+        self.main_frame = HPVScrollWapper(self, width= int(self.width), height =int(0.96*self.height))
         # Variable
         self.file_infos ={
             "name": StringVar(value =""),
@@ -529,7 +529,7 @@ class FileInfo(HPLabelFrame):
         #self.content_canvas.grid(row=0, column=0, sticky = W+N+S)
         #self.content_scroll_y.grid(row=0, column =1 , sticky = N+S+E)
 
-        self.main_frame.configure(borderwidth=2, relief="groove")
+        #self.main_frame.configure(borderwidth=2, relief="groove")
         self.main_frame.grid(row=0, column=0)
 
     def __set_labels(self):
@@ -680,10 +680,10 @@ class Output(HPLabelFrame):
             width=5)
         self.__set_output_directory_frame()
 
-        self.layout_frames["merge"].grid(row= 0, column =0, padx=5, sticky = S+W+E+N, ipady = 3)
-        self.layout_frames["name"].grid(row= 1, column =0, padx=5, sticky = S+W+E+N, ipady = 3)
-        self.layout_frames["split"].grid(row=2, column = 0, padx = 5, sticky=S+W+E+N, ipady = 3)
-        self.layout_frames["output_directory"].grid(row=3, column=0, padx = 5, sticky=S+W+E+N, ipady = 3)
+        self.layout_frames["merge"].grid(row= 0, column =0, padx=5, sticky = W+E+N, ipady = 3)
+        self.layout_frames["name"].grid(row= 1, column =0, padx=5, sticky = W+E+N, ipady = 3)
+        self.layout_frames["split"].grid(row=2, column = 0, padx = 5, sticky=W+E+N, ipady = 3)
+        self.layout_frames["output_directory"].grid(row=3, column=0, padx = 5, sticky=S+W+E, ipady = 3)
     def __set_merge_frame(self):
         self.merge_label.configure(width = self.info_label_width, textvariable = self.string_vars["merge"], anchor="center")
         self.merge_label_checkbutton.configure(variable = self.merge_onoff, command=self.__command_total_page_cal)

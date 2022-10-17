@@ -208,7 +208,7 @@ class HPVScrollWapper(HPFrame):
         self.frame.bind('<Configure>', self.__configure_frame)
         self.canvas.bind('<Configure>', self.__configure_canvas)
 
-        self.frame.configure(borderwidth=2, relief="groove")
+        #self.frame.configure(borderwidth=2, relief="groove")
 
         self.canvas.grid(row=0, column=0, pady = (2,0), sticky=tk.N+tk.S+tk.W)
         self.vscrollbar.grid(row=0, column=1, pady = (2,0), sticky = tk.N+tk.S+tk.E)
