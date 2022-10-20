@@ -34,16 +34,16 @@ from booklet.core.manuscript import Template, Manuscript
 
 
 class Note(Template):
-    __name__ = "Imposition"
-    __description__ = "Imposition work"
+    __name__ = "Note"
+    __description__ = "Generate Note manuscript from few template"
 
     @property
     def name(self):
-        return Imposition.__name__
+        return Note.__name__
 
     @property
     def description(self):
-        return Imposition.__description__
+        return Note.__description__
     
     def __init__(
         self):

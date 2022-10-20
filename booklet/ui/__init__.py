@@ -85,6 +85,7 @@ class HPLabelFrame(LabelFrame):
         self.sub_frames = []
         self.string_vars = {} # tkinter StringVar to be convert with ui_text update
         
+        self.ui_frames={}
     def update_ui_texts(self, ui_texts):
         label_strings = ui_texts["strings"] if "strings" in ui_texts.keys() else None
         subframe_strings = list(ui_texts["frames"].values()) if "frames" in ui_texts.keys() else None
@@ -138,6 +139,11 @@ class HPFrame(Frame):
                 subframe.update_ui_texts(subframe_strings[i])
             for i, label_string_var in enumerate(self.string_vars):
                 label_string_var.set(label_strings[i])
+    def call_frames_routine(self, frame_index, attr_name, *args, **kwargs):
+        method = getattr(self.sub_frames[frame_index], attr_name)
+        method(*args, **kwargs)
+    def get_frames_property(self, frame_index, attr_name):
+        return getattr(self.sub_frames[frame_index], attr_name)
 
 class HPNoteBook(Notebook):
     def __init__(self, parent, ui_texts, resources, *args, **kwargs):

@@ -58,7 +58,11 @@ class HPBooklet_Tabs(HPNoteBook):
         super().__init__(*args, **kwargs)
         
         tabs = [
-            FileIO(self, ui_texts = self.ui_texts["files"], resources = self.resources["files"], width=self.width, height=self.height)
+            FileIO(self, ui_texts = self.ui_texts["files"], resources = self.resources["files"], width=self.width, height=self.height),
+            Section(self, ui_texts = self.ui_texts["section"], resources = self.resources["section"], width=self.width, height=self.height),
+            Imposition(self, ui_texts = self.ui_texts["imposition"], resources = self.resources["imposition"], width=self.width, height=self.height),
+            PrintingMarks(self, ui_texts = self.ui_texts["printingmarks"], resources = self.resources["printingmarks"], width=self.width, height=self.height),
+            Utils(self, ui_texts = self.ui_texts["utils"], resources = self.resources["utils"], width=self.width, height=self.height)
         ]
         for tab in tabs:
             self.add(tab, text=tab.ui_texts["name"])

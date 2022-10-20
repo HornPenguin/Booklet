@@ -17,6 +17,7 @@ menubar:
       tutorial : "Tutorial"
       paper-format: "Paper format"
       paper-fold: "Paper fold"
+      unit-conversion: "Unit conversion"
   settings: 
     name: "Settings"
     subentries:
@@ -63,12 +64,14 @@ tabs:
       standard:
         name: "Standard"
         strings:
-          onoff: "On/Off"
+          type: "Type"
           pages_per: "Pages per"
+          insert: "Insert"
           paper_format: "Paper format"
           custom_format: "Custom format"
           page_range: "Page range"
-          blank_pages: "Blank pages"
+          riffle_direction: "Riffle direction"
+          blank_pages: "Blank pages to"
       custom:
         name: "Custom"
         strings:
@@ -86,7 +89,7 @@ tabs:
     name: "Imposition"
     frames:
       book:
-        name: "Book&booklet"
+        name: "Book&Brochure"
         strings:
           onoff: "On/Off"
           layout: "Layout"
@@ -110,7 +113,7 @@ tabs:
       name: "Printing Marks"
       frames:
         printingmarks:
-          name: 
+          name: "Marks"
           strings:
             margin: "Margin"
             crop: "Crop"
@@ -125,7 +128,7 @@ tabs:
       frames:
         toimage:
           name: "To image"
-          stirngs:
+          strings:
             onoff: "On/Off"
         duplex:
           name: "Duplex"
@@ -133,20 +136,23 @@ tabs:
             onoff: "On/Off"
             translation: "Translation"
             rotation: "Rotation"
-            preserve_dimension:  "Preserve dim"
+            preserve:  "Preserve dim"
         note:
           name: "Note"
           strings:
             onoff: "On/Off"
             pages: "Pages"
-            numbering: "Numbering"
-            onoff: "On/Off"
-            counts: "Counts"
-            marks: "Marks"
-            locations: "Location"
-            align: "Align"
-            font: "Font"
-            size: "Size"
+          frames:
+            numbering: 
+              name: "Numbering"
+              strings:
+                onoff: "On/Off"
+                counts: "Count"
+                marks: "Mark on"
+                locations: "Location"
+                align: "Align"
+                font: "Font"
+                size: "Size"
 
 # Misc UI
 

@@ -43,8 +43,16 @@ resources ={
                 }
             }
         },
+        "section":{
+            "standard":{},
+            "custom": {}
+        },
+        "imposition":{
+            "book": {},
+            "repetition": {}
+        },
         "printingmarks":{
-            "images":{
+            "printingmarks":{
                 "crop_line": "",
                 "trim_line": "",
                 "registration_mark": "",
@@ -53,6 +61,11 @@ resources ={
                 "angle_mark": "",
                 "duplex_measure": ""
             } 
+        },
+        "utils":{
+            "toimage":{},
+            "duplex": {},
+            "note": {}
         }
     },
 }

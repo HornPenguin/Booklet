@@ -10,3 +10,5 @@ from tkinter import filedialog, Canvas
 from tkinter.ttk import Button, Label, Frame, Entry, Treeview, Scrollbar, Checkbutton, Combobox
 if sys.platform.startswith("darwin"):
     from tkmacosx import Button
+
+from booklet.utils.conversion import pix2pts, pts2pix

@@ -1,3 +1,4 @@
+from tkinter.filedialog import asksaveasfile, askopenfile
 from booklet.ui import HPMenu
 from booklet.utils.misc import open_url 
 from functools import partial
@@ -40,9 +41,9 @@ class SettingMenu(HPMenu):
         self.add_command(label = self.ui_texts["subentries"]["save"], command = self.__save)
     
     def __load(self):
-        pass
+        askopenfile()
     def __save(self):
-        pass
+        asksaveasfile(mode='w', defaultextension=("YAML",".yaml"))
     
 class LanguageMenu(HPMenu):
     def __init__(self, *args, **kwargs):
