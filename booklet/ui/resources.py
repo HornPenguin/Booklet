@@ -66,7 +66,14 @@ resources ={
             "toimage":{},
             "duplex": {},
             "note": {
-                "numbering": {}
+                "numbering": {
+                    "count":["test"],
+                    "mark_on":["test"],
+                    "location":["test"],
+                    "align":["test"],
+                    "font":["test"],
+                    "size":["test"],
+                }
             }
         }
     },

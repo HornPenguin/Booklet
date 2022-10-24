@@ -131,7 +131,7 @@ class HPBooklet(tk.Tk):
                                                 self
                                             )
         #   Buttons, Labels
-        self.sub_elemnts_direct["generate"] = Button(self, textvariable=self.string_vars["generate"])
+        self.sub_elemnts_direct["generate"] = Button(self, textvariable=self.string_vars["generate"], width =int(0.1*self.width))
 
         self.string_vars["generate"].set(self.ui_texts["generate"])
         

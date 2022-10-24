@@ -237,7 +237,7 @@ class Numbering(HPLabelFrame):
 
         # Functional variables
         self.info_label_width = 13
-        self.main_entry_width = 27
+        self.main_entry_width = 35
 
         # Ui strings
         self.string_vars["onoff"] = StringVar(value=self.ui_texts["strings"]["onoff"])
@@ -276,16 +276,16 @@ class Numbering(HPLabelFrame):
         self.align_combobox = Combobox(self.ui_frames["align"])
         self.font_combobox = Combobox(self.ui_frames["font"])
         self.font_size_combobox = Combobox(self.ui_frames["size"])
-        #self.__set_inputs()
+        self.__set_inputs()
         
         # Griding        
-        self.ui_frames["onoff"].grid( row=0, column = 0, pady=(1,1))
-        self.ui_frames["count"].grid( row=1, column = 0, pady=(1,1))
-        self.ui_frames["mark_on"].grid( row=2, column = 0, pady=(1,1))
-        self.ui_frames["location"].grid( row=3, column = 0, pady=(1,1))
-        self.ui_frames["align"].grid( row=4, column = 0, pady=(1,1))
-        self.ui_frames["font"].grid( row=5, column = 0, pady=(1,1))
-        self.ui_frames["size"].grid( row=6, column = 0, pady=(1,1))
+        self.ui_frames["onoff"].grid( row=0, column = 0, pady=(1,1), sticky= N+W+S+E)
+        self.ui_frames["count"].grid( row=1, column = 0, pady=(1,1), sticky= N+W+S+E)
+        self.ui_frames["mark_on"].grid( row=2, column = 0, pady=(1,1), sticky= N+W+S+E)
+        self.ui_frames["location"].grid( row=3, column = 0, pady=(1,1), sticky= N+W+S+E)
+        self.ui_frames["align"].grid( row=4, column = 0, pady=(1,1), sticky= N+W+S+E)
+        self.ui_frames["font"].grid( row=5, column = 0, pady=(1,1), sticky= N+W+S+E)
+        self.ui_frames["size"].grid( row=6, column = 0, pady=(1,1), sticky= N+W+S+E)
         
         self.main_frame.grid(row= 0, column= 0, padx = (2,2), pady= (2,2), sticky=N+W+S)
     def __set_labels(self):
@@ -297,21 +297,29 @@ class Numbering(HPLabelFrame):
         self.info_labels["font"].configure(textvariable= self.string_vars["font"], anchor = CENTER, width = self.info_label_width)
         self.info_labels["size"].configure(textvariable= self.string_vars["size"], anchor = CENTER, width = self.info_label_width)
 
-        self.info_labels["onoff"].grid(row=0, column=0)
-        self.info_labels["count"].grid(row=0, column=0)
-        self.info_labels["mark_on"].grid(row=0, column=0)
-        self.info_labels["location"].grid(row=0, column=0)
-        self.info_labels["align"].grid(row=0, column=0)
-        self.info_labels["font"].grid(row=0, column=0)
-        self.info_labels["size"].grid(row=0, column=0)
+        self.info_labels["onoff"].grid(row=0, column=0, sticky = N+S+W)
+        self.info_labels["count"].grid(row=0, column=0, sticky = N+S+W)
+        self.info_labels["mark_on"].grid(row=0, column=0, sticky = N+S+W)
+        self.info_labels["location"].grid(row=0, column=0, sticky = N+S+W)
+        self.info_labels["align"].grid(row=0, column=0, sticky = N+S+W)
+        self.info_labels["font"].grid(row=0, column=0, sticky = N+S+W)
+        self.info_labels["size"].grid(row=0, column=0, sticky = N+S+W)
     def __set_inputs(self):
         self.onoff_checkbutton.configure(variable = self.numbering_onoff)
 
-        self.counts_combobox.configure(values=self.resources[""], width = self.main_entry_width)
-        self.marks_on_combobox.configure(values=self.resources[""], width = self.main_entry_width)
-        self.location_combobox.configure(values=self.resources[""], width = self.main_entry_width)
-        self.align_combobox .configure(values=self.resources[""], width = self.main_entry_width)
-        self.font_combobox.configure(values=self.resources[""], width = self.main_entry_width)
-        self.font_size_combobox.configure(values=self.resources[""], width = self.main_entry_width)
+        self.counts_combobox.configure(values=self.resources["count"], width = self.main_entry_width)
+        self.marks_on_combobox.configure(values=self.resources["mark_on"], width = self.main_entry_width)
+        self.location_combobox.configure(values=self.resources["location"], width = self.main_entry_width)
+        self.align_combobox.configure(values=self.resources["align"], width = self.main_entry_width)
+        self.font_combobox.configure(values=self.resources["font"], width = self.main_entry_width)
+        self.font_size_combobox.configure(values=self.resources["size"], width = self.main_entry_width)
+
+        self.onoff_checkbutton.grid(row =0, column = 1, padx=(int(0.3*self.width)))
+        self.counts_combobox.grid(row =0, column = 1, padx = 10)
+        self.marks_on_combobox.grid(row =0, column = 1, padx = 10)
+        self.location_combobox.grid(row =0, column = 1, padx = 10)
+        self.align_combobox.grid(row =0, column = 1, padx = 10)
+        self.font_combobox.grid(row =0, column = 1, padx = 10)
+        self.font_size_combobox.grid(row =0, column = 1, padx = 10)
 
 
