@@ -6,9 +6,11 @@ class Utils(HPFrame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.side_frame = HPFrame(self, width = int(0.48*self.width))
+
         self.sub_frames.append(
             ToImage(
-                self,
+                self.side_frame,
                 self.ui_texts["frames"]["toimage"],
                 self.resources["toimage"],
                 width = int(0.48*self.width),
@@ -17,7 +19,7 @@ class Utils(HPFrame):
         )
         self.sub_frames.append(
             Duplex(
-                self,
+                self.side_frame,
                 self.ui_texts["frames"]["duplex"],
                 self.resources["duplex"],
                 width = int(0.48*self.width),
@@ -34,9 +36,10 @@ class Utils(HPFrame):
             )
         )
 
-        self.sub_frames[0].grid(row=0, column=0, pady = 4, padx = (10,10), sticky= N+W+E)
-        self.sub_frames[1].grid(row=1, column=0, pady = 4, padx = (10,10), sticky= N+W+E)
-        self.sub_frames[2].grid(row=0, column=1, rowspan= 2, pady = 4, padx = (10,10), sticky= N+S+E)
+        self.sub_frames[0].grid(row=0, column=0, pady = 4, padx = (10,10), sticky= N+W+S+E)
+        self.sub_frames[1].grid(row=1, column=0, pady = 4, padx = (10,10), sticky= N+W+S+E)
+        self.side_frame.grid(row=0, column =0, pady = 4, padx = (10,10), sticky=  W+E)
+        self.sub_frames[2].grid(row=0, column=1, pady = 4, padx = (10,10), sticky=W+E)
         
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
@@ -181,21 +184,134 @@ class Note(HPLabelFrame):
         self.note_onoff = BooleanVar(value = False)
         
         # Functional variables
+        self.info_label_width = 15
+        self.main_entry_width = 30
 
         # Ui strings
+        self.string_vars["onoff"] = StringVar(value = self.ui_texts["strings"]["onoff"])
+        self.string_vars["pages"] = StringVar(value = self.ui_texts["strings"]["pages"])
 
         # Ui frames
+        self.ui_frames["onoff"] = HPFrame(self, width =self.width)
+        self.ui_frames["pages"] = HPFrame(self, width = self.width)
 
+        # Ui lables
+        self.info_labels = {}
+        self.info_labels["onoff"] = Label(self.ui_frames["onoff"])
+        self.info_labels["pages"] = Label(self.ui_frames["pages"])
+        self.__set_labels()
+        # input elements
+        self.onoff_checkbutton = Checkbutton(self.ui_frames["onoff"])
+        self.pages_entry = Entry(self.ui_frames["pages"])
+        self.__set_inputs()
+
+        # Griding
+
+        self.ui_frames["onoff"].grid(row=0, column=0, padx=(2,2), pady=2, sticky= N+W+S)
+        self.ui_frames["pages"].grid(row=1, column=0, padx=(2,2), pady=2, sticky= N+W+S)
+        self.sub_frames[0].grid(row=2, column=0, padx=(4,4), pady=2, sticky= N+W+S+E)
+    
+    def __set_labels(self):
+        self.info_labels["onoff"]
+        self.info_labels["pages"]
+
+        self.info_labels["onoff"].configure(textvariable = self.string_vars["onoff"], width = self.info_label_width, anchor = CENTER)
+        self.info_labels["pages"].configure(textvariable = self.string_vars["pages"], width = self.info_label_width, anchor = CENTER)
+
+        self.info_labels["onoff"].grid(row=0, column=0)
+        self.info_labels["pages"].grid(row=0, column=0)
+    def __set_inputs(self):
+        self.onoff_checkbutton.configure(variable=self.note_onoff)
+        self.pages_entry.configure(width = self.main_entry_width)
+
+        self.onoff_checkbutton.grid(row= 0 , column = 1, padx = (int(0.28*self.width),0))
+        self.pages_entry.grid(row= 0 , column = 1, padx = (2,4))
 
 class Numbering(HPLabelFrame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.main_frame = HPFrame(self, width = self.width)
 
         # Variables
+        self.numbering_onoff = BooleanVar(value = False)
 
         # Functional variables
+        self.info_label_width = 13
+        self.main_entry_width = 27
 
         # Ui strings
-
+        self.string_vars["onoff"] = StringVar(value=self.ui_texts["strings"]["onoff"])
+        self.string_vars["count"] = StringVar(value=self.ui_texts["strings"]["count"])
+        self.string_vars["mark_on"] = StringVar(value=self.ui_texts["strings"]["mark_on"])
+        self.string_vars["location"] = StringVar(value=self.ui_texts["strings"]["location"])
+        self.string_vars["align"] = StringVar(value=self.ui_texts["strings"]["align"])
+        self.string_vars["font"] = StringVar(value=self.ui_texts["strings"]["font"])
+        self.string_vars["size"] = StringVar(value=self.ui_texts["strings"]["size"])
         # Ui frames
+        self.ui_frames["onoff"] = HPFrame(self.main_frame, width = self.width)
+        self.ui_frames["count"] = HPFrame(self.main_frame, width = self.width)
+        self.ui_frames["mark_on"] = HPFrame(self.main_frame, width = self.width)
+        self.ui_frames["location"] = HPFrame(self.main_frame, width = self.width)
+        self.ui_frames["align"] = HPFrame(self.main_frame, width = self.width)
+        self.ui_frames["font"] = HPFrame(self.main_frame, width = self.width)
+        self.ui_frames["size"] = HPFrame(self.main_frame, width = self.width)
+
+        # info labels
+        self.info_labels = {}
+        self.info_labels["onoff"] = Label(self.ui_frames["onoff"])
+        self.info_labels["count"] = Label(self.ui_frames["count"])
+        self.info_labels["mark_on"] = Label(self.ui_frames["mark_on"])
+        self.info_labels["location"] = Label(self.ui_frames["location"])
+        self.info_labels["align"] = Label(self.ui_frames["align"])
+        self.info_labels["font"] = Label(self.ui_frames["font"])
+        self.info_labels["size"] = Label(self.ui_frames["size"])
+
+        self.__set_labels()
+        
+        # inputs
+        self.onoff_checkbutton = Checkbutton(self.ui_frames["onoff"])
+        self.counts_combobox = Combobox(self.ui_frames["count"])
+        self.marks_on_combobox = Combobox(self.ui_frames["mark_on"])
+        self.location_combobox = Combobox(self.ui_frames["location"])
+        self.align_combobox = Combobox(self.ui_frames["align"])
+        self.font_combobox = Combobox(self.ui_frames["font"])
+        self.font_size_combobox = Combobox(self.ui_frames["size"])
+        #self.__set_inputs()
+        
+        # Griding        
+        self.ui_frames["onoff"].grid( row=0, column = 0, pady=(1,1))
+        self.ui_frames["count"].grid( row=1, column = 0, pady=(1,1))
+        self.ui_frames["mark_on"].grid( row=2, column = 0, pady=(1,1))
+        self.ui_frames["location"].grid( row=3, column = 0, pady=(1,1))
+        self.ui_frames["align"].grid( row=4, column = 0, pady=(1,1))
+        self.ui_frames["font"].grid( row=5, column = 0, pady=(1,1))
+        self.ui_frames["size"].grid( row=6, column = 0, pady=(1,1))
+        
+        self.main_frame.grid(row= 0, column= 0, padx = (2,2), pady= (2,2), sticky=N+W+S)
+    def __set_labels(self):
+        self.info_labels["onoff"].configure(textvariable= self.string_vars["onoff"], anchor = CENTER, width = self.info_label_width)
+        self.info_labels["count"].configure(textvariable= self.string_vars["count"], anchor = CENTER, width = self.info_label_width)
+        self.info_labels["mark_on"].configure(textvariable= self.string_vars["mark_on"], anchor = CENTER, width = self.info_label_width)
+        self.info_labels["location"].configure(textvariable= self.string_vars["location"], anchor = CENTER, width = self.info_label_width)
+        self.info_labels["align"].configure(textvariable= self.string_vars["align"], anchor = CENTER, width = self.info_label_width)
+        self.info_labels["font"].configure(textvariable= self.string_vars["font"], anchor = CENTER, width = self.info_label_width)
+        self.info_labels["size"].configure(textvariable= self.string_vars["size"], anchor = CENTER, width = self.info_label_width)
+
+        self.info_labels["onoff"].grid(row=0, column=0)
+        self.info_labels["count"].grid(row=0, column=0)
+        self.info_labels["mark_on"].grid(row=0, column=0)
+        self.info_labels["location"].grid(row=0, column=0)
+        self.info_labels["align"].grid(row=0, column=0)
+        self.info_labels["font"].grid(row=0, column=0)
+        self.info_labels["size"].grid(row=0, column=0)
+    def __set_inputs(self):
+        self.onoff_checkbutton.configure(variable = self.numbering_onoff)
+
+        self.counts_combobox.configure(values=self.resources[""], width = self.main_entry_width)
+        self.marks_on_combobox.configure(values=self.resources[""], width = self.main_entry_width)
+        self.location_combobox.configure(values=self.resources[""], width = self.main_entry_width)
+        self.align_combobox .configure(values=self.resources[""], width = self.main_entry_width)
+        self.font_combobox.configure(values=self.resources[""], width = self.main_entry_width)
+        self.font_size_combobox.configure(values=self.resources[""], width = self.main_entry_width)
+
 

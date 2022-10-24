@@ -65,7 +65,7 @@ tabs:
         name: "Standard"
         strings:
           type: "Type"
-          pages_per: "Pages per"
+          pages_per: "Pages"
           insert: "Insert"
           paper_format: "Paper format"
           custom_format: "Custom format"
@@ -147,9 +147,9 @@ tabs:
               name: "Numbering"
               strings:
                 onoff: "On/Off"
-                counts: "Count"
-                marks: "Mark on"
-                locations: "Location"
+                count: "Count"
+                mark_on: "Mark on"
+                location: "Location"
                 align: "Align"
                 font: "Font"
                 size: "Size"

@@ -139,6 +139,7 @@ class Standard(HPLabelFrame):
         self.riffle_label.grid(         row=0, column=0, sticky = E+N+S+W)
         self.blank_label.grid(          row=0, column=0, sticky = E+N+S+W)
     def __set_inputs(self):
+
         self.type_combobox.configure(values=section.section_type ,  width = self.main_entry_width, state="readonly")
         self.pages_per_sec_combobox.configure(width =int(0.38*self.main_entry_width), state="readonly")
         
@@ -146,7 +147,7 @@ class Standard(HPLabelFrame):
         self.insert_product_label = Label(self.insert_frame, text="x")
         self.insert_gathered_pages_label.configure(textvariable = self.page_collection_gather, width = int(0.3*self.width))
         
-        self.brochures_combobox.configure( values=list(section.brochure_types.keys()),  width = int(0.58*self.main_entry_width), state="readonly")
+        self.brochures_combobox.configure( values=list(section.brochure_types.keys()),  width = int(0.56*self.main_entry_width), state="readonly")
         self.paper_format_combobox.configure(values=list(section.paper_formats.keys()), width = self.main_entry_width, state="readonly")
         
         self.custom_format_onoff_checkbox.configure(variable=self.custom_format_onoff)
@@ -165,20 +166,24 @@ class Standard(HPLabelFrame):
         self.blank_page_combbox.current(0)
 
         self.type_combobox.grid(            row = 0, column = 1)
-        self.pages_per_sec_combobox.grid(   row = 0, column = 1)
-        self.insert_combobox.grid(          row = 0, column = 1)
-        self.insert_product_label.grid(     row = 0, column = 2)
-        self.insert_gathered_pages_label.grid(row=0, column = 3)
-        self.brochures_combobox.grid(       row = 0, column = 2)
+        self.pages_per_sec_combobox.grid(   row = 0, column = 1, padx=(0, 2))
+        self.brochures_combobox.grid(       row = 0, column = 2, padx=(2, 0))
+        
+        self.insert_combobox.grid(          row = 0, column = 1, padx=(0, 2))
+        self.insert_product_label.grid(     row = 0, column = 2, padx= 2)
+        self.insert_gathered_pages_label.grid(row=0, column = 3, padx= 2)
+
         self.paper_format_combobox.grid(    row = 0, column = 1)
         
-        self.custom_format_onoff_checkbox.grid(row = 0, column = 1)
-        self.custom_format_width_entry.grid(row = 0, column = 2)
-        self.custom_format_product_label.grid(row = 0, column = 3)
-        self.custom_format_height_entry.grid(row = 0, column = 4)
+        self.custom_format_onoff_checkbox.grid(row = 0, column = 1, padx=(0, 2))
+        self.custom_format_width_entry.grid(row = 0, column = 2, padx = 2)
+        self.custom_format_product_label.grid(row = 0, column = 3, padx = 2)
+        self.custom_format_height_entry.grid(row = 0, column = 4, padx = 2)
 
         self.page_range_entry.grid(         row = 0, column = 1)
+        
         self.riffle_combobox.grid(          row = 0, column = 1) 
+        
         self.blank_page_combbox.grid(       row = 0, column = 1)
 
 class Custom(HPLabelFrame):

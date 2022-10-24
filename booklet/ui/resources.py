@@ -65,7 +65,9 @@ resources ={
         "utils":{
             "toimage":{},
             "duplex": {},
-            "note": {}
+            "note": {
+                "numbering": {}
+            }
         }
     },
 }
