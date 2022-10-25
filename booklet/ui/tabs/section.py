@@ -1,4 +1,7 @@
 from distutils.sysconfig import customize_compiler
+from statistics import variance
+
+from numpy import var
 from booklet.ui.tabs import *
 from booklet.ui import HPFrame, HPLabelFrame
 from booklet.data import section 
@@ -14,7 +17,7 @@ class Section(HPFrame):
             Standard(
                 self,
                 self.ui_texts["frames"]["standard"],
-                self.resources["standard"],
+                self.resources.pop("standard"),
                 width = int(0.5*self.width),
                 height = self.height
             )
@@ -23,7 +26,7 @@ class Section(HPFrame):
             Custom(
                 self,
                 self.ui_texts["frames"]["custom"],
-                self.resources["custom"],
+                self.resources.pop("custom"),
                 width = int(0.5*self.width),
                 height = self.height
             )
@@ -189,3 +192,146 @@ class Standard(HPLabelFrame):
 class Custom(HPLabelFrame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.sub_frames.append(
+            Layout(
+                self,
+                self.ui_texts["frames"]["layout"],
+                self.resources.pop("layout"),
+                width = self.width
+            )
+        )
+        self.sub_frames.append(
+            Fcode(
+                self,
+                self.ui_texts["frames"]["fcode"],
+                self.resources.pop("fcode"),
+                width = self.width
+            )
+        )
+
+        # Functional variables
+        self.onoff_var = BooleanVar(value=False)
+        # UI variables
+        self.string_vars["onoff"] = StringVar(value= self.ui_texts["strings"]["onoff"])
+        
+        self.ui_frames["onoff"] = HPFrame(self, width = self.width)
+
+        self.onoff_label = Label(self.ui_frames["onoff"])
+        self.__set_labels()
+
+        self.onoff_checkbutton = Checkbutton(self.ui_frames["onoff"])
+        self.type_combobox = Combobox(self.ui_frames["onoff"])
+        self.__set_inputs()
+        
+        self.ui_frames["onoff"].grid(row=0, column =0) 
+        self.sub_frames[0].grid(row= 1 , column =0)
+        self.sub_frames[1].grid(row= 2 , column =0)
+
+    def __set_labels(self):
+        self.onoff_label.configure(textvariable=self.string_vars["onoff"])
+        
+        self.onoff_label.grid(row= 0, column =0)
+    def __set_inputs(self):
+        self.onoff_checkbutton.configure(variable=self.onoff_var)
+        self.type_combobox.configure(values = ["layout", "fcode"], state="readonly")
+
+        self.onoff_checkbutton.grid(row= 0, column = 1)
+        self.type_combobox.grid(row= 0, column = 2)
+
+class Layout(HPLabelFrame):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Variables
+        self.layout_x_var = StringVar(value = "")
+        self.layout_y_var = StringVar(value = "")
+        self.front_map_var = StringVar(value = "")
+
+        self.fold_sequence = ""
+
+        # Functional variables
+        self.main_entry_width = 5
+
+        # Ui string
+
+        self.string_vars["layout"] = StringVar(value = self.ui_texts["strings"]["layout"]) 
+        self.string_vars["front"] = StringVar(value = self.ui_texts["strings"]["front"])
+
+        # Ui Frames
+        self.ui_frames["layout"] = HPFrame(self, width= self.width)
+        self.ui_frames["front"] = HPFrame(self, width= self.width)
+        # info labels
+        self.info_labels = {}
+        self.info_labels["layout"] = Label(self.ui_frames["layout"])
+        self.info_labels["front"] = Label(self.ui_frames["front"])
+        self.__set_info_labels()
+        # inputs
+
+        self.layout_x_entry = Entry(self.ui_frames["layout"])
+        self.layout_times_label = Label(self.ui_frames["layout"], text="x")
+        self.layout_y_entry = Entry(self.ui_frames["layout"])
+
+        self.front_map_text = Text(self.ui_frames["front"])
+        self.__set_inputs()
+
+        self.ui_frames["layout"].grid(row = 0, column = 0, stick=N+S)
+        self.ui_frames["front"].grid(row = 1, column = 0, stick=N+S)
+    def __set_info_labels(self):
+        self.info_labels["layout"].configure(textvariable = self.string_vars["layout"])
+        self.info_labels["front"].configure(textvariable = self.string_vars["front"])
+
+        self.info_labels["layout"].grid(row = 0, column = 0)
+        self.info_labels["front"].grid(row = 0, column = 0)
+    def __set_inputs(self):
+        self.layout_x_entry.configure(textvariable = self.layout_x_var, width = self.main_entry_width)
+        self.layout_y_entry.configure(textvariable = self.layout_y_var, width = self.main_entry_width)
+
+        self.front_map_text.configure(width = 10, height = 5)
+
+        self.front_map_text.grid(row= 0, column=1, padx = (2,2), sticky=N+W+S+E)
+
+        self.layout_x_entry.grid(row= 0, column=1, padx = 2, sticky=N+S+W)
+        self.layout_times_label.grid(row= 0, column=2, padx = 2, sticky=N+S+W)
+        self.layout_y_entry.grid(row= 0, column=3, padx = 2, sticky=N+S+W)
+
+class Fcode(HPLabelFrame):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Ui frame
+        self.ui_frames["start_axis"] = HPFrame(self, width=self.width)
+        self.ui_frames["button"] = HPFrame(self)
+        
+        # Variables
+        self.string_vars["start_axis"] = StringVar(value = self.ui_texts["strings"]["start_axis"])
+        self.string_vars["preview"] = StringVar(value = self.ui_texts["strings"]["preview"])
+        self.string_vars["apply"] = StringVar(value = self.ui_texts["strings"]["apply"])
+        
+        # Info label
+        self.info_labels = {}
+        self.info_labels["start_axis"] = Label(self.ui_frames["start_axis"])
+        self.__set_info_labels()
+        # Inputs
+        self.start_axis_combobox = Combobox(self.ui_frames["start_axis"])
+        self.fcode_input_text = Text(self, width =20, height= 8)
+        self.view_preview_button = Button(self.ui_frames["button"])
+        self.apply_button = Button(self.ui_frames["button"])
+        self.__set_inputs()
+        
+        self.ui_frames["start_axis"].grid(row=0, column = 0)
+        self.fcode_input_text.grid(row=1, column=0)
+        self.ui_frames["button"].grid(row=2, column = 0)
+    def __set_info_labels(self):
+        self.info_labels["start_axis"].configure(textvariable=self.string_vars["start_axis"])
+        self.info_labels["start_axis"].grid(row=0, column=0)
+    def __set_inputs(self):
+        self.start_axis_combobox.configure(values = self.resources["misc"]["start_axis"], state="readonly")
+        self.start_axis_combobox.current(0)
+        self.view_preview_button.configure(textvariable= self.string_vars["preview"])
+        self.apply_button.configure(textvariable= self.string_vars["apply"])
+
+        self.start_axis_combobox.grid(row=0, column=1)
+        self.view_preview_button.grid(row=0, column=0)
+        self.apply_button.grid(row=0, column=1)
+        

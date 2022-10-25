@@ -38,7 +38,7 @@ tabs:
         name: "Manuscript"
         strings:
           index: " "
-          files: "files"
+          files: "file"
       file_info:
         name: "File Info"
         strings:
@@ -85,10 +85,22 @@ tabs:
           order: "Order"
           mv: "M/V"
           validate: "Validate"
+        frames:
+          layout:
+            name: "Layout"
+            strings:
+              layout: "Layout"
+              front: "Front"
+          fcode:
+            name: "Fcode"
+            strings:
+              start_axis: "Start axis"
+              preview: "Preview"
+              apply: "Apply"
   imposition:
     name: "Imposition"
     frames:
-      book:
+      bookbrochures:
         name: "Book&Brochure"
         strings:
           onoff: "On/Off"
@@ -108,7 +120,7 @@ tabs:
           gap_line: "Gap Line"
           paper_format: "Paper format"
           page_format: "Page format"
-          maximum_fill: "Maximum fill"
+          max_fill: "Maximum fill"
   printingmarks:
       name: "Printing Marks"
       frames:

@@ -45,21 +45,30 @@ resources ={
         },
         "section":{
             "standard":{},
-            "custom": {}
+            "custom": {
+                "layout":{},
+                "fcode": {
+                    "misc":{
+                        "start_axis": ["x", "y"]
+                    }
+                }
+            }
         },
         "imposition":{
-            "book": {},
+            "bookbrochures": {},
             "repetition": {}
         },
         "printingmarks":{
             "printingmarks":{
-                "crop_line": "",
-                "trim_line": "",
-                "registration_mark": "",
-                "cmyk": "",
-                "direction_mark": "",
-                "angle_mark": "",
-                "duplex_measure": ""
+                "texts":{
+                    "crop_line": "",
+                    "trim_line": "",
+                    "registration_mark": "",
+                    "cmyk": "",
+                    "direction_mark": "",
+                    "angle_mark": "",
+                    "duplex_measure": ""
+                }
             } 
         },
         "utils":{
@@ -67,12 +76,14 @@ resources ={
             "duplex": {},
             "note": {
                 "numbering": {
-                    "count":["test"],
-                    "mark_on":["test"],
-                    "location":["test"],
-                    "align":["test"],
-                    "font":["test"],
-                    "size":["test"],
+                    "misc":{
+                        "count":["test"],
+                        "mark_on":["test"],
+                        "location":["test"],
+                        "align":["test"],
+                        "font":["test"],
+                        "size":["test"],
+                    }
                 }
             }
         }
