@@ -7,7 +7,7 @@ Features
 In this chapters, we will overlook some detailed algorithms 
 and structure of implementations of each feature. 
 
-.. include:: signature.rst
+.. include:: section.rst
 
 .. include:: imposition.rst
 
