@@ -18,6 +18,54 @@ from tkinter.font import Font
 from typing import Dict
 from collections.abc import Iterable
 
+# Basic validation functions
+class Validate:
+    def double_value(event, current_text, previous_text, inserted_text):
+        if inserted_text not in "0123456789.-":
+                return False
+        if current_text == "":
+            return True
+        if current_text.count(".") >1:
+            return False
+        if current_text.count("-") > 1:
+            return False
+        if current_text[0] != "-" and current_text.count("-") == 1:
+            return False 
+        return True
+    def double_positive_value(event, current_text, previous_text, inserted_text):
+        if inserted_text not in "0123456789.":
+                return False
+        if current_text == "":
+            return True
+        if current_text.count(".") >1:
+            return False
+        if current_text.count("-") > 1:
+            return False
+        return True
+    def int_value(event, current_text, previous_text, inserted_text):
+        if inserted_text not in "0123456789-":
+            return False
+        if current_text == "":
+            return True
+        if current_text.count("-") > 1:
+            return False
+        if current_text[0] != "-" and current_text.count("-") == 1:
+            return False 
+        if current_text[0] == "0":
+            return False
+        return True
+    def int_positive_value(event, current_text, previous_text, inserted_text):
+        if inserted_text not in "0123456789":
+            return False
+        if current_text == "":
+            return True
+        if current_text[0] == "0":
+            return False
+        return True
+
+
+# Main elements
+
 class HPMenu(Menu):
     # YAML format:
     #   MenuName:
@@ -104,13 +152,17 @@ class HPLabelFrame(LabelFrame):
 
 class HPFrame(Frame):
     def __init__(self, parent, *args, ui_texts=None, resources=None,**kwargs):
-        
+        grid_anchor = False
+        if "grid_anchor" in kwargs.keys():
+            grid_anchor = kwargs.pop("grid_anchor")
+            
         super().__init__(parent, *args, **kwargs)
         self.parent = parent
 
         self.width = kwargs["width"] if "width" in kwargs.keys() else None
         self.height = kwargs["height"] if "height" in kwargs.keys() else None
-
+        if grid_anchor:
+            self.grid_anchor(grid_anchor)
 
         self.ui_texts = ui_texts
         self.resources = resources
@@ -160,6 +212,7 @@ class HPNoteBook(Notebook):
             print(sub_lang_pack["name"])
             self.tab(i, text = sub_lang_pack["name"])
             tab.update_ui_texts(sub_lang_pack)
+    
 
 class HPPopUp(Toplevel):
     def __init__(
@@ -240,8 +293,7 @@ class HPVScrollWapper(HPFrame):
             self.canvas.itemconfigure(self.frame_id, width=self.canvas.winfo_width())
         self.scroll_region_update()
         self.canvas.yview_moveto(0.0)
-
-        
+    
 
 
 

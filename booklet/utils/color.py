@@ -90,7 +90,7 @@ def __color_conversion(
     if i not in color_mode or f not in color_mode:
         raise ValueError(f"Invaild conversion space, they must be in {color_mode}")
     if i == "rgb":
-        if not isinstance(value, collections.Iterable):
+        if not isinstance(value, collections.abc.Iterable):
             raise ValueError("Invaild rgb value, not an iterable object")
         if len(value) != 3:
             raise ValueError("Invaild rgb value, its length is not 3")
@@ -100,7 +100,7 @@ def __color_conversion(
             )
         r, g, b = int(value[0]), int(value[1]), int(value[2])
     elif i == "cmyk":
-        if not isinstance(value, collections.Iterable):
+        if not isinstance(value, collections.abc.Iterable):
             raise ValueError("Invaild cmyk value, not an iterable object")
         if len(value) != 4:
             raise ValueError("Invaild cmyk value, its length is not 4")

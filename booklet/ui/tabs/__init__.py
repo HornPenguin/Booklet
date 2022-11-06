@@ -1,7 +1,7 @@
 import sys
 
 from tkinter import Button as tk_Button
-from tkinter import W, E, N, S, BOTH, LEFT, RIGHT, CENTER
+from tkinter import W, E, N, S, BOTH, LEFT, RIGHT, CENTER, TOP
 from tkinter import StringVar, IntVar, DoubleVar, BooleanVar
 from tkinter import DISABLED, ACTIVE, NORMAL
 from tkinter import filedialog, Canvas

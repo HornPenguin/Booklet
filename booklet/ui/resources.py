@@ -1,4 +1,5 @@
 from booklet.data import *
+from booklet.data.printing_marks import routine_images
 
 # Types of data
 # 1. images
@@ -56,7 +57,14 @@ resources ={
         },
         "imposition":{
             "bookbrochures": {},
-            "repetition": {}
+            "repetition": {
+                "misc": {
+                    "fit": ["to paper", "to page"],
+                    "gap_line": ["middle", "page"],
+                    "line_type": ["plain", "dot", "dash", "dash-dot"]
+                }
+
+            }
         },
         "printingmarks":{
             "printingmarks":{
@@ -68,7 +76,8 @@ resources ={
                     "direction_mark": "",
                     "angle_mark": "",
                     "duplex_measure": ""
-                }
+                },
+                "images": routine_images
             } 
         },
         "utils":{

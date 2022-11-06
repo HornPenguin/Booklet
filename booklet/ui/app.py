@@ -49,6 +49,13 @@ class HPBooklet_Menu(HPMenu):
 
 # Tabs
 class HPBooklet_Tabs(HPNoteBook):
+    INDEX = {
+        "FileIO": 0,
+        "Section": 1,
+        "Imposition": 2,
+        "PrintingMarks": 3,
+        "Utils": 4
+    }
     def __init__(self, *args, **kwargs):
         self.width = kwargs["width"] if "width" in kwargs.keys() else 0
         self.height = kwargs["height"] if "height" in kwargs.keys() else 0

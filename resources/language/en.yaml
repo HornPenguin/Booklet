@@ -57,13 +57,19 @@ tabs:
           total_page: "Total pages"
           name: "File name"
           as: "as"
-          split_per: "Split per" 
+          split_per: "Split per"
+        variables:
+          file_name: 
+            name: "name"
+            prefix: "prefix"
+            suffix: "suffix"
   section:
     name: "Section"
     frames:
       standard:
         name: "Standard"
         strings:
+          onoff: "On/off"
           type: "Type"
           pages_per: "Pages"
           insert: "Insert"
@@ -72,6 +78,19 @@ tabs:
           page_range: "Page range"
           riffle_direction: "Riffle direction"
           blank_pages: "Blank pages to"
+        variables:
+          type:
+            book: "Book"
+            brochure: "Brochure"
+          brochure_types:
+            half-fold:
+          riffle_direction:
+            right: "Right"
+            left: "Left"
+          blank_page:
+            back: "back"
+            front: "front"
+            both: "both"
       custom:
         name: "Custom"
         strings:
@@ -97,6 +116,10 @@ tabs:
               start_axis: "Start axis"
               preview: "Preview"
               apply: "Apply"
+        variables:
+          type:
+            lyaout: "Layout"
+            fcode: "Fcode"
   imposition:
     name: "Imposition"
     frames:
@@ -121,6 +144,18 @@ tabs:
           paper_format: "Paper format"
           page_format: "Page format"
           max_fill: "Maximum fill"
+        variables:
+          fit:
+            to_paper: "to paper"
+            to_page: "to page"
+          gap_position:
+            middle: "middle"
+            page: "page"
+          gap_type:
+            plain: "plain"
+            dot : "dot"
+            dash: "dash"
+            dash_dot: "dash dot"
   printingmarks:
       name: "Printing Marks"
       frames:
@@ -130,7 +165,7 @@ tabs:
             margin: "Margin"
             crop: "Crop"
             trim: "Trim"
-            registration: "Registration"
+            reg: "Registration"
             cmyk: "CMYK"
             direction: "Direction"
             angle: "Angle"

@@ -2221,7 +2221,7 @@ class Files(tk.Frame):
         self.selected_files.bind("<ButtonRelease-1>", self.__event_file_selection)
 
 
-    def __add_new_file(self, event=None):
+    #def __add_new_file(self, event=None):
         
 
     def __event_file_selection(self, event=None):

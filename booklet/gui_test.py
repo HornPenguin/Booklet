@@ -846,7 +846,7 @@ if __name__ == "__main__":
     HPbooklet = HPBooklet(
         lang_code = "en",
         resources = resources,
-        width = 750,
+        width = 720,
         height = 570
         )
     HPbooklet.mainloop()

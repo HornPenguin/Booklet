@@ -1,0 +1,25 @@
+
+- Resource data setting for ui
+- Section:
+    entry input vaildation
+    page range parsing function implement
+    show pages by the type of book and brochure.
+    custom - onoff selection.
+    Layout parser
+    Fcode parser
+- Imposition:
+    onoff routine settig.
+    exclusive relation setting.
+    entry input vaildation
+    disable all setting.
+    Color button routine implemenation.
+- Printing mark:
+   Add icons 
+   disable routine
+- Utils:
+   image:
+    None
+   Duplex:
+    disable routine
+   Note:
+    disable routine

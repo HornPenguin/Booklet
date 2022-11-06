@@ -1,5 +1,5 @@
 from booklet.ui.tabs import *
-from booklet.ui import HPFrame, HPLabelFrame
+from booklet.ui import Validate, HPFrame, HPLabelFrame
 
 
 class Utils(HPFrame):
@@ -38,8 +38,8 @@ class Utils(HPFrame):
 
         self.sub_frames[0].grid(row=0, column=0, pady = 4, padx = (10,10), sticky= N+W+S+E)
         self.sub_frames[1].grid(row=1, column=0, pady = 4, padx = (10,10), sticky= N+W+S+E)
-        self.side_frame.grid(row=0, column =0, pady = 4, padx = (10,10), sticky=  W+E)
-        self.sub_frames[2].grid(row=0, column=1, pady = 4, padx = (10,10), sticky=W+E)
+        self.side_frame.grid(row=0, column =0, pady = 4, padx = (10,10), sticky=  N+S+W+E)
+        self.sub_frames[2].grid(row=0, column=1, pady = 4, padx = (10,10), sticky=N+S+W+E)
         
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
@@ -62,15 +62,15 @@ class ToImage(HPLabelFrame):
 
         self.toimage_onoff_label = Label(self.ui_frames["image"])
         self.toimage_onoff_checkbutton = Checkbutton(self.ui_frames["image"])
-        self.__set_label()
-        self.__set_inputs()
+        self.set_label()
+        self.set_inputs()
         self.ui_frames["image"].grid(row=0, column=0, padx= 4, pady = 4, sticky=N+S+W)
         self.main_frame.grid(row=0, column= 0, sticky=N+S+W)
-    def __set_label(self):
+    def set_label(self):
         self.toimage_onoff_label.configure(textvariable=self.string_vars["onoff"], width=self.info_label_width, anchor = CENTER)
 
         self.toimage_onoff_label.grid(row=0, column=0,  sticky=N+S+W)
-    def __set_inputs(self):
+    def set_inputs(self):
         self.toimage_onoff_checkbutton.configure(variable=self.toimage_onoff)
         self.toimage_onoff_checkbutton.grid(row=0, column=1, padx = int(0.35* self.width), sticky=N+S+W)
 
@@ -112,7 +112,7 @@ class Duplex(HPLabelFrame):
         self.info_labels["translation"] = Label(self.ui_frames["translation"])
         self.info_labels["rotation"] = Label(self.ui_frames["rotation"])
         self.info_labels["preserve"] = Label(self.ui_frames["preserve"])
-        self.__set_info_labels()
+        self.set_info_labels()
         
         # input elements
         self.onoff_checkbutton = Checkbutton(self.ui_frames["onoff"])
@@ -123,8 +123,10 @@ class Duplex(HPLabelFrame):
         self.rotation_checkbutton = Checkbutton(self.ui_frames["rotation"])
         self.rotation_entry = Entry(self.ui_frames["rotation"])
         self.preserve_checkbutton = Checkbutton(self.ui_frames["preserve"])
-        self.__set_inputs()
+        self.set_inputs()
         
+        self.validation_setting()
+
         # Grid
         self.ui_frames["onoff"].grid(       row= 0, column =0, pady = 4, sticky= W+N+S)
         self.ui_frames["translation"].grid( row= 1, column =0, pady = 4, sticky= W+N+S)
@@ -135,7 +137,7 @@ class Duplex(HPLabelFrame):
         #self.main_frame.configure(borderwidth=2, relief="groove")
         self.main_frame.grid(row=0 , column=0, pady=(4,4), sticky= N+S+W)
 
-    def __set_info_labels(self):
+    def set_info_labels(self):
 
         self.info_labels["onoff"].configure(textvariable = self.string_vars["onoff"], width = self.info_label_width, anchor = CENTER)
         self.info_labels["translation"].configure(textvariable = self.string_vars["translation"], width = self.info_label_width, anchor = CENTER)
@@ -146,7 +148,7 @@ class Duplex(HPLabelFrame):
         self.info_labels["translation"].grid( row= 0, column = 0 , sticky = W+N+S)
         self.info_labels["rotation"].grid( row= 0, column = 0 , sticky = W+N+S)
         self.info_labels["preserve"].grid( row= 0, column = 0 , sticky = W+N+S)
-    def __set_inputs(self):
+    def set_inputs(self):
         self.onoff_checkbutton.configure(variable= self.duplex_onoff)
         self.translation_checkbutton.configure(variable = self.translation_onoff)
         self.translation_x_entry.configure(textvariable= self.translation_x, width = int(0.45*self.main_entry_width))
@@ -166,6 +168,12 @@ class Duplex(HPLabelFrame):
         self.rotation_entry.grid(row=0, column=2)
 
         self.preserve_checkbutton.grid(row=0, column=1, padx = int(0.32*self.width))
+    def validation_setting(self):
+        double_validator = self.register(Validate.double_value)
+
+        self.translation_x_entry.configure(validate="all", validatecommand=(double_validator, "%V", "%P", r"%s", "%S"))
+        self.translation_y_entry.configure(validate="all", validatecommand=(double_validator, "%V", "%P", r"%s", "%S"))
+        self.rotation_entry.configure(validate="all", validatecommand=(double_validator, "%V", "%P", r"%s", "%S"))
 
 class Note(HPLabelFrame):
     def __init__(self, *args, **kwargs):
@@ -199,19 +207,20 @@ class Note(HPLabelFrame):
         self.info_labels = {}
         self.info_labels["onoff"] = Label(self.ui_frames["onoff"])
         self.info_labels["pages"] = Label(self.ui_frames["pages"])
-        self.__set_labels()
+        self.set_labels()
         # input elements
         self.onoff_checkbutton = Checkbutton(self.ui_frames["onoff"])
         self.pages_entry = Entry(self.ui_frames["pages"])
-        self.__set_inputs()
+        self.set_inputs()
 
+        self.validation_setting()
+        
         # Griding
-
         self.ui_frames["onoff"].grid(row=0, column=0, padx=(2,2), pady=2, sticky= N+W+S)
         self.ui_frames["pages"].grid(row=1, column=0, padx=(2,2), pady=2, sticky= N+W+S)
-        self.sub_frames[0].grid(row=2, column=0, padx=(4,4), pady=2, sticky= N+W+S+E)
+        self.sub_frames[0].grid(row=2, column=0, padx=(4,4), pady=(2, 10), sticky= N+W+S+E)
     
-    def __set_labels(self):
+    def set_labels(self):
         self.info_labels["onoff"]
         self.info_labels["pages"]
 
@@ -220,13 +229,16 @@ class Note(HPLabelFrame):
 
         self.info_labels["onoff"].grid(row=0, column=0)
         self.info_labels["pages"].grid(row=0, column=0)
-    def __set_inputs(self):
+    def set_inputs(self):
         self.onoff_checkbutton.configure(variable=self.note_onoff)
         self.pages_entry.configure(width = self.main_entry_width)
 
         self.onoff_checkbutton.grid(row= 0 , column = 1, padx = (int(0.28*self.width),0))
         self.pages_entry.grid(row= 0 , column = 1, padx = (2,4))
-
+    
+    def validation_setting(self):
+        int_positive_validator = self.register(Validate.int_positive_value)
+        self.pages_entry.configure(validate="all", validatecommand=(int_positive_validator, "%V", "%P", r"%s", "%S"))
 class Numbering(HPLabelFrame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -266,7 +278,7 @@ class Numbering(HPLabelFrame):
         self.info_labels["font"] = Label(self.ui_frames["font"])
         self.info_labels["size"] = Label(self.ui_frames["size"])
 
-        self.__set_labels()
+        self.set_labels()
         
         # inputs
         self.onoff_checkbutton = Checkbutton(self.ui_frames["onoff"])
@@ -276,7 +288,7 @@ class Numbering(HPLabelFrame):
         self.align_combobox = Combobox(self.ui_frames["align"])
         self.font_combobox = Combobox(self.ui_frames["font"])
         self.font_size_combobox = Combobox(self.ui_frames["size"])
-        self.__set_inputs()
+        self.set_inputs()
         
         # Griding        
         self.ui_frames["onoff"].grid( row=0, column = 0, pady=(1,1), sticky= N+W+S+E)
@@ -288,7 +300,7 @@ class Numbering(HPLabelFrame):
         self.ui_frames["size"].grid( row=6, column = 0, pady=(1,1), sticky= N+W+S+E)
         
         self.main_frame.grid(row= 0, column= 0, padx = (2,2), pady= (2,2), sticky=N+W+S)
-    def __set_labels(self):
+    def set_labels(self):
         self.info_labels["onoff"].configure(textvariable= self.string_vars["onoff"], anchor = CENTER, width = self.info_label_width)
         self.info_labels["count"].configure(textvariable= self.string_vars["count"], anchor = CENTER, width = self.info_label_width)
         self.info_labels["mark_on"].configure(textvariable= self.string_vars["mark_on"], anchor = CENTER, width = self.info_label_width)
@@ -304,7 +316,7 @@ class Numbering(HPLabelFrame):
         self.info_labels["align"].grid(row=0, column=0, sticky = N+S+W)
         self.info_labels["font"].grid(row=0, column=0, sticky = N+S+W)
         self.info_labels["size"].grid(row=0, column=0, sticky = N+S+W)
-    def __set_inputs(self):
+    def set_inputs(self):
         self.onoff_checkbutton.configure(variable = self.numbering_onoff)
 
         self.counts_combobox.configure(values=self.resources["misc"]["count"], width = self.main_entry_width, state = "readonly")

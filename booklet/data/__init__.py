@@ -81,14 +81,14 @@ icon_images = {
     "imposition": ["imposition", "split"],
     "printing" : ["proof", "cmyk", "registration", "crop"]
 }
-imposition_icons = {
-    name: Image.open(PATH_IMAGE/f"{name}.png") for name in icon_images["imposition"]
-}
-printing_icons = {
-    name: Image.open(PATH_IMAGE/f"{name}.png") for name in icon_images["printing"]
-}
-icons = {**imposition_icons, **printing_icons}
-
+#imposition_icons = {
+#    name: Image.open(PATH_IMAGE/f"{name}.png") for name in icon_images["imposition"]
+#}
+#printing_icons = {
+#    name: Image.open(PATH_IMAGE/f"{name}.png") for name in icon_images["printing"]
+#}
+#icons = {**imposition_icons, **printing_icons}
+icons = {}
 # Regular expression
 re_get_ranges = r"([ ]{0,}\d+[ ]{0,}-{1,1}[ ]{0,}\d+[ ]{0,}|[ ]{0,}\d+[ ]{0,}[^,-])"
 re_check_permited_character = r"([^-,\d\s])+?"
