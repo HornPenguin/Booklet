@@ -13,18 +13,18 @@ riffle = {
 }
 
 brochure_types = {
-    "Half-fold": 2,
-    "Tri-fold": 3,
-    "Z-fold": 3,
-    "Gate-fold": 3,
-    "Double-gate-fold": 4,
-    "Double-parallel-fold": 4,
-    "Arcodian-fold-4": 4,
-    "Roll-fold": 4
+    "half-fold": 2,
+    "tri-fold": 3,
+    "z-fold": 3,
+    "gate-fold": 3,
+    "double-gate-fold": 4,
+    "double-parallel-fold": 4,
+    "arcodian-fold-4": 4,
+    "roll-fold": 4
 }
 
 blank_mode = {
-    "back" : "back",
-    "front" : "front",
-    "both" : "both"
+    "back" : 1,
+    "front" : 2,
+    "both" : 0
 }

@@ -319,12 +319,27 @@ class Numbering(HPLabelFrame):
     def set_inputs(self):
         self.onoff_checkbutton.configure(variable = self.numbering_onoff)
 
-        self.counts_combobox.configure(values=self.resources["misc"]["count"], width = self.main_entry_width, state = "readonly")
-        self.marks_on_combobox.configure(values=self.resources["misc"]["mark_on"], width = self.main_entry_width, state = "readonly")
-        self.location_combobox.configure(values=self.resources["misc"]["location"], width = self.main_entry_width, state = "readonly")
-        self.align_combobox.configure(values=self.resources["misc"]["align"], width = self.main_entry_width, state = "readonly")
+        self.counts_combobox.configure(
+                values=list(self.ui_texts["variables"]["count"].values()), 
+                width = self.main_entry_width, 
+                state = "readonly"
+            )
+        self.marks_on_combobox.configure(
+            values=list(self.ui_texts["variables"]["mark_on"].values()), 
+            width = self.main_entry_width, state = "readonly"
+            )
+        self.location_combobox.configure(
+            values=list(self.ui_texts["variables"]["location"].values()), 
+            width = self.main_entry_width, state = "readonly")
+        self.align_combobox.configure(
+            values=list(self.ui_texts["variables"]["align"].values()), width = self.main_entry_width, state = "readonly")
         self.font_combobox.configure(values=self.resources["misc"]["font"], width = self.main_entry_width, state = "readonly")
         self.font_size_combobox.configure(values=self.resources["misc"]["size"], width = self.main_entry_width, state = "readonly")
+
+        self.counts_combobox.current(0)
+        self.marks_on_combobox.current(0)
+        self.location_combobox.current(0)
+        self.align_combobox.current(0)
 
         self.onoff_checkbutton.grid(row =0, column = 1, padx=(int(0.3*self.width)))
         self.counts_combobox.grid(row =0, column = 1, padx = 10)

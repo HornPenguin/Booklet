@@ -331,7 +331,9 @@ class Repetition(HPLabelFrame):
         self.layout_times_label.grid(row=0, column= 2, sticky=N+S+W+E)
         self.layout_y_entry.grid(row=0, column= 3, sticky=N+S+W+E)
 
-        self.fit_mode_combobox.configure(values= self.resources["misc"]["fit"], state = "readonly", width = int(1.*self.main_entry_width))
+        self.fit_mode_combobox.configure(
+            values= list(self.ui_texts["variables"]["fit"].values()), 
+            state = "readonly", width = int(1.*self.main_entry_width))
         self.fit_mode_combobox.current(0)
         self.fit_mode_combobox.grid(row=0, column= 1, sticky=N+S+W+E)
 
@@ -341,11 +343,15 @@ class Repetition(HPLabelFrame):
         self.gap_thick_entry.grid(row=0, column= 2, sticky=N+S+W+E)
 
         self.gap_line_checkbutton.configure(variable = self.gap_line_bool)
-        self.gap_line_location_combobox.configure(values = self.resources["misc"]["gap_line"], width = int(0.4 * self.main_entry_width), state = "readonly")
+        self.gap_line_location_combobox.configure(
+            values = list(self.ui_texts["variables"]["gap_position"].values()), 
+            width = int(0.4 * self.main_entry_width), 
+            state = "readonly")
         self.gap_line_location_combobox.current(0)
         self.pixel_button = PhotoImage(width=1, height=1)
         self.gap_line_color_button.configure(bg='blue', image= self.pixel_button, width = 15, height =15, compound="c")
-        self.gap_line_type_combobox.configure(values = self.resources["misc"]["line_type"], width = int(0.4 * self.main_entry_width), state = "readonly")
+        self.gap_line_type_combobox.configure(
+            values = list(self.ui_texts["variables"]["gap_type"].values()), width = int(0.4 * self.main_entry_width), state = "readonly")
         self.gap_line_type_combobox.current(0)
         self.gap_line_thick_entry.configure(textvariable=self.gap_line_thick_double, width = int(0.2*self.main_entry_width))
 

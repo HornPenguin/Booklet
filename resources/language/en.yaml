@@ -83,10 +83,17 @@ tabs:
             book: "Book"
             brochure: "Brochure"
           brochure_types:
-            half-fold:
+            half-fold: "half-fold"
+            tri-fold: "tri-fold"
+            z-fold: "z-fold"
+            gate-fold: "gate-fold"
+            double-gage-fold: "double-gate-fold"
+            double-parallel-fold: "double-parallel-fold"
+            arcodian-fold-4: "arcodian-fold-4"
+            roll-fold: "roll-fold"
           riffle_direction:
-            right: "Right"
-            left: "Left"
+            right: "right"
+            left: "left"
           blank_page:
             back: "back"
             front: "front"
@@ -118,8 +125,8 @@ tabs:
               apply: "Apply"
         variables:
           type:
-            lyaout: "Layout"
-            fcode: "Fcode"
+            lyaout: "layout"
+            fcode: "fcode"
   imposition:
     name: "Imposition"
     frames:
@@ -152,10 +159,10 @@ tabs:
             middle: "middle"
             page: "page"
           gap_type:
-            plain: "plain"
-            dot : "dot"
-            dash: "dash"
-            dash_dot: "dash dot"
+            plain: "_"
+            dot : "..."
+            dash: "_ _ _"
+            dash_dot: "_._._"
   printingmarks:
       name: "Printing Marks"
       frames:
@@ -200,7 +207,32 @@ tabs:
                 align: "Align"
                 font: "Font"
                 size: "Size"
-
+              variables:
+                count: 
+                  both: "both"
+                  odd: "odd"
+                  even: "even"
+                  oddo : "odd(only)"
+                  eveno: "even(only)"
+                mark_on:
+                  both: "both"
+                  odd: "odd"
+                  even: "even"
+                location:
+                  header: "header"
+                  footer: "footer"
+                  hf: "hf"
+                  fh: "fh"
+                align:
+                  left: "left"
+                  right: "right"
+                  center: "center"
+                  lr: "lr"
+                  rl: "rl"
+                  lc: "lc"
+                  cl: "cl"
+                  rc: "rc"
+                  cr: "cr"
 # Misc UI
 
 generate: "Generate"

@@ -166,15 +166,30 @@ class Standard(HPLabelFrame):
 
         self.onoff_checkbutton.configure(variable= self.onoff_bool)
 
-        self.type_combobox.configure(values=section.section_type ,  width = self.main_entry_width, state="readonly")
+        self.type_combobox.configure(
+                values=list(self.ui_texts["variables"]["type"].values()), 
+                width = self.main_entry_width, 
+                state="readonly"
+            )
         self.pages_per_sec_combobox.configure(width =int(0.38*self.main_entry_width), state="readonly")
         
         self.insert_combobox.configure(width = int(0.3*self.main_entry_width), state="readonly")
         self.insert_product_label = Label(self.ui_frames["insert"], text="x")
-        self.insert_gathered_pages_label.configure(textvariable = self.page_collection_gather, width = int(0.3*self.width))
+        self.insert_gathered_pages_label.configure(
+                    textvariable = self.page_collection_gather, 
+                    width = int(0.3*self.width)
+                )
         
-        self.brochures_combobox.configure( values=list(section.brochure_types.keys()),  width = int(0.56*self.main_entry_width), state="readonly")
-        self.paper_format_combobox.configure(values=list(section.paper_formats.keys()), width = self.main_entry_width, state="readonly")
+        self.brochures_combobox.configure(
+                values=list(self.ui_texts["variables"]["brochure_types"].values()),  
+                width = int(0.56*self.main_entry_width), 
+                state="readonly"
+            )
+        self.paper_format_combobox.configure(
+                values=list(section.paper_formats.keys()), 
+                width = self.main_entry_width, 
+                state="readonly"
+                )
         
         self.custom_format_onoff_checkbox.configure(variable=self.custom_format_onoff)
         self.custom_format_width_entry.configure( width = int(0.2*self.main_entry_width))
@@ -182,8 +197,10 @@ class Standard(HPLabelFrame):
         
         self.page_range_entry.configure(textvariable = self.page_range, width = int(0.8*self.main_entry_width))
         self.page_range_total_label.configure(textvariable=self.page_range_total)
-        self.riffle_combobox.configure(value=list(section.riffle.keys()),  width = self.main_entry_width, state="readonly") 
-        self.blank_page_combbox.configure(values=list(section.blank_mode) ,  width =self.main_entry_width , state="readonly")
+        self.riffle_combobox.configure(
+                value=list(self.ui_texts["variables"]["riffle_direction"].values()),  width = self.main_entry_width, state="readonly") 
+        self.blank_page_combbox.configure(
+                values=list(self.ui_texts["variables"]["blank_page"].values()) ,  width =self.main_entry_width , state="readonly")
 
         self.type_combobox.current(0)
         self.pages_per_sec_combobox.set(1)
@@ -344,8 +361,8 @@ class Custom(HPLabelFrame):
         self.onoff_label.grid(row= 0, column =0)
     def set_inputs(self):
         self.onoff_checkbutton.configure(variable=self.onoff_var)
-        self.type_combobox.configure(values = ["layout", "fcode"], state="readonly", width = int(0.4*self.main_entry_width))
-        #self.type_combobox.current(0)
+        self.type_combobox.configure(values = list(self.ui_texts["variables"]["type"].values()), state="readonly", width = int(0.4*self.main_entry_width))
+        self.type_combobox.current(0)
 
         self.onoff_checkbutton.grid(row= 0, column = 1)
         self.type_combobox.grid(row= 0, column = 2, padx=(2, 20))
