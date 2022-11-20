@@ -144,8 +144,6 @@ class Manuscript(HPLabelFrame):
 
         self.main_frame.pack(padx=10, fill=BOTH)
 
-        
-
     def update_ui_texts(self, language_pack):
         self.ui_texts = language_pack
         super().config(text=self.ui_texts["name"])
@@ -330,7 +328,7 @@ class Manuscript(HPLabelFrame):
             pass
     def method_open_file(self):
         filenames = filedialog.askopenfilenames(
-            __init__ialdir="~", title="Select Manuscript", filetypes=(("PDF", "*.pdf"),)
+            initialdir="~", title="Select Manuscript", filetypes=(("PDF", "*.pdf"),)
         )
         if len(filenames) != 0:
             for filename in filenames:
@@ -527,7 +525,6 @@ class FileInfo(HPLabelFrame):
 
         #self.main_frame.configure(borderwidth=2, relief="groove")
         self.main_frame.grid(row=0, column=0, padx=(0,0), sticky= N+S+W+E)
-
     def set_labels(self):
         info_label_width = 16
         info_wrap_width = int(0.34*self.width)
@@ -584,7 +581,6 @@ class FileInfo(HPLabelFrame):
         self.page_size_height_label_var.grid(row=0, column=2, sticky = N+S+W+E)
 
         self.page_size_label_frame.grid(row =0, column =1, sticky = W+E, padx = 5)
-
     def update_file_infos(self, focused_file):
         if focused_file is not None:
             for key in focused_file.keys():
@@ -602,9 +598,7 @@ class FileInfo(HPLabelFrame):
                     self.file_infos[key].set("")
                 elif isinstance(self.file_infos[key], tuple):
                     self.file_infos[key][i].set(0.0)
-        self.main_frame.scroll_region_update()
-
-    
+        self.main_frame.scroll_region_update()   
     def update_ui_texts(self, ui_texts):
         super().update_ui_texts(ui_texts)
         super().config(text=self.ui_texts["name"])
@@ -727,7 +721,11 @@ class Output(HPLabelFrame):
         self.search_directory.grid(row=0, column=1, padx=2, ipadx = 2)
 
     def method_open_directory(self):
-        pass
+        directory_path = filedialog.askdirectory(initialdir="~", title="Save directory", mustexist=True)
+        if len(directory_path) != 0:
+            self.output_directory_path.set(directory_path)
+        else:
+            print("Invaild path")
     def command_split_check(self):
         if self.split_per_onoff.get():
             self.split_per_entry.configure(state=ACTIVE)
