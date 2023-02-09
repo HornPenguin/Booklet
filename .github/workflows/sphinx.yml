@@ -1,17 +1,20 @@
-name: Sphinx Build
-  # You may pin to the exact commit or the version.
-  # uses: ammaraskar/sphinx-action@8b4f60114d7fd1faeba1a712269168508d4750d2
-on: 
+name: Pages
+on:
   push:
-    -'documents/**'
+    branches:
+    - main
 jobs:
-  build-sphinx-html:
+  build:
     runs-on: ubuntu-latest
-    uses: ammaraskar/sphinx-action@8b4f60114d7fd1faeba1a712269168508d4750d2
-    with:
-    # The folder containing your sphinx docs.
-      docs-folder: documents/ # default is docs/
-    # The command used to build your documentation.
-      build-command: # optional, default is make html
-    # Run before the build command, you can use this to install system level dependencies, for example with "apt-get update -y && apt-get install -y perl"
-      pre-build-command: # optional
+    steps:
+    - uses: actions/setup-python@v2
+    - uses: actions/checkout@master
+      with:
+        fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+    - name: Build and Commit
+      uses: sphinx-notes/pages@v2
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: gh-pages
