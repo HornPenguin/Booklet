@@ -32,7 +32,7 @@ from numbers import Number
 from decimal import Decimal
 from math import log2
 
-import PyPDF2 as pypdf
+import pypdf
 
 from booklet.core.manuscript import Manuscript, Converter
 from booklet.utils.permutation import Permutation

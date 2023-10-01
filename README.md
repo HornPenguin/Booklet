@@ -63,7 +63,7 @@ It is recommended if there are some errors in the execution files or you are usi
 ## Dependencies
 
 * [reportlab](https://www.reportlab.com/)
-* [PyPDF2](https://pypdf2.readthedocs.io/)
+* [PyPDF](https://pypdf.readthedocs.io/)
 * [Pillow](https://pillow.readthedocs.io/en/stable/)
 * [simpleaudio](https://simpleaudio.readthedocs.io/en/latest/)
 * [tkmacosx](https://pypi.org/project/tkmacosx/) : Mac only
@@ -71,10 +71,11 @@ It is recommended if there are some errors in the execution files or you are usi
 Install them with next command
 
 ```
-pip install PyPDF2 reportlab Pillow simpleaudio
+pip install -r requirements.txt
 ```
 
-For `simpleaudio`, it requires compilers, build tools and prerequest library `libasound2-dev` to install the module. 
+Python module `simpleaudio` requires compilers, build tools and the
+development package `libasound2-dev` to be present to allow installation.
 If you are using Ubuntu you can install `build-essential` from repository.
 
 ```

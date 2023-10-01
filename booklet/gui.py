@@ -57,6 +57,7 @@ import booklet.data as data
 from booklet.utils.misc import *
 from booklet.utils.conversion import mm2pts, pts2mm
 from booklet.utils.color import hex2cmyk, cmyk2rgb, rgb2hex
+from booklet.deprecated.converters import SigComposition, Signature
 
 
 # UI--------------------------------------------------------------------------------------------
@@ -1379,9 +1380,9 @@ class Booklet:
         if not path.is_file():
             raise ValueError("File {path} does not exist.")
 
-        pdf = pypdf.PdfFileReader(path)
+        pdf = pypdf.PdfReader(path)
 
-        page_num = pdf.getNumPages()
+        page_num = len(pdf.pages)
 
         if page_num != 0:  # check whether pdf is empty or not.
             pdfinfo = pdf.metadata
@@ -1390,8 +1391,8 @@ class Booklet:
             authors = pdfinfo["/Author"] if "/Author" in pdfinfo.keys() else "Unkown"
 
             page_size = [
-                float(pdf.getPage(0).mediaBox.width),
-                float(pdf.getPage(0).mediaBox.height),
+                float(pdf.pages[0].mediabox.width),
+                float(pdf.pages[0].mediabox.height),
             ]
 
             return title, authors, page_num, page_size
@@ -1820,7 +1821,7 @@ class Booklet:
         # CYMK Mark-----------------------------------------------------------------------------
         cmykbool: bool = self.cmykbool.get()
 
-        margin = mm2pts(self.margin.get(), False)
+        margin = mm2pts(self.margin.get())
 
         print(
             f"Document:{filename}\n signature leaves: {nl} \n direction: {self.riffle.get()}"
@@ -1872,8 +1873,8 @@ class Booklet:
             riffle=rifflebool,
             fold=foldbool,
             paper_format=[
-                mm2pts(float(format_width), mode=False),
-                mm2pts(float(format_height), mode=False),
+                mm2pts(float(format_width)),
+                mm2pts(float(format_height)),
             ],
         )
         imposition = Imposition(
