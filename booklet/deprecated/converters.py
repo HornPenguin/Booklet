@@ -34,7 +34,7 @@ from decimal import Decimal
 from math import log2, log, floor, perm
 
 # PDF
-import PyPDF2 as pypdf
+import pypdf
 import pdf2image
 from booklet.dependency import img2pdf
 
@@ -450,7 +450,12 @@ class Signature(Converter):
             return (format_t[0], format_t[1])
 
     def do(self, do_index: int, manuscript: Manuscript, file_mode: int, format=None):
-        blank_num = len(manuscript.pages) % self.sig_composition.leaves
+        pages_over = len(manuscript.pages) % self.sig_composition.leaves
+        if pages_over > 0:
+            blank_num = self.sig_composition.leaves - pages_over
+        else:
+            blank_num = 0
+
         page_range: list(int) = manuscript.page_range
         if self.blank_mode == "front":
             page_range = ([0] * blank_num) + page_range
@@ -497,7 +502,7 @@ class Signature(Converter):
         )
         new_file.close()
         os.unlink(new_file.name)
-        new_pdf = pypdf.PdfFileWriter()
+        new_pdf = pypdf.PdfWriter()
         for pages in permuted_blocks:
             for index, i in enumerate(pages):
                 if i == 0:
@@ -515,8 +520,8 @@ class Signature(Converter):
                     page = manuscript.pages[page_num]
 
                     page.scale_to(paper_format[0], paper_format[1])
-                    page.mediabox.setLowerLeft([0, 0])
-                    page.mediabox.setUpperRight(paper_format)
+                    page.mediabox.lower_left = (0, 0)
+                    page.mediabox.upper_right = paper_format
 
                     left = manuscript.pdf_origin[0]
                     bottom = manuscript.pdf_origin[1]

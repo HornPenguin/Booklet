@@ -35,7 +35,7 @@ from datetime import datetime
 from typing import Callable
 
 # import numpy as np
-import PyPDF2 as pypdf
+import pypdf
 
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics

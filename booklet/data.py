@@ -32,6 +32,7 @@ from PIL import Image
 
 from booklet.utils.misc import resources_path
 from booklet.utils.images import icon_path
+from os import path
 
 
 des = """PDF modulation for printing and press----------------------------------------------------"""
@@ -43,7 +44,7 @@ epi = (
 # Resources
 # -Audio file
 beep_file_name = "beep_ping.wav"
-beep_file = resources_path(beep_file_name, "resouce\\sound")
+beep_file = resources_path(beep_file_name, path.normpath("resouce/sound"))
 
 # -Images
 task_bar_icon = icon_path
@@ -69,13 +70,17 @@ printing_icons = {
 
 icons = {**imposition_icons, **printing_icons}
 
-# - Text
-re_get_ranges = r"([ ]{0,}\d+[ ]{0,}-{1,1}[ ]{0,}\d+[ ]{0,}|[ ]{0,}\d+[ ]{0,}[^,-])"
+# Create an array of ranges. This misses single page numbers that are comma
+# delimited.
+#re_get_ranges = r"([ ]{0,}\d+[ ]{0,}-{1,1}[ ]{0,}\d+[ ]{0,}|[ ]{0,}\d+[ ]{0,}[^,-])"
+# Ranges are either a range (digits, hyphen, digits) or a single digit
+re_get_ranges = r"([ ]*\d+[ ]*-[ ]*\d+[ ]*|[ ]*\d+[ ]*)"
+# not -, digit space, so actually matches not allowed chars.
 re_check_permited_character = r"([^-,\d\s])+?"
 
-about_text_path = resources_path("about", "resources\\text")
-license_text_path = resources_path("license", "resources\\text")
-url_text_path = resources_path("urls", "resources\\text")
+about_text_path = resources_path("about", path.normpath("resources/text"))
+license_text_path = resources_path("license", path.normpath("resources/text"))
+url_text_path = resources_path("urls", path.normpath("resources/text"))
 
 with open(url_text_path, mode="r") as f:
     git_repository = f.readline()

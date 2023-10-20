@@ -40,7 +40,7 @@ from types import FunctionType
 from io import BytesIO, FileIO
 
 # PDF
-import PyPDF2 as pypdf
+import pypdf
 from reportlab.pdfgen.canvas import Canvas
 
 # Project modules

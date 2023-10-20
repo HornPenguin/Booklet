@@ -29,7 +29,7 @@
 import os
 from typing import Union, Tuple
 
-import PyPDF2 as pypdf
+import pypdf
 import pdf2image
 from booklet.dependency import img2pdf
 

@@ -37,12 +37,12 @@ sys.path.insert(0, os.path.abspath("."))
 from booklet.meta import __version__ as __version__
 from booklet.meta import name
 
-import PyPDF2 as pypdf
+import pypdf
 from PIL import Image
 
 from booklet.core.manuscript import Manuscript
 from booklet.core.modifiers import *
-
+from booklet.deprecated.converters import SigComposition, Signature
 from booklet.utils.misc import *
 from booklet.data import *
 from booklet.utils.images import icon_path
@@ -127,11 +127,11 @@ if __name__ == "__main__":
                     name = name_formatted.split(".pdf")[0] + "_HP_BOOKLET" + ".pdf"
                 outputpath = os.path.join(outputpath, name)
 
-            pre_pdf = pypdf.PdfFileReader(inputfile)
+            pre_pdf = pypdf.PdfReader(inputfile)
             page_max = len(pre_pdf.pages)
             default_size = [
-                float(pre_pdf.getPage(0).mediaBox.width),
-                float(pre_pdf.getPage(0).mediaBox.height),
+                float(pre_pdf.pages[0].mediabox.width),
+                float(pre_pdf.pages[0].mediabox.height),
             ]
 
             # page range
@@ -164,9 +164,11 @@ if __name__ == "__main__":
             nl = args.sig_composition[0]
             nn = args.sig_composition[1]
             ns = int(nl / nn)
+            print(f"Leaves: nl:{nl}, nn:{nn}, ns:{ns}")
             if not check_composition(nn, ns):
                 raise ValueError(f"sig composition {nl} {nn} are not vaild.")
-            nl = nn * ns
+            # nl = nn * ns
+            print(f"nl: {nl}")
             _sig_composition = SigComposition(nl, nn)
 
             # blank
@@ -177,7 +179,7 @@ if __name__ == "__main__":
             if args.sigproof is not None:
                 sigproof = [True, args.sigproof[0]]
             else:
-                sigproof = [False, ""]
+                sigproof = [False, [0,0,0,0]]
 
             printbool = args.crop or args.registration or args.cmyk or sigproof[0]
 
@@ -218,8 +220,10 @@ if __name__ == "__main__":
             default_gap = 5
             default_margin = 43
 
+            print(f"inputfile:{inputfile}, outputpath:{outputpath}")
             manuscript = Manuscript(
-                input=inputfile, output=outputpath, page_range=pagerange
+                input=inputfile, output=os.path.dirname(outputpath),
+                filename=os.path.basename(outputpath), page_range=pagerange
             )
 
             toimage = ToImage(toimage=toimagebool, dpi=300)
@@ -230,6 +234,7 @@ if __name__ == "__main__":
                 fold=args.fold,
                 paper_format=format,
             )
+            print(f"sigproof:{sigproof}")
             imposition = Imposition(
                 imposition=args.imposition,
                 gap=default_gap,
@@ -276,7 +281,7 @@ if __name__ == "__main__":
     else:  # guid mode
         text_pady = 3
         beep_file_name = "beep_ping.wav"
-        beep_file = resources_path(beep_file_name, "resources\\sound")
+        beep_file = resources_path(beep_file_name, os.path.join("resources","sound"))
 
         logo_width = logo_height = 70
         logo = Image.open(resources_path("logo.png", "resources")).resize(
