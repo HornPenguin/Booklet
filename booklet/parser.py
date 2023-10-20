@@ -159,10 +159,11 @@ parser.add_argument(
     "--sig-composition",
     nargs=2,
     type=int,
-    default=(1, 4),
-    help="Signature composition (i, f). i is a inserted number of signature and f is a number of sheets in sub-signature, defaults to 1 4",
+    default=(4, 1),
+    help="Signature composition (f, i). i is a inserted number of signature and f is a number of sheets in sub-signature, defaults to 4, 1",
 )
 parser.add_argument(
+    "--riffle_direction",
     "--riffle",
     nargs=1,
     type=str,
@@ -201,11 +202,14 @@ parser.add_argument(
 )
 # Printing Mark Feature
 parser.add_argument(
+    "--trim", action="store_true", help="trim."
+)
+parser.add_argument(
     "--crop", action="store_true", help="add crop marker in imposition pdf."
 )
 parser.add_argument(
-    "--reg",
     "--registration",
+    "--reg",
     action="store_true",
     help="add registration markers in imposition pdf.",
 )

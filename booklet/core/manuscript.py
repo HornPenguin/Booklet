@@ -372,7 +372,8 @@ class Modifier:
     
     .. code::
         
-        new_pdf = modification(manuscript, a, b, c)`
+        new_pdf = modification(manuscript, a, b, c)
+    
     as
 
     .. code::
@@ -403,7 +404,7 @@ class Modifier:
 
         :param index: index, indicating the order of modifer in execution in :class:`Manuscript object.` 
         :type index: int
-        :param manuscript: :class:`Manuscript object calls the modifier
+        :param manuscript: :class:`Manuscript` object calls the modifier
         :type manuscript: Manuscript
         :param filemode: New file mode. If it is "safe" :class`NamedTempFile` object is returend else :class:`io.BytesIO` is returned, defaults to "safe"
         :type filemode: str, optional
@@ -452,7 +453,7 @@ class Converter(Modifier):
     """
     This class 
     All its methods are depending on PDF libraries, since it does not provides any additional internal methods.
-    It is just a wrapper of :class:`Modifier: class for categorizing features.
+    It is just a wrapper of :class:`Modifier`: class for categorizing features.
     """
     __type__ = "converter"
     # Using internal routines only

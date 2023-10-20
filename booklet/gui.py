@@ -60,7 +60,7 @@ from booklet.utils.color import hex2cmyk, cmyk2rgb, rgb2hex
 from booklet.deprecated.converters import SigComposition, Signature
 
 
-# UI--------------------------------------------------------------------------------------------
+# UI-----------------------------------------------------------------------
 class Booklet:
     """Main GUI module"""
 
@@ -98,15 +98,21 @@ class Booklet:
         :type icons: _type_
         :param beep_file: _description_
         :type beep_file: _type_
-        :param re_range_validation: Regular expression to validate the range of pages., defaults to data.re_get_ranges
+        :param re_range_validation: Regular expression to validate the range
+            of pages. defaults to data.re_get_ranges
         :type re_range_validation: _type_, optional
-        :param re_character_validation: Regular expression to confirm vaild characters in page ragne input., defaults to data.re_check_permited_character
+        :param re_character_validation: Regular expression to confirm valid
+            characters in page ragne input. Defaults to 
+            data.re_check_permited_character
         :type re_character_validation: _type_, optional
-        :param fix: ui setting, tkinter gui window size modulation permission setting., defaults to False
+        :param fix: ui setting, tkinter gui window size modulation permission
+            setting. Defaults to False
         :type fix: bool, optional
-        :param width: Width of main window. It is not absolute setting, defaults to 390
+        :param width: Width of main window. It is not absolute setting,
+            defaults to 390
         :type width: int, optional
-        :param height: Height of main window. It is not absolute setting, defaults to 780
+        :param height: Height of main window. It is not absolute setting,
+            defaults to 780
         :type height: int, optional
         """
 
@@ -973,10 +979,10 @@ class Booklet:
         self.margin_entry = ttk.Entry(
             self.Frame_ad_printing, textvariable=self.margin, width=int(entry_width / 2)
         )
-        int_vaild = (self.window.register(self.__int_validation), "%P")
-        int_invaild = (self.window.register(self.__int_invaild),)
+        int_valid = (self.window.register(self.__int_validation), "%P")
+        int_invalid = (self.window.register(self.__int_invalid),)
         self.margin_entry.config(
-            validate="all", validatecommand=int_vaild, invalidcommand=int_invaild
+            validate="all", validatecommand=int_valid, invalidcommand=int_invalid
         )
 
         self.sigproof_label.grid(row=0, column=0, pady=self.text_pady)
@@ -1045,10 +1051,10 @@ class Booklet:
             textvariable=self.notepage_str,
             width=int(entry_width / 2),
         )
-        int_vaild = (self.window.register(self.__int_validation), "%P")
-        int_invaild = (self.window.register(self.__int_invaild),)
+        int_valid = (self.window.register(self.__int_validation), "%P")
+        int_invalid = (self.window.register(self.__int_invalid),)
         self.notepages_entry.config(
-            validate="all", validatecommand=int_vaild, invalidcommand=int_invaild
+            validate="all", validatecommand=int_valid, invalidcommand=int_invalid
         )
 
         self.Frame_pagenumbering = ttk.LabelFrame(
@@ -1148,7 +1154,7 @@ class Booklet:
     ):
 
         int_validation = (self.window.register(self.__int_validation), "%P")
-        int_invalid = (self.window.register(self.__int_invaild),)
+        int_invalid = (self.window.register(self.__int_invalid),)
 
         self.Frame_utils_misc = ttk.LabelFrame(
             master=self.tab_utils,
@@ -1400,7 +1406,8 @@ class Booklet:
         return False, False, False, False
 
     def __event_open_file(self):
-        """Search the pdf file and, if it is vaild file, extract basic meta informations from the file.
+        """Search the pdf file and, if it is valid file, extract basic metadata
+        from the file.
 
         Returns:
             int: Return zero.
@@ -1437,7 +1444,7 @@ class Booklet:
                 self.Generate_button.config(state=tk.ACTIVE)
 
             else:
-                print(f"Not a vaild PDF file: file ({filename})")
+                print(f"Not a valid PDF file: file ({filename})")
                 self.Generate_button.config(state=tk.DISABLED)
         self.__event_fold_enable(False)
         return 0
@@ -1534,22 +1541,27 @@ class Booklet:
         print(event)
         text = value.replace(" ", "")
         # self.pagerange_var.set(text)
-        vaild = True
+        valid = True
 
+        # Empty is OK.
         if text == "" or text == None:
             return True
 
+        # Must start with a number.
         initial_value = text[0]
         if initial_value not in "123456789":
             return False
+        # Check for invalid characters.
+        # Only digit, space, comma, hyphen allowed.
         if self.character_validation_re.search(text) != None:
             print(self.character_validation_re.findall(text))
-            vaild = False
+            valid = False
 
+        #
         rangelist = self.range_validation_re.findall(text)
 
         range = 0
-        if vaild == True:
+        if valid == True:
             pre = 1
             max = int(self.page_n.get())
             for st in rangelist:
@@ -1558,25 +1570,25 @@ class Booklet:
                     i = int(i_s)
                     l = int(l_s)
                     if (i <= pre and pre > 1) or l > max:
-                        vaild = False
+                        valid = False
                         print(f"{i}-{l}, pre:{pre}, max:{max}")
                     if i >= l:
                         if event != "focusout" and len(i_s) >= len(l_s):
                             return True
                         else:
-                            self.pagerange_var.set(f"1-{max}")
-                            vaild = False
+                            #self.pagerange_var.set(f"1-{max}")
+                            valid = False
                             print(f"{i}>{l}")
-                    pre = l
+                    #pre = l
                     range += l - i + 1
                 else:
                     n = int(st)
                     if (n <= pre and pre > 1) or n > max:
                         print(f"{n}")
-                        vaild = False
+                        valid = False
                     range += 1
 
-        if vaild:
+        if valid:
             self.page_range_size.set(range)
             self.__event_fold_enable(True)
             #    self.pagerange_example.config(bg="#ffffff")
@@ -1690,7 +1702,7 @@ class Booklet:
             return False
         return True
 
-    def __int_invaild(self):
+    def __int_invalid(self):
         print("Please enter an integer value")
 
     def __layout_validation(self, value, stored_value, event):  # focusing in
@@ -1736,14 +1748,19 @@ class Booklet:
 
         self.icon_setting(sub_window)
 
-        progress_length = 2 * len(page_range) if impositionbool else len(page_range)
+        progress_length = 2 * len(page_range) if impositionbool 
+            else len(page_range)
         print("Pro_length:", progress_length)
         sub_progress = ttk.Progressbar(
-            sub_window, orient="horizontal", mode="determinate", maximum=progress_length
+            sub_window,
+            orient="horizontal",
+            mode="determinate",
+            maximum=progress_length
         )
         sub_progress.grid(column=0, row=0, padx=10, pady=20)
         progress_text = tk.StringVar(value="Start conversion")
-        sub_progress_text_label = ttk.Label(sub_window, textvariable=progress_text)
+        sub_progress_text_label = ttk.Label(sub_window,
+            textvariable=progress_text)
         sub_progress_text_label.grid(column=0, row=1, padx=10, pady=20)
 
         destorybutton = ttk.Button(
@@ -1753,15 +1770,17 @@ class Booklet:
             comman=sub_window.destroy,
             state=tk.DISABLED,
         )
-        destorybutton.grid(column=0, row=2, padx=int(2 * tpadx), pady=int(2 * tpady))
+        destorybutton.grid(column=0, row=2,
+            padx=int(2 * tpadx), pady=int(2 * tpady))
 
-        return sub_window, sub_progress, progress_text, progress_length, destorybutton
+        return sub_window, sub_progress, progress_text, progress_length,
+            destorybutton
 
     def gen_button_action(self):
 
-        # inputfile----------------------------------------------------
+        # inputfile--------------------------------------------------------
         input_file = self.input_entry.get()
-        # outputfile----------------------------------------------------
+        # outputfile-------------------------------------------------------
         filename = self.filename.get()
         if ".pdf" not in filename:
             filename = filename + ".pdf"
@@ -1770,17 +1789,17 @@ class Booklet:
 
         # pagerange--------------------------------------------------------
         pagerange: str = self.pagerange.get()
-        # Leaves and sub signature---------------------------------------------------------------
+        # Leaves and sub signature-----------------------------------------
         pages = (self.pages.get()).split("f")
         nl = int(pages[0])
         nn = int(self.sigcomposition_nn_combo.get())
         ns = int(self.ns.get())
-        # Fold----------------------------------------------------------------------------------
+        # Fold-------------------------------------------------------------
         foldbool: bool = self.foldvalue.get()
-        # Riffle direction----------------------------------------------------------------------
+        # Riffle direction-------------------------------------------------
         rifflebool: bool = True if self.riffle.get() == "right" else False
 
-        # Format----------------------------------------------------------------------------------
+        # Format-----------------------------------------------------------
         formatbool = False
         format_width = 0.0
         format_height = 0.0
@@ -1802,23 +1821,23 @@ class Booklet:
             format_width = wh[0]  # mm
             format_height = wh[1]
 
-        # Imposition----------------------------------------------------------------------------
+        # Imposition-------------------------------------------------------
         impositionbool: bool = self.impositionbool.get()
         if impositionbool:
             foldbool = True
         # blank
         blankmode: str = self.blankpage.get()
         blanknumber: int = self.addBlankpages.get()
-        # Split---------------------------------------------------------------------------------
+        # Split------------------------------------------------------------
         splitbool: bool = self.splitpersigbool.get()
-        # Signature Proof-----------------------------------------------------------------------
+        # Signature Proof--------------------------------------------------
         sigproofbool: bool = self.sigproofbool.get()
         sig_color: str = self.sig_color.get()
-        # Trim Mark-----------------------------------------------------------------------------
+        # Trim Mark--------------------------------------------------------
         trimbool: bool = self.trimbool.get()
-        # Registration Mark---------------------------------------------------------------------
+        # Registration Mark------------------------------------------------
         registrationbool: bool = self.registrationbool.get()
-        # CYMK Mark-----------------------------------------------------------------------------
+        # CYMK Mark--------------------------------------------------------
         cmykbool: bool = self.cmykbool.get()
 
         margin = mm2pts(self.margin.get())
