@@ -1748,8 +1748,11 @@ class Booklet:
 
         self.icon_setting(sub_window)
 
-        progress_length = 2 * len(page_range) if impositionbool 
-            else len(page_range)
+        if impositionbool:
+            progress_length = 2 * len(page_range) 
+        else: 
+            progress_length = len(page_range)
+
         print("Pro_length:", progress_length)
         sub_progress = ttk.Progressbar(
             sub_window,
@@ -1773,7 +1776,7 @@ class Booklet:
         destorybutton.grid(column=0, row=2,
             padx=int(2 * tpadx), pady=int(2 * tpady))
 
-        return sub_window, sub_progress, progress_text, progress_length,
+        return sub_window, sub_progress, progress_text, progress_length, \
             destorybutton
 
     def gen_button_action(self):
