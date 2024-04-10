@@ -32,6 +32,13 @@ The executable files are in `dist` directory.
 There are two options *onefile* execution file and the compressed *onedir* file. The project supports for Windows, Linux, and OSX.
 You must notice that the *onefile* files requires some time to execute at initial stage. To inform the executation, there is a splash window in the each *onefile* files, thanks to splash routine in [pyinstaller](https://pyinstaller.org/en/stable/).
 
+```
+pip install pyinstaller
+```
+
+and execute the `build.py`.
+The file would automatically generate executable file and the documentations.
+
 * **Windows**
 
   ```
@@ -66,12 +73,13 @@ It is recommended if there are some errors in the execution files or you are usi
 * [PyPDF2](https://pypdf2.readthedocs.io/)
 * [Pillow](https://pillow.readthedocs.io/en/stable/)
 * [simpleaudio](https://simpleaudio.readthedocs.io/en/latest/)
+* [pdf2image](https://github.com/Belval/pdf2image)
 * [tkmacosx](https://pypi.org/project/tkmacosx/) : Mac only
 
 Install them with next command
 
 ```
-pip install PyPDF2 reportlab Pillow simpleaudio
+pip install PyPDF2 reportlab Pillow pdf2image simpleaudio
 ```
 
 For `simpleaudio`, it requires compilers, build tools and prerequest library `libasound2-dev` to install the module. 
