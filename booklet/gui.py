@@ -37,10 +37,10 @@ from math import log2
 import tkinter as tk
 from tkinter import filedialog
 
-if platform.system() != "Darwin":
-    from tkinter import ttk
-else:
-    import tkmacosx as ttk  # Mac OS specific module
+from tkinter import ttk
+if platform.system() == "Darwin":
+    import tkmacosx as ttkmac  # Mac OS specific module
+#from tkinter import ttk
 from tkinter.colorchooser import askcolor
 
 # 3rd parties----------------------------
@@ -687,12 +687,12 @@ class Booklet:
             anchor="w",
         )
         if self.platform_mac:
-            self.pagerange_example = ttk.Label(
+            self.pagerange_example = tk.Label(
                 self.Frame_ad_imposition,
                 text="1, 3-5, 10",
                 justify=tk.LEFT,
                 anchor="w",
-                bg="white",
+                bg="white"
             )
         else:
             self.pagerange_example = tk.Label(
@@ -915,7 +915,7 @@ class Booklet:
             self.Frame_ad_printing, variable=self.sigproofbool
         )
         if self.platform_mac:
-            self.sigproof_button = ttk.Button(
+            self.sigproof_button = ttkmac.Button(
                 self.Frame_ad_printing,
                 width=3,
                 height=1,

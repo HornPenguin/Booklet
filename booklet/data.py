@@ -28,6 +28,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from PIL import Image
 
 from booklet.utils.misc import resources_path
@@ -43,7 +45,7 @@ epi = (
 # Resources
 # -Audio file
 beep_file_name = "beep_ping.wav"
-beep_file = resources_path(beep_file_name, "resouce\\sound")
+beep_file = resources_path(beep_file_name, "resouce/sound")
 
 # -Images
 task_bar_icon = icon_path
@@ -73,9 +75,9 @@ icons = {**imposition_icons, **printing_icons}
 re_get_ranges = r"([ ]{0,}\d+[ ]{0,}-{1,1}[ ]{0,}\d+[ ]{0,}|[ ]{0,}\d+[ ]{0,}[^,-])"
 re_check_permited_character = r"([^-,\d\s])+?"
 
-about_text_path = resources_path("about", "resources\\text")
-license_text_path = resources_path("license", "resources\\text")
-url_text_path = resources_path("urls", "resources\\text")
+about_text_path = resources_path("about", "resources/text")
+license_text_path = resources_path("license", "resources/text")
+url_text_path = resources_path("urls", "resources/text")
 
 with open(url_text_path, mode="r") as f:
     git_repository = f.readline()
