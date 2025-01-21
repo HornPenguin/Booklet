@@ -32,7 +32,9 @@ from numbers import Number
 from decimal import Decimal
 from math import log2
 
-import PyPDF2 as pypdf
+from booklet import pypdf as pypdf
+from booklet.pypdf.generic import NameObject, RectangleObject
+from booklet.pypdf.constants import PageAttributes as PG
 
 from booklet.core.manuscript import Manuscript, Converter
 from booklet.utils.permutation import Permutation
@@ -384,7 +386,7 @@ class Section(Converter):
 
     def do(self, do_index: int, manuscript: Manuscript, file_mode: int, format=None):
         blank_num = len(manuscript.pages) % self.sec_composition.leaves
-        page_range: list(int) = manuscript.page_range
+        page_range: list[int] = manuscript.page_range
         if self.blank_mode == "front":
             page_range = ([0] * blank_num) + page_range
         elif self.blank_mode == "back":
@@ -421,7 +423,8 @@ class Section(Converter):
             )
             permuted_blocks.append(permuted_block)
 
-        new_pdf, new_file = self.get_new_pdf(do_index, manuscript, filemode=file_mode)
+        new_pdf, new_file = self.get_new_pdf(do_index, manuscript.tem_directory.name, filemode=file_mode)
+        
         for pages in permuted_blocks:
             for index, i in enumerate(pages):
                 if i == 0:
@@ -438,9 +441,16 @@ class Section(Converter):
 
                     page = manuscript.pages[page_num]
 
+                    try:
+                            hasattr(page, "mediabox")
+                    except TypeError:
+                            page.__setitem__(
+                                NameObject(PG.MEDIABOX), RectangleObject(page["/mediabox"])  # type: ignore
+                            )
+
                     page.scale_to(paper_format[0], paper_format[1])
-                    page.mediabox.setLowerLeft([0, 0])
-                    page.mediabox.setUpperRight(paper_format)
+                    page.mediabox.lower_left = [0, 0]
+                    page.mediabox.upper_right = (paper_format)
 
                     left = manuscript.pdf_origin[0]
                     bottom = manuscript.pdf_origin[1]
@@ -456,3 +466,7 @@ class Section(Converter):
 
         manuscript.pdf_update(new_pdf, new_file.name)
         return True
+
+
+
+
