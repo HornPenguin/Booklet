@@ -31,11 +31,12 @@
 # 1, 2 dimension matrix operation based on default list type
 
 import collections
+from typing import Iterable
 
 # Utils
 
 def split_list(list1d: list, n: int, mode="l") -> list:
-    if not isinstance(list1d, collections.Iterable):
+    if not isinstance(list1d, Iterable):
         raise TypeError("The given object is not an iterable object.")
     if mode != "l" and mode != "n":
         raise ValueError("The 'mode' parameter must be 'l' or 'n', current = {mode}")
