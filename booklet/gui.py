@@ -46,13 +46,14 @@ from tkinter.colorchooser import askcolor
 # 3rd parties----------------------------
 from PIL import Image, ImageTk
 import simpleaudio
-import PyPDF2 as pypdf
+from booklet import pypdf as pypdf
 
 
 # Project modules-----------------------------------------------
 
 from booklet.core.manuscript import Manuscript
 from booklet.core.modifiers import *
+from booklet.core.converters.section import SecComposition, Section
 import booklet.data as data
 from booklet.utils.misc import *
 from booklet.utils.conversion import mm2pts, pts2mm
@@ -1379,9 +1380,9 @@ class Booklet:
         if not path.is_file():
             raise ValueError("File {path} does not exist.")
 
-        pdf = pypdf.PdfFileReader(path)
+        pdf = pypdf.PdfReader(path)
 
-        page_num = pdf.getNumPages()
+        page_num = len(pdf.pages)
 
         if page_num != 0:  # check whether pdf is empty or not.
             pdfinfo = pdf.metadata
@@ -1389,9 +1390,18 @@ class Booklet:
             title = pdfinfo["/Title"] if "/Title" in pdfinfo.keys() else "None"
             authors = pdfinfo["/Author"] if "/Author" in pdfinfo.keys() else "Unkown"
 
+            page0 = pdf.pages[0]
+            try:
+                    hasattr(page0, "mediabox")
+            except TypeError:
+                    page0.__setitem__(
+                        NameObject(PG.MEDIABOX), RectangleObject(page0["/mediabox"])  # type: ignore
+                    )
+            width, height = page0.mediabox.width, page0.mediabox.height
+
             page_size = [
-                float(pdf.getPage(0).mediaBox.width),
-                float(pdf.getPage(0).mediaBox.height),
+                float(width),
+                float(height)
             ]
 
             return title, authors, page_num, page_size
@@ -1820,7 +1830,7 @@ class Booklet:
         # CYMK Mark-----------------------------------------------------------------------------
         cmykbool: bool = self.cmykbool.get()
 
-        margin = mm2pts(self.margin.get(), False)
+        margin = mm2pts(self.margin.get())
 
         print(
             f"Document:{filename}\n signature leaves: {nl} \n direction: {self.riffle.get()}"
@@ -1830,6 +1840,7 @@ class Booklet:
         print(f"input file:\t{input_file} ")
         print(f"Output path:\t{output_path} ")
         print(f"page range:\t\t{pagerange} ")
+        print(f"Convert to image:\t", self.imageconvert_bool.get())
         print(f"leaves:\t{[nl, nn, ns]} ")
         print(f"fold:\t{foldbool}")
         print(f"riffle:\t{rifflebool}")
@@ -1863,17 +1874,17 @@ class Booklet:
             filename=filename,
             page_range=pagerange,
         )
-        _sig_composition = SigComposition(nl, nn)
-        toimage = ToImage(toimage=False, dpi=600)
+        _sig_composition = SecComposition(nl, nn)
+        toimage = ToImage(toimage=self.imageconvert_bool.get(), dpi=600)
 
-        signature = Signature(
-            sig_composition=_sig_composition,
+        signature = Section(
+            sec_composition=_sig_composition,
             blank_mode=blankmode,
             riffle=rifflebool,
             fold=foldbool,
             paper_format=[
-                mm2pts(float(format_width), mode=False),
-                mm2pts(float(format_height), mode=False),
+                mm2pts(float(format_width)),
+                mm2pts(float(format_height)),
             ],
         )
         imposition = Imposition(

@@ -29,7 +29,7 @@
 import os
 from typing import Union, Tuple
 
-import PyPDF2 as pypdf
+from booklet import pypdf as pypdf
 import pdf2image
 from booklet.dependency import img2pdf
 
@@ -79,7 +79,7 @@ class ToImage(Converter):
             transparent=False,
             output_folder=manuscript.tem_directory.name,
         )
-        new_pdf, new_file = self.get_new_pdf(index, manuscript)
+        new_pdf, new_file = self.get_new_pdf(index, manuscript.tem_directory.name, filemode=file_mode)
         files = [im.filename for im in page_images]
         welldid = True
         if self.mode == "lgpl":  # Using img2pdf method
@@ -91,4 +91,6 @@ class ToImage(Converter):
         if not welldid:  # PIL version
             files[0].save(new_file.name, save_all=True, append_images=files[1:])
 
-        manuscript.pdf_update(None, new_file.name)
+        manuscript.pdf_update(new_pdf, new_file.name)
+        
+        return True

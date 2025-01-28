@@ -40,7 +40,7 @@ from types import FunctionType
 from io import BytesIO, FileIO
 
 # PDF
-import PyPDF2 as pypdf
+from booklet import pypdf as pypdf
 from reportlab.pdfgen.canvas import Canvas
 
 # Project modules
@@ -49,7 +49,7 @@ import booklet.utils.validation as vailidation
 from booklet.utils.conversion import mm
 from booklet.utils.color import Basis_Colors
 from booklet.utils.misc import *
-
+from booklet.utils import matrix as Matrix
 
 class PrintingMark(Template):
     """
@@ -86,9 +86,7 @@ class PrintingMark(Template):
 
         super().__init__(direction=True)
 
-    def ____basic_position(
-        self, pagesize: Tuple[float, float]
-    ) -> Tuple[
+    def ____basic_position(self, pagesize: Tuple[float, float]) -> Tuple[
         Tuple[float, float, float, float], Tuple[Tuple[float, float, float, float]]
     ]:
         x1 = self.margin * 0.25
@@ -175,7 +173,7 @@ class PrintingMark(Template):
 
             if not vertical:
                 column, row = row, column
-                color_map = List12dim.transpose(color_map)
+                color_map = Matrix.transpose(color_map)
 
             for i in range(0, row):
                 for j in range(0, column):
@@ -392,7 +390,7 @@ class PrintingMark(Template):
 
     def generate_template(
         self, manuscript: Manuscript
-    ) -> Tuple[pypdf.PdfFileReader, BytesIO]:
+    ) -> Tuple[pypdf.PdfReader, BytesIO]:
         self.manu_paper_format = manuscript.file_paper_format
         paper_format = self.__get_paper_dim(self.manu_paper_format)
 
@@ -409,7 +407,7 @@ class PrintingMark(Template):
         printing_template.save()
 
         tem_byte.seek(0)
-        template_pdf = pypdf.PdfFileReader(tem_byte)
+        template_pdf = pypdf.PdfReader(tem_byte)
 
         return template_pdf, tem_byte
 
@@ -420,17 +418,17 @@ class PrintingMark(Template):
         if not self.on:
             pass
         else:
-            new_pdf, new_file = self.get_new_pdf(index, manuscript, file_mode)
+            new_pdf, new_file = self.get_new_pdf(index, manuscript.tem_directory.name, file_mode)
             template_pdf, tem_byte = self.generate_template(manuscript)
             template = template_pdf.pages[0]
             for i, page in enumerate(manuscript.pages):
                 temp_page = copy(template)
-                page.addTransformation(
+                page.add_transformation(
                     pypdf.Transformation().translate(tx=self.margin, ty=self.margin)
                 )
-                upper = float(page.mediaBox[2])
-                right = float(page.mediaBox[3])
-                page.mediaBox.setUpperRight((upper + self.margin, right + self.margin))
+                upper = float(page.mediabox[2])
+                right = float(page.mediabox[3])
+                page.mediabox.upper_right = ((upper + self.margin, right + self.margin))
 
                 temp_page.merge_page(page)
                 new_pdf.add_page(temp_page)

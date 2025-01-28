@@ -40,7 +40,9 @@ from types import FunctionType
 from io import BytesIO, FileIO
 
 # PDF
-import PyPDF2 as pypdf
+from booklet import pypdf as pypdf
+from booklet.pypdf.generic import NameObject, RectangleObject
+from booklet.pypdf.constants import PageAttributes as PG
 from reportlab.pdfgen.canvas import Canvas
 
 # Project modules
@@ -159,10 +161,10 @@ class Imposition(Template):
 
         for i in range(0, template_pages):
             proof_page = proof_templates.pages[i]
-            proof_page.mediabox.setLowerLeft((proof_position[0], heights[i]))
-            proof_page.mediabox.setUpperRight(
+            proof_page.mediabox.lower_left = (proof_position[0], heights[i])
+            proof_page.mediabox.upper_right = \
                 (proof_position[0] + proof_width, heights[i] + proof_height)
-            )
+            
 
         return proof_templates, tem_pdf_byte
 
@@ -171,7 +173,7 @@ class Imposition(Template):
         if not self.imposition:
             return 0
 
-        new_pdf, new_file = self.get_new_pdf(index, manuscript, file_mode)
+        new_pdf, new_file = self.get_new_pdf(index, manuscript.tem_directory.name, file_mode)
 
         self.manuscript_format = manuscript.file_paper_format
         paper_width = (self.manuscript_format[0] + self.gap) * self.layout[1] - (
@@ -205,9 +207,9 @@ class Imposition(Template):
 
                 page_translate = pypdf.Transformation().translate(tx=tx, ty=ty)
                 page.add_transformation(page_translate)
-                page.mediaBox.setLowerLeft((tx, ty))
+                page.mediabox.lower_left = (tx, ty)
                 upr = (tx + self.manuscript_format[0], ty + self.manuscript_format[1])
-                page.mediaBox.setUpperRight(upr)
+                page.mediabox.upper_right =(upr)
 
                 tem_page.merge_page(page)
 

@@ -37,11 +37,12 @@ sys.path.insert(0, os.path.abspath("."))
 from booklet.meta import __version__ as __version__
 from booklet.meta import name
 
-import PyPDF2 as pypdf
+from booklet import pypdf as pypdf
 from PIL import Image
 
 from booklet.core.manuscript import Manuscript
 from booklet.core.modifiers import *
+from booklet.core.converters.section import SecComposition, Section
 
 from booklet.utils.misc import *
 from booklet.data import *
@@ -127,11 +128,21 @@ if __name__ == "__main__":
                     name = name_formatted.split(".pdf")[0] + "_HP_BOOKLET" + ".pdf"
                 outputpath = os.path.join(outputpath, name)
 
-            pre_pdf = pypdf.PdfFileReader(inputfile)
+            pre_pdf = pypdf.PdfReader(inputfile)
             page_max = len(pre_pdf.pages)
+            
+            page0 = pre_pdf.pages[0]
+            try:
+                    hasattr(page0, "mediabox")
+            except TypeError:
+                    page0.__setitem__(
+                        NameObject(PG.MEDIABOX), RectangleObject(page0["/mediabox"])  # type: ignore
+                    )
+            width, height = page0.mediabox.width, page0.mediabox.height
+
             default_size = [
-                float(pre_pdf.getPage(0).mediaBox.width),
-                float(pre_pdf.getPage(0).mediaBox.height),
+                float(width),
+                float(height)
             ]
 
             # page range
@@ -167,7 +178,7 @@ if __name__ == "__main__":
             if not check_composition(nn, ns):
                 raise ValueError(f"sig composition {nl} {nn} are not vaild.")
             nl = nn * ns
-            _sig_composition = SigComposition(nl, nn)
+            _sig_composition = SecComposition(nl, nn)
 
             # blank
             blankmode = args.blank_mode
@@ -223,7 +234,7 @@ if __name__ == "__main__":
             )
 
             toimage = ToImage(toimage=toimagebool, dpi=300)
-            signature = Signature(
+            signature = Section(
                 sig_composition=_sig_composition,
                 blank_mode=blankmode,
                 riffle=rifflebool,
