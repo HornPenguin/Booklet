@@ -32,7 +32,9 @@ from numbers import Number
 from decimal import Decimal
 from math import log2
 
-import pypdf
+from booklet import pypdf as pypdf
+from booklet.pypdf.generic import NameObject, RectangleObject
+from booklet.pypdf.constants import PageAttributes as PG
 
 from booklet.core.manuscript import Manuscript, Converter
 from booklet.utils.permutation import Permutation
@@ -51,72 +53,10 @@ class SecComposition:  # Fix all the permutation routines. Currnet is not vaild 
         ],
         64: [
             [
-                44,
-                21,
-                28,
-                37,
-                40,
-                25,
-                24,
-                41,
-                53,
-                12,
-                5,
-                60,
-                57,
-                8,
-                9,
-                56,
-                52,
-                13,
-                4,
-                61,
-                64,
-                1,
-                16,
-                49,
-                45,
-                20,
-                29,
-                36,
-                33,
-                32,
-                17,
-                48,
+                44,21,28,37,40,25,24,41,53,12,5,60,57,8,9,56,52,13,4,61,64,1,16,49,45,20,29,36,33,32,17,48,
             ],
             [
-                46,
-                19,
-                30,
-                35,
-                34,
-                31,
-                18,
-                47,
-                51,
-                14,
-                3,
-                62,
-                63,
-                2,
-                15,
-                50,
-                54,
-                11,
-                6,
-                59,
-                58,
-                7,
-                10,
-                55,
-                43,
-                22,
-                27,
-                38,
-                39,
-                26,
-                23,
-                42,
+                46,19,30,35,34,31,18,47,51,14,3,62,63,2,15,50,54,11,6,59,58,7,10,55,43,22,27,38,39,26,23,42,
             ],
         ],
         12: [[12, 1, 9, 4, 8, 5], [2, 11, 3, 10, 6, 7]],
@@ -446,7 +386,7 @@ class Section(Converter):
 
     def do(self, do_index: int, manuscript: Manuscript, file_mode: int, format=None):
         blank_num = len(manuscript.pages) % self.sec_composition.leaves
-        page_range: list(int) = manuscript.page_range
+        page_range: list[int] = manuscript.page_range
         if self.blank_mode == "front":
             page_range = ([0] * blank_num) + page_range
         elif self.blank_mode == "back":
@@ -483,7 +423,8 @@ class Section(Converter):
             )
             permuted_blocks.append(permuted_block)
 
-        new_pdf, new_file = self.get_new_pdf(do_index, manuscript, filemode=file_mode)
+        new_pdf, new_file = self.get_new_pdf(do_index, manuscript.tem_directory.name, filemode=file_mode)
+        
         for pages in permuted_blocks:
             for index, i in enumerate(pages):
                 if i == 0:
@@ -500,9 +441,16 @@ class Section(Converter):
 
                     page = manuscript.pages[page_num]
 
+                    try:
+                            hasattr(page, "mediabox")
+                    except TypeError:
+                            page.__setitem__(
+                                NameObject(PG.MEDIABOX), RectangleObject(page["/mediabox"])  # type: ignore
+                            )
+
                     page.scale_to(paper_format[0], paper_format[1])
-                    page.mediabox.setLowerLeft([0, 0])
-                    page.mediabox.setUpperRight(paper_format)
+                    page.mediabox.lower_left = [0, 0]
+                    page.mediabox.upper_right = (paper_format)
 
                     left = manuscript.pdf_origin[0]
                     bottom = manuscript.pdf_origin[1]
@@ -518,3 +466,7 @@ class Section(Converter):
 
         manuscript.pdf_update(new_pdf, new_file.name)
         return True
+
+
+
+

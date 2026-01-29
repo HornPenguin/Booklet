@@ -72,7 +72,7 @@ class NamedTempFile:
     """NamedTemporary file IO warpper for reading and writing"""
 
     def __init__(self, tempfile, mode=None, delete: bool = False):
-        if tempfile.delete:
+        if tempfile.__dict__["_closer"].delete: # See _TemporaryFileCloser class of "tempfile" library.
             raise ValueError("Named Temporary File must be in non-delete mode.")
         self.path = Path(tempfile.name)
         self.mode = tempfile.mode if mode == None else mode
@@ -96,12 +96,15 @@ class NamedTempFile:
                 os.unlink(self.path)
             except:
                 pass
+    @property
+    def name(self):
+        return self.path
 
     @classmethod
     def from_temp_setting(cls, *args, **kwargs):
-        kwargs["delete"] = False
+        delete = kwargs["delete"]
         return cls(
-            tempfile.NamedTemporaryFile(*args, **kwargs), mode="wb+", delete=True
+            tempfile.NamedTemporaryFile(*args, **kwargs), mode="wb+", delete=False
         )
 
     @property

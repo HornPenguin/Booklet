@@ -40,7 +40,9 @@ from types import FunctionType
 from io import BytesIO, FileIO
 
 # PDF
-import pypdf
+from booklet import pypdf as pypdf
+from booklet.pypdf.generic import NameObject, RectangleObject
+from booklet.pypdf.constants import PageAttributes as PG
 from reportlab.pdfgen.canvas import Canvas
 
 # Project modules
@@ -159,10 +161,10 @@ class Imposition(Template):
 
         for i in range(0, template_pages):
             proof_page = proof_templates.pages[i]
-            proof_page.mediabox.lower_left((proof_position[0], heights[i]))
-            proof_page.mediabox.upper_right(
+            proof_page.mediabox.lower_left = (proof_position[0], heights[i])
+            proof_page.mediabox.upper_right = \
                 (proof_position[0] + proof_width, heights[i] + proof_height)
-            )
+            
 
         return proof_templates, tem_pdf_byte
 
@@ -203,12 +205,16 @@ class Imposition(Template):
                 page = manuscript.pages[j]
                 x, y = self.position_mapping(manuscript, j, manuscript.file_pages)
 
-                tem_page.merge_transformed_page(
-                    page,
-                    pypdf.Transformation().translate(
-                        x,y
-                    )
-                )
+                tx = x
+                ty = y
+
+                page_translate = pypdf.Transformation().translate(tx=tx, ty=ty)
+                page.add_transformation(page_translate)
+                page.mediabox.lower_left = (tx, ty)
+                upr = (tx + self.manuscript_format[0], ty + self.manuscript_format[1])
+                page.mediabox.upper_right =(upr)
+
+                tem_page.merge_page(page)
 
         if self.proof:
             proof_templates, temp_file = self.generate_template(

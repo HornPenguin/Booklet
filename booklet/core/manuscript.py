@@ -44,7 +44,9 @@ from types import FunctionType
 from numbers import Number
 
 # PDF
-import pypdf
+from booklet import pypdf as pypdf
+from booklet.pypdf.generic import NameObject, RectangleObject
+from booklet.pypdf.constants import PageAttributes as PG
 
 # Project modules
 from booklet.utils.misc import *
@@ -106,7 +108,18 @@ class Manuscript:
             self.meta[key] = str(val)
 
         self.file_pages, self.file_paper_format = self.__get_file_info(self.file_path)
-        self.pdf_origin = (self.pdf.pages[0].mediabox[0], self.pdf.pages[0].mediabox[1])
+        
+        page0 = self.pdf.pages[0]
+        try:
+                hasattr(page0, "mediabox")
+        except TypeError:
+                page0.__setitem__(
+                    NameObject(PG.MEDIABOX), RectangleObject(page0["/mediabox"])  # type: ignore
+                )
+        self.pdf_origin = (
+            page0.mediabox[0], 
+            page0.mediabox[1]
+            )
 
         self.page_range = self.__get_page_range(page_range)
 
@@ -172,10 +185,20 @@ class Manuscript:
         """Extract basic pdf info from the given file path."""
         pdf = pypdf.PdfReader(path)
         page_num = len(pdf.pages)
+        
+        page0 = pdf.pages[0]
+        try:
+                hasattr(page0, "mediabox")
+        except TypeError:
+                page0.__setitem__(
+                    NameObject(PG.MEDIABOX), RectangleObject(page0["/mediabox"])  # type: ignore
+                )
+        width, height = page0.mediabox.width, page0.mediabox.height
         paper_format = (
-            float(pdf.pages[0].mediabox.width),
-            float(pdf.pages[0].mediabox.height),
+            float(width),
+            float(height)
         )
+        
         return page_num, paper_format
 
     def __vaildate_index(self, i: int, li: list):
@@ -253,8 +276,11 @@ class Manuscript:
             if isinstance(pdf, pypdf.PdfReader)
             else pypdf.PdfReader(self.file_path)
         )
+        print(file)
         self.file_pages, self.file_paper_format = self.__get_file_info(file)
         self.page_range = self.__get_page_range(page_range)
+        
+        print("File is updated.")
 
     def update(
         self,
@@ -267,6 +293,7 @@ class Manuscript:
         if do == "all":
             for index, modifier in enumerate(self.modifiers):
                 print(f"{index+1}, {modifier.name} : {modifier.description}")
+                #print("Type:", modifier.__bases__)
                 modifier.do(index, self, file_mode)
             return "all"
         if rule is not None and isinstance(
@@ -276,6 +303,9 @@ class Manuscript:
                 j = rule(i)
                 modifier = self.modifiers[j]
                 print(f"{index+1}, {modifier.name} : {modifier.description}")
+                
+                print("Type:", modifier.__bases__)
+                
                 modifier.do(i, self, file_mode)
             return "rule"
 
@@ -398,9 +428,9 @@ class Modifier:
     def file_requirement(self):
         return self.__external_file__
 
-    def get_new_pdf(self, index:int, tem_dir:Union[str, Path], filemode:str="safe") -> Tuple[pypdf.PdfFileWriter, Union[NamedTempFile, io.BytesIO]]:
+    def get_new_pdf(self, index:int, tem_dir:Union[str, Path], filemode:str="safe") -> Tuple[pypdf.PdfWriter, Union[NamedTempFile, io.BytesIO]]:
         """
-        Return new :class:`PdfFileWriter` object in pypdf and new file, file-like object.
+        Return new :class:`PdfWriter` object in PyPDF2 and new file, file-like object.
 
         :param index: index, indicating the order of modifer in execution in :class:`Manuscript object.` 
         :type index: int
@@ -408,8 +438,8 @@ class Modifier:
         :type manuscript: Manuscript
         :param filemode: New file mode. If it is "safe" :class`NamedTempFile` object is returend else :class:`io.BytesIO` is returned, defaults to "safe"
         :type filemode: str, optional
-        :return: :class:`PdfFileWriter` object and new file, file-like object.
-        :rtype: Tuple[pypdf.PdfFileWriter, Union[NamedTempFile, io.BytesIO]]
+        :return: :class:`PdfWriter` object and new file, file-like object.
+        :rtype: Tuple[pypdf.PdfWriter, Union[NamedTempFile, io.BytesIO]]
         """
         if filemode == "safe":
             new_file = NamedTempFile.from_temp_setting(
@@ -434,11 +464,11 @@ class Modifier:
     def do(self, index:int, manuscript:Manuscript, *args, **kwargs) -> NoReturn:
         """
         Body of each modifier object. Using internal variables and methods generate new manuscript file
-        and update end of the function :code:`cls.pdf_update()` method is called 
+        and update end of the function :code:`cls.pdf_update()` method is called.
 
         :param index: index, indicating the order of modifer in execution in :class:`Manuscript object.` 
         :type index: int
-        :param manuscript: :class:`Manuscript`
+        :param manuscript: Manuscript data
         :type manuscript: :class:`Manuscript`
         :return: None
         :rtype: NoReturn
@@ -449,6 +479,7 @@ class Modifier:
 
         #-----
         manuscript.pdf_update(new_pdf, new_file)
+
 class Converter(Modifier):
     """
     This class 
@@ -462,6 +493,7 @@ class Converter(Modifier):
     @property
     def type(self):
         return Converter.__type__
+
 class Template(Modifier):
     """
     This class 
@@ -487,12 +519,18 @@ class Template(Modifier):
         if file != None:
             self.file = file if type(file) != str else self.__get_path(file, mode="f")
             self.pdf = pypdf.PdfReader(file)
-            page = self.pdf.pages[0]
+            page0 = self.pdf.pages[0]
+            try:
+                    hasattr(page0, "mediabox")
+            except TypeError:
+                    page0.__setitem__(
+                        NameObject(PG.MEDIABOX), RectangleObject(page0["/mediabox"])  # type: ignore
+                    )
             self.paper_format = (
-                float(page.mediabox.width),
-                float(page.mediabox.height),
+                float(page0.mediabox.width),
+                float(page0.mediabox.height),
             )
-            self.pdf_origin = (page.mediabox[0], page.mediabox[1])
+            self.pdf_origin = (page0.mediabox[0], page0.mediabox[1])
         self.direction = direction
         self.custom_rule = rule
         self.custom_position = position

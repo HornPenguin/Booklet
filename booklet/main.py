@@ -37,12 +37,13 @@ sys.path.insert(0, os.path.abspath("."))
 from booklet.meta import __version__ as __version__
 from booklet.meta import name
 
-import pypdf
+from booklet import pypdf as pypdf
 from PIL import Image
 
 from booklet.core.manuscript import Manuscript
 from booklet.core.modifiers import *
-from booklet.deprecated.converters import SigComposition, Signature
+from booklet.core.converters.section import SecComposition, Section
+
 from booklet.utils.misc import *
 from booklet.data import *
 from booklet.utils.images import icon_path
@@ -129,9 +130,19 @@ if __name__ == "__main__":
 
             pre_pdf = pypdf.PdfReader(inputfile)
             page_max = len(pre_pdf.pages)
+            
+            page0 = pre_pdf.pages[0]
+            try:
+                    hasattr(page0, "mediabox")
+            except TypeError:
+                    page0.__setitem__(
+                        NameObject(PG.MEDIABOX), RectangleObject(page0["/mediabox"])  # type: ignore
+                    )
+            width, height = page0.mediabox.width, page0.mediabox.height
+
             default_size = [
-                float(pre_pdf.pages[0].mediabox.width),
-                float(pre_pdf.pages[0].mediabox.height),
+                float(width),
+                float(height)
             ]
 
             # page range
@@ -167,9 +178,8 @@ if __name__ == "__main__":
             print(f"Leaves: nl:{nl}, nn:{nn}, ns:{ns}")
             if not check_composition(nn, ns):
                 raise ValueError(f"sig composition {nl} {nn} are not vaild.")
-            # nl = nn * ns
-            print(f"nl: {nl}")
-            _sig_composition = SigComposition(nl, nn)
+            nl = nn * ns
+            _sig_composition = SecComposition(nl, nn)
 
             # blank
             blankmode = args.blank_mode
@@ -227,7 +237,7 @@ if __name__ == "__main__":
             )
 
             toimage = ToImage(toimage=toimagebool, dpi=300)
-            signature = Signature(
+            signature = Section(
                 sig_composition=_sig_composition,
                 blank_mode=blankmode,
                 riffle=rifflebool,

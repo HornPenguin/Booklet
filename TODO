@@ -35,6 +35,13 @@ Version 0.0.3 - in working
   * Progress bar routine update
   * Repeating routine add
 
+  * Rebuild the structure:
+    * Multiple PDF routines
+      * PyPDF2
+      * Borb
+      * MuPDF
+      * Ghostscript
+    * Image to PDF routines
 Version 0.0.2 - current
 
 * Unifying Graphic-Console. - Done

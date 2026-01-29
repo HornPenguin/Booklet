@@ -37,22 +37,23 @@ from math import log2
 import tkinter as tk
 from tkinter import filedialog
 
-if platform.system() != "Darwin":
-    from tkinter import ttk
-else:
-    import tkmacosx as ttk  # Mac OS specific module
+from tkinter import ttk
+if platform.system() == "Darwin":
+    import tkmacosx as ttkmac  # Mac OS specific module
+#from tkinter import ttk
 from tkinter.colorchooser import askcolor
 
 # 3rd parties----------------------------
 from PIL import Image, ImageTk
 import simpleaudio
-import PyPDF2 as pypdf
+from booklet import pypdf as pypdf
 
 
 # Project modules-----------------------------------------------
 
 from booklet.core.manuscript import Manuscript
 from booklet.core.modifiers import *
+from booklet.core.converters.section import SecComposition, Section
 import booklet.data as data
 from booklet.utils.misc import *
 from booklet.utils.conversion import mm2pts, pts2mm
@@ -694,12 +695,12 @@ class Booklet:
             anchor="w",
         )
         if self.platform_mac:
-            self.pagerange_example = ttk.Label(
+            self.pagerange_example = tk.Label(
                 self.Frame_ad_imposition,
                 text="1, 3-5, 10",
                 justify=tk.LEFT,
                 anchor="w",
-                bg="white",
+                bg="white"
             )
         else:
             self.pagerange_example = tk.Label(
@@ -922,7 +923,7 @@ class Booklet:
             self.Frame_ad_printing, variable=self.sigproofbool
         )
         if self.platform_mac:
-            self.sigproof_button = ttk.Button(
+            self.sigproof_button = ttkmac.Button(
                 self.Frame_ad_printing,
                 width=3,
                 height=1,
@@ -1396,9 +1397,18 @@ class Booklet:
             title = pdfinfo["/Title"] if "/Title" in pdfinfo.keys() else "None"
             authors = pdfinfo["/Author"] if "/Author" in pdfinfo.keys() else "Unkown"
 
+            page0 = pdf.pages[0]
+            try:
+                    hasattr(page0, "mediabox")
+            except TypeError:
+                    page0.__setitem__(
+                        NameObject(PG.MEDIABOX), RectangleObject(page0["/mediabox"])  # type: ignore
+                    )
+            width, height = page0.mediabox.width, page0.mediabox.height
+
             page_size = [
-                float(pdf.pages[0].mediabox.width),
-                float(pdf.pages[0].mediabox.height),
+                float(width),
+                float(height)
             ]
 
             return title, authors, page_num, page_size
@@ -1853,6 +1863,7 @@ class Booklet:
         print(f"input file:\t{input_file} ")
         print(f"Output path:\t{output_path} ")
         print(f"page range:\t\t{pagerange} ")
+        print(f"Convert to image:\t", self.imageconvert_bool.get())
         print(f"leaves:\t{[nl, nn, ns]} ")
         print(f"fold:\t{foldbool}")
         print(f"riffle:\t{rifflebool}")
@@ -1886,11 +1897,11 @@ class Booklet:
             filename=filename,
             page_range=pagerange,
         )
-        _sig_composition = SigComposition(nl, nn)
-        toimage = ToImage(toimage=False, dpi=600)
+        _sig_composition = SecComposition(nl, nn)
+        toimage = ToImage(toimage=self.imageconvert_bool.get(), dpi=600)
 
-        signature = Signature(
-            sig_composition=_sig_composition,
+        signature = Section(
+            sec_composition=_sig_composition,
             blank_mode=blankmode,
             riffle=rifflebool,
             fold=foldbool,
