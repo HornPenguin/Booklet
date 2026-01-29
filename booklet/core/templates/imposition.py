@@ -88,7 +88,7 @@ class Imposition(Template):
             else imposition_layout
         )
         self.pages_per_template = (
-            self.layout[0] * self.layout[1] if self.layout != None else 1
+            self.layout.layout[0] * self.layout.layout[1] if self.layout != None else 1
         )
 
     def rule(
@@ -100,8 +100,8 @@ class Imposition(Template):
 
     def position(self, i: int) -> tuple[float, float]:  # manuscript page
         index = i % self.pages_per_template
-        column = self.layout[1]
-        row = self.layout[0]
+        column = self.layout.layout[1]
+        row = self.layout.layout[0]
 
         x = (index) % column
         y = row - floor((index) / column) - 1
@@ -176,10 +176,10 @@ class Imposition(Template):
         new_pdf, new_file = self.get_new_pdf(index, manuscript.tem_directory.name, file_mode)
 
         self.manuscript_format = manuscript.file_paper_format
-        paper_width = (self.manuscript_format[0] + self.gap) * self.layout[1] - (
+        paper_width = (self.manuscript_format[0] + self.gap) * self.layout.layout[1] - (
             self.gap
         )
-        paper_height = (self.manuscript_format[1] + self.gap) * self.layout[0] - (
+        paper_height = (self.manuscript_format[1] + self.gap) * self.layout.layout[0] - (
             self.gap
         )
         format = (paper_width, paper_height)
@@ -187,6 +187,7 @@ class Imposition(Template):
         manuscript_pages = len(manuscript.pages)
         pages_per_template = self.pages_per_template
 
+        # template_pages - Number of pages in the output pdf
         template_pages = int(manuscript_pages / pages_per_template) + (
             1 if bool(manuscript_pages % pages_per_template) else 0
         )
@@ -195,7 +196,9 @@ class Imposition(Template):
             new_pdf.add_blank_page(format[0], format[1])
 
         for i in range(0, template_pages):
+            # manu_pages - Which input pages appear on this output page.
             manu_pages = self.index_mapping(manuscript, i, template_pages)
+            #print(f"page: {i}, manu_pages {manu_pages}")
 
             tem_page = new_pdf.pages[i]
             for j in manu_pages:
@@ -222,5 +225,5 @@ class Imposition(Template):
                 page.merge_page(proof_templates.pages[i])
 
         new_pdf.write(new_file)
-        manuscript.meta["/Imposition"] = f"{self.layout[0]}x{self.layout[1]}"
+        manuscript.meta["/Imposition"] = f"{self.layout.layout[0]}x{self.layout.layout[1]}"
         manuscript.pdf_update(new_pdf, new_file)

@@ -9,5 +9,7 @@ tem/*
 install_build/*
 sphinx_build/*
 dist/*
+.vscode/*
+.idea
 
-
+venvbooklet

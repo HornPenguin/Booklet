@@ -29,9 +29,8 @@
 from __future__ import annotations
 
 # Python standard
-import io, tempfile
+import io
 from datetime import datetime
-from pathlib import Path
 import sys, os
 
 sys.path.insert(1, os.getcwd())
@@ -242,7 +241,7 @@ class Manuscript:
 
     def modifier_register(self, modifier:Modifier, to: bool = False) -> NoReturn:
         if not hasattr(modifier, "__type__"):
-            raise ValueError("Invaild modifier")
+            raise ValueError("Invalid modifier")
         if type(to) == bool:
             self.modifiers.append(modifier)
         elif validation.check_integer(to, True) and to < len(self.modifiers):
@@ -297,7 +296,7 @@ class Manuscript:
                 #print("Type:", modifier.__bases__)
                 modifier.do(index, self, file_mode)
             return "all"
-        if rule != None and isinstance(
+        if rule is not None and isinstance(
             rule, FunctionType
         ):  # Apply specific modifiers by the given rule
             for i in range(0, len(self.modifiers)):
@@ -317,7 +316,7 @@ class Manuscript:
                 raise ValueError("Not an integer string.")
         if type(do) == int:
             if do < 0 or do >= len(self.modifiers):
-                raise ValueError("Invaild index.")
+                raise ValueError("Invalid index.")
             else:
                 modifier = self.modifiers[self.modifier_index]
                 print(f"{index+1}, {modifier.name} : {modifier.description}")
@@ -326,7 +325,7 @@ class Manuscript:
                 return f"{do}"
         else:
             raise TypeError(
-                f"Invaild type, {type(do)}, it must be integer, integer string or 'all'."
+                f"Invalid type, {type(do)}, it must be integer, integer string or 'all'."
             )
 
     def save_to_file(
@@ -370,7 +369,7 @@ class Manuscript:
         self.meta["/ModDate"] = f"D:{current}{utcstring}"
 
         # Save
-        if split != None and split:
+        if split is not None and split:
             pages_num = len(self.pages)
             repeat = int(pages_num / split) + (1 if pages_num % split else 0)
             for i in range(0, repeat):
@@ -403,7 +402,8 @@ class Modifier:
     
     .. code::
         
-        new_pdf = modification(manuscript, a, b, c)`
+        new_pdf = modification(manuscript, a, b, c)
+    
     as
 
     .. code::
@@ -434,7 +434,7 @@ class Modifier:
 
         :param index: index, indicating the order of modifer in execution in :class:`Manuscript object.` 
         :type index: int
-        :param manuscript: :class:`Manuscript object calls the modifier
+        :param manuscript: :class:`Manuscript` object calls the modifier
         :type manuscript: Manuscript
         :param filemode: New file mode. If it is "safe" :class`NamedTempFile` object is returend else :class:`io.BytesIO` is returned, defaults to "safe"
         :type filemode: str, optional
@@ -484,7 +484,7 @@ class Converter(Modifier):
     """
     This class 
     All its methods are depending on PDF libraries, since it does not provides any additional internal methods.
-    It is just a wrapper of :class:`Modifier: class for categorizing features.
+    It is just a wrapper of :class:`Modifier`: class for categorizing features.
     """
     __type__ = "converter"
     # Using internal routines only

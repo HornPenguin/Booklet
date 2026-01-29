@@ -1,1 +1,6 @@
-sphinxawesome_theme
+sphinxawesome_theme==4.1.0
+pypdf==3.16.2
+Pillow==10.0.0
+simpleaudio==1.0.4
+reportlab==4.0.4
+pdf2image==1.16.3

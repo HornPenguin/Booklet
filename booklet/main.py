@@ -175,6 +175,7 @@ if __name__ == "__main__":
             nl = args.sig_composition[0]
             nn = args.sig_composition[1]
             ns = int(nl / nn)
+            print(f"Leaves: nl:{nl}, nn:{nn}, ns:{ns}")
             if not check_composition(nn, ns):
                 raise ValueError(f"sig composition {nl} {nn} are not vaild.")
             nl = nn * ns
@@ -188,7 +189,7 @@ if __name__ == "__main__":
             if args.sigproof is not None:
                 sigproof = [True, args.sigproof[0]]
             else:
-                sigproof = [False, ""]
+                sigproof = [False, [0,0,0,0]]
 
             printbool = args.crop or args.registration or args.cmyk or sigproof[0]
 
@@ -229,8 +230,10 @@ if __name__ == "__main__":
             default_gap = 5
             default_margin = 43
 
+            print(f"inputfile:{inputfile}, outputpath:{outputpath}")
             manuscript = Manuscript(
-                input=inputfile, output=outputpath, page_range=pagerange
+                input=inputfile, output=os.path.dirname(outputpath),
+                filename=os.path.basename(outputpath), page_range=pagerange
             )
 
             toimage = ToImage(toimage=toimagebool, dpi=300)
@@ -241,6 +244,7 @@ if __name__ == "__main__":
                 fold=args.fold,
                 paper_format=format,
             )
+            print(f"sigproof:{sigproof}")
             imposition = Imposition(
                 imposition=args.imposition,
                 gap=default_gap,
@@ -287,7 +291,7 @@ if __name__ == "__main__":
     else:  # guid mode
         text_pady = 3
         beep_file_name = "beep_ping.wav"
-        beep_file = resources_path(beep_file_name, "resources\\sound")
+        beep_file = resources_path(beep_file_name, os.path.join("resources","sound"))
 
         logo_width = logo_height = 70
         logo = Image.open(resources_path("logo.png", "resources")).resize(

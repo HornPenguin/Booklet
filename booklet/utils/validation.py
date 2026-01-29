@@ -73,9 +73,9 @@ def path(_path: Union[str, Path], mode: str = "f") -> NoReturn:
     if not _path.exists:
         raise ValueError(f"No such file or directory exists. {str(_path)}")
     if mode == "f" and not _path.is_file():
-        raise ValueError(f"Invaild file path, not a file. {str(_path)}")
+        raise ValueError(f"Invalid file path, not a file. {str(_path)}")
     elif mode == "d" and not _path.is_dir():
-        raise ValueError(f"Invaild directory path, not a directory. {str(_path)}")
+        raise ValueError(f"Invalid directory path, not a directory. {str(_path)}")
 
 
 def check_integer(i: int, positive: bool = False) -> bool:
