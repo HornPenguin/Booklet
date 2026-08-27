@@ -996,7 +996,7 @@ class pdfdoc(object):
         else:
             page = PdfDict(indirect=True)
             page[PdfName.Type] = PdfName.Page
-            page[PdfName.MediaBox] = [0, 0, pagewidth, pageheight]
+            page[PdfName.mediabox] = [0, 0, pagewidth, pageheight]
         # 14.11.2 Page Boundaries
         # ...
         # The crop, bleed, trim, and art boxes shall not ordinarily extend
@@ -1187,7 +1187,7 @@ class pdfdoc(object):
         if self.magnification == Magnification.fit:
             catalog[PdfName.OpenAction] = PdfArray([initial_page, PdfName.Fit])
         elif self.magnification == Magnification.fith:
-            pagewidth = initial_page[PdfName.MediaBox][2]
+            pagewidth = initial_page[PdfName.mediabox][2]
             catalog[PdfName.OpenAction] = PdfArray(
                 [initial_page, PdfName.FitH, pagewidth]
             )
@@ -3976,7 +3976,7 @@ setting. If the --border option is given while both the --pagesize and
 --imgsize options are passed, then the --border option will be ignored.
 
 The --pagesize option or the --imgsize option with the --border option will
-determine the MediaBox size of the resulting PDF document.
+determine the mediabox size of the resulting PDF document.
 """
         % default_dpi,
     )
@@ -4069,7 +4069,7 @@ of zero. The values 90, 180 and 270 perform a clockwise rotation of the image.
         metavar="L[:L]",
         type=parse_borderarg,
         help="""
-Specifies the border between the CropBox and the MediaBox. One, or two length
+Specifies the border between the CropBox and the mediabox. One, or two length
 values can be given as an argument, separated by a colon. One value specifies
 the border on all four sides. Two values specify the border on the top/bottom
 and left/right, respectively. It is not possible to specify asymmetric borders.
@@ -4080,7 +4080,7 @@ and left/right, respectively. It is not possible to specify asymmetric borders.
         metavar="L[:L]",
         type=parse_borderarg,
         help="""
-Specifies the border between the BleedBox and the MediaBox. One, or two length
+Specifies the border between the BleedBox and the mediabox. One, or two length
 values can be given as an argument, separated by a colon. One value specifies
 the border on all four sides. Two values specify the border on the top/bottom
 and left/right, respectively. It is not possible to specify asymmetric borders.
@@ -4091,7 +4091,7 @@ and left/right, respectively. It is not possible to specify asymmetric borders.
         metavar="L[:L]",
         type=parse_borderarg,
         help="""
-Specifies the border between the TrimBox and the MediaBox. One, or two length
+Specifies the border between the TrimBox and the mediabox. One, or two length
 values can be given as an argument, separated by a colon. One value specifies
 the border on all four sides. Two values specify the border on the top/bottom
 and left/right, respectively. It is not possible to specify asymmetric borders.
@@ -4102,7 +4102,7 @@ and left/right, respectively. It is not possible to specify asymmetric borders.
         metavar="L[:L]",
         type=parse_borderarg,
         help="""
-Specifies the border between the ArtBox and the MediaBox. One, or two length
+Specifies the border between the ArtBox and the mediabox. One, or two length
 values can be given as an argument, separated by a colon. One value specifies
 the border on all four sides. Two values specify the border on the top/bottom
 and left/right, respectively. It is not possible to specify asymmetric borders.

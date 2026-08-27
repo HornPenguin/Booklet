@@ -40,12 +40,12 @@ from types import FunctionType
 from io import BytesIO, FileIO
 
 # PDF
-import pypdf
+from booklet import pypdf as pypdf
 from reportlab.pdfgen.canvas import Canvas
 
 # Project modules
 from booklet.core.manuscript import Modifier, Template, Manuscript
-from booklet.converters import SigComposition
+from booklet.core.converters import SigComposition
 import vailidation
 from booklet.utils.misc import *
 
@@ -233,9 +233,9 @@ class Imposition(Template):
 
                 page_translate = pypdf.Transformation().translate(tx=tx, ty=ty)
                 page.add_transformation(page_translate)
-                page.mediaBox.setLowerLeft((tx, ty))
+                page.mediabox.setLowerLeft((tx, ty))
                 upr = (tx + self.manuscript_format[0], ty + self.manuscript_format[1])
-                page.mediaBox.setUpperRight(upr)
+                page.mediabox.setUpperRight(upr)
 
                 tem_page.merge_page(page)
 
@@ -587,7 +587,7 @@ class PrintingMark(Template):
 
     def generate_template(
         self, manuscript: Manuscript
-    ) -> Tuple[pypdf.PdfFileReader, BytesIO]:
+    ) -> Tuple[pypdf.PdfReader, BytesIO]:
         self.manu_paper_format = manuscript.file_paper_format
         paper_format = self.__get_paper_dim(self.manu_paper_format)
 
@@ -604,7 +604,7 @@ class PrintingMark(Template):
         printing_template.save()
 
         tem_byte.seek(0)
-        template_pdf = pypdf.PdfFileReader(tem_byte)
+        template_pdf = pypdf.PdfReader(tem_byte)
 
         return template_pdf, tem_byte
 
@@ -623,9 +623,9 @@ class PrintingMark(Template):
                 page.addTransformation(
                     pypdf.Transformation().translate(tx=self.margin, ty=self.margin)
                 )
-                upper = float(page.mediaBox[2])
-                right = float(page.mediaBox[3])
-                page.mediaBox.setUpperRight((upper + self.margin, right + self.margin))
+                upper = float(page.mediabox[2])
+                right = float(page.mediabox[3])
+                page.mediabox.setUpperRight((upper + self.margin, right + self.margin))
 
                 temp_page.merge_page(page)
                 new_pdf.add_page(temp_page)
@@ -679,7 +679,7 @@ class Note(Template):
 
     def generate_template(
         self, manuscript: Manuscript
-    ) -> Tuple[pypdf.PdfFileReader, BytesIO]:
+    ) -> Tuple[pypdf.PdfReader, BytesIO]:
         self.manu_paper_format = manuscript.file_paper_format
         return template_pdf, tem_byte
 

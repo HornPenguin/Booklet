@@ -35,7 +35,7 @@ from datetime import datetime
 from typing import Callable
 
 # import numpy as np
-import pypdf
+from booklet import pypdf as pypdf
 
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
@@ -555,10 +555,10 @@ def page_printing_layout(
 # Main Routine (Sequential): For the progress routine in the program ui.
 def get_writer_and_manuscript(
     inputfile: str,
-) -> Tuple[pypdf.PdfFileReader, pypdf.PdfFileWriter, dict]:
+) -> Tuple[pypdf.PdfReader, pypdf.PdfFileWriter, dict]:
 
     if type(inputfile) == str:
-        manuscript = pypdf.PdfFileReader(inputfile)
+        manuscript = pypdf.PdfReader(inputfile)
     else:
         manuscript = inputfile
     output = pypdf.PdfFileWriter()
@@ -649,7 +649,7 @@ def toimagepdf(pdf_path, mode: bool = False, dpi: int = 600, format=None):
 
     Returns:
         dict: bool: boolean value of activation
-              pdf: PyPDF2.PdfFileReader class of the transposed pdf. All its pages are image and it is saved in temporary file.
+              pdf: PyPDF2.PdfReader class of the transposed pdf. All its pages are image and it is saved in temporary file.
               dir: Temporary directory that all pages images are saved.
               file: Temporary file object connected with the pdf.
     """
@@ -670,7 +670,7 @@ def toimagepdf(pdf_path, mode: bool = False, dpi: int = 600, format=None):
         tem_file.write(img2pdf.convert(files))
         return {
             "bool": True,
-            "pdf": pypdf.PdfFileReader(tem_file),
+            "pdf": pypdf.PdfReader(tem_file),
             "dir": tem_dir,
             "file": tem_file,
         }
@@ -680,7 +680,7 @@ def toimagepdf(pdf_path, mode: bool = False, dpi: int = 600, format=None):
 
 
 def note(
-    pdf: Union[pypdf.PdfFileReader, str, None] = None,
+    pdf: Union[pypdf.PdfReader, str, None] = None,
     mode: bool = False,
     pages: Union[int, None] = None,
     numbering: bool = False,
@@ -703,7 +703,7 @@ def note(
     if pdf == None:  # No pdf is given
         return False
     elif type(pdf) == str:  # if given value is path, change it to PyPDF2 reader class
-        pdf = pypdf.PdfFileReader(pdf)
+        pdf = pypdf.PdfReader(pdf)
     elif len(pdf.pages) == 0:
         raise ValueError("Invaild pdf")
 
@@ -769,11 +769,11 @@ def note(
         tem_pdfs[0].seek(0)
         if numbering:
             tem_pdfs[1].seek(0)
-    pdf_manu = pypdf.PdfFileReader(tem_pdfs[0])
+    pdf_manu = pypdf.PdfReader(tem_pdfs[0])
     pdf_numbering = None
     template = None
     if numbering:
-        pdf_numbering = pypdf.PdfFileReader(tem_pdfs[1])
+        pdf_numbering = pypdf.PdfReader(tem_pdfs[1])
         template = Template(pdf_numbering, tem_pdfs[1])
     return pdf_manu, tem_pdfs[0], template
 

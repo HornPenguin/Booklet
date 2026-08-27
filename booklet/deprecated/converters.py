@@ -34,7 +34,7 @@ from decimal import Decimal
 from math import log2, log, floor, perm
 
 # PDF
-import pypdf
+from booklet import pypdf as pypdf
 import pdf2image
 from booklet.dependency import img2pdf
 
