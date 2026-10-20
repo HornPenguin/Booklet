@@ -117,3 +117,9 @@ Further routines for next version
 
 This program distributed under BSD 3-clause license
 See detail license text in [LICENSE](LICENSE) file in repository.
+
+## Funding & Support
+
+This project is proudly supported and funded by the **[FOSS for All Microgrants](https://program-website.com)**, an initiative by **[FOSS for All](https://fossforall.org)** in 2026. 
+
+We are extremely grateful for their support in making this project possible.
