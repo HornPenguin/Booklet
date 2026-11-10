@@ -1,5 +1,7 @@
 # HornPenguin Booklet
 
+[![Funded by FOSS for All Microgrants 2026](https://fossforall.org/badges/microgrants-2026.svg)](https://forum.fossforall.org/t/foss-for-all-microgrants-2026/105)
+
 **Version** 0.0.2
 
 <p align="center">
